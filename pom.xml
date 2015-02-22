@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ssbl</groupId>
+	<groupId>com.hunnymustard.ssbl</groupId>
 	<artifactId>ssbl</artifactId>
 	<version>${ssbl.version}</version>
 	<packaging>pom</packaging>
@@ -20,10 +20,18 @@
 	
 	<modules>
 		<module>ssbl-model</module>
+		<module>ssbl-server</module>
 	</modules>
 	
 	<dependencyManagement>
 	    <dependencies>
+	         <!-- Inter-Project Dependencies -->
+		    <dependency>
+		        <groupId>com.hunnymustard.ssbl</groupId>
+		        <artifactId>ssbl-model</artifactId>
+		        <version>${ssbl.version}</version>
+		    </dependency>
+		    
 	        <!-- Apache Dependencies -->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
