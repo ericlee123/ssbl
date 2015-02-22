@@ -27,6 +27,14 @@ import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+/**
+ * This entity represents a User. Users are account holders in the application.
+ * A variety of information about users is stored in the database including a history
+ * of attended events, a short blurb or bio, login credentials, etc. Users are one
+ * of the central entities in the smash locator.
+ * 
+ * @author ashwin
+ */
 @Entity
 @Table(name="users")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")

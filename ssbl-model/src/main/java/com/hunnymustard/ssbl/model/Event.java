@@ -27,6 +27,15 @@ import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+/**
+ * This entity represents a smash bros. event. Events are created by a host user at
+ * a specified location over a specified duration of time. Other users can choose to
+ * join the event if it is public, or can be invited to the event otherwise.
+ * 
+ * @author ashwin
+ * 
+ * @see com.hunnymustard.ssbm.model.User
+ */
 @Entity
 @Table(name="events")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")

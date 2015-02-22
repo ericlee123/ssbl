@@ -13,6 +13,16 @@ import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+/**
+ * This entity represents a location. Locations contain a latitude and longitude
+ * and represent the geographic location of a User, Event, etc. The Location class
+ * also exposes methods for comparing the distances between different points.
+ * 
+ * @author ashwin
+ * 
+ * @see com.hunnymustard.ssbm.model.User
+ * @see com.hunnymustard.ssbm.model.Event
+ */
 @Entity
 @Table(name="locations")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")

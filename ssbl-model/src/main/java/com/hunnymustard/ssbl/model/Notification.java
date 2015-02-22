@@ -20,6 +20,15 @@ import org.hibernate.annotations.GenericGenerator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+/**
+ * This class represents a notification. Notifications are sent by a sender user to
+ * a receiver user and are used to convey some information or message. This format of the
+ * message is determined by the type attribute.
+ * 
+ * @author ashwin
+ * 
+ * @see com.hunnymustard.ssbl.model.User
+ */
 @Entity
 @Table(name="notifications")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
