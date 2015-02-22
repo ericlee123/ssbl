@@ -21,6 +21,7 @@
 	<modules>
 		<module>ssbl-model</module>
 		<module>ssbl-server</module>
+		<module>ssbl-android</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -31,6 +32,20 @@
 		        <artifactId>ssbl-model</artifactId>
 		        <version>${ssbl.version}</version>
 		    </dependency>
+
+			<!-- Android Dependencies -->
+			<dependency>
+				<groupId>com.google.android</groupId>
+				<artifactId>android</artifactId>
+				<version>4.1.1.4</version>
+				<scope>provided</scope>
+			</dependency>
+		
+			<dependency>
+				<groupId>com.google.android</groupId>
+				<artifactId>support-v4</artifactId>
+				<version>r7</version>
+			</dependency>
 		    
 	        <!-- Apache Dependencies -->
 			<dependency>
