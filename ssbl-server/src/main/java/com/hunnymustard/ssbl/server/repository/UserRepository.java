@@ -27,6 +27,8 @@ public class UserRepository extends GenericRepository<User, Integer> {
 			Hibernate.initialize(user.getEmail());
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getRefreshTime());
+			Hibernate.initialize(user.getNotifications());
+			Hibernate.initialize(user.getGames());
 		}
 		
 		return user;
