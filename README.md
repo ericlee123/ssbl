@@ -5,7 +5,7 @@ Super Smash Bros. Locator is an application designed to help people coordinate s
 ### 0.0.2 (2-22-2015) (ashwin)
 - Minor bug fixes to repository layer
 - Enabled ProGuard to shrink and obfuscate Android code at runtime
-- 
+
 ### 0.0.1 (2-21-2015) (ashwin)
 - Created maven project and wrote base .pom files
 - Refactored database.sql
