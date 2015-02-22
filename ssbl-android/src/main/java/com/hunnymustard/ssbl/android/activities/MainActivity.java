@@ -1,9 +1,9 @@
-package com.eric.ssbl;
+package com.hunnymustard.ssbl.android.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.eric.ssbl.R;
+import com.hunnymustard.ssbl.android.R;
 
 public class MainActivity extends Activity {
 	

@@ -18,7 +18,12 @@
 		    <groupId>com.hunnymustard.ssbl</groupId>
 		    <artifactId>ssbl-model</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
