@@ -18,3 +18,4 @@ Super Smash Bros. Locator is an application designed to help people coordinate s
 - Updated README.md
 
 [ashwin]:http://daringfireball.net/
+[eric]:https://github.com/ericlee123
