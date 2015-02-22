@@ -108,7 +108,7 @@ public class Event {
 		_startTime = startTime;
 	}
 	
-	@Column(name="end_time", nullable=false)
+	@Column(name="end_time")
 	public Long getEndTime() {
 		return _endTime;
 	}
@@ -135,7 +135,7 @@ public class Event {
 		_public = publc;
 	}
 	
-	@ManyToMany(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
+	@ManyToMany(cascade=CascadeType.PERSIST)
 	@Fetch(FetchMode.SELECT)
 	@JoinTable(name="event_users",
 			joinColumns = { @JoinColumn(name="event_id") },
@@ -153,7 +153,7 @@ public class Event {
 		_users.add(user);
 	}
 	
-	@ElementCollection(targetClass=Game.class, fetch=FetchType.EAGER)
+	@ElementCollection(targetClass=Game.class)
     @JoinTable(name="event_games",
             joinColumns = {@JoinColumn(name="event_id")})
     @Column(name="game_id")

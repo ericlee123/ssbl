@@ -30,7 +30,6 @@ CREATE TABLE `events` (
 	UNIQUE (host_id)
 );
 
-
 # Yes, users and events will share the same table.
 DROP TABLE IF EXISTS `locations`;
 CREATE TABLE `locations` (

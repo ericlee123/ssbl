@@ -128,7 +128,7 @@ public class User {
 		_blurb = blurb;
 	}
 	
-	@ElementCollection(targetClass=Game.class, fetch=FetchType.EAGER)
+	@ElementCollection(targetClass=Game.class)
     @JoinTable(name="user_games",
             joinColumns = {@JoinColumn(name="user_id")})
     @Column(name="game_id")
@@ -146,7 +146,7 @@ public class User {
 		_games.add(game);
 	}
 	
-    @ManyToMany(mappedBy="users")
+    @ManyToMany(mappedBy="users", fetch=FetchType.EAGER)
 	public List<Event> getEvents() {
 		return _events;
 	}
