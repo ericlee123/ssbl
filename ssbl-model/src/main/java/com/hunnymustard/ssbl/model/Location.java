@@ -59,6 +59,29 @@ public class Location {
 		_lon = lon;
 	}
 	
+	/**
+	 * Calculates the distance between this location and the specified location
+	 * using the haversine formula. The result of this computation is the shortest
+	 * distance over the earth's surface (ignoring hills, etc.).
+	 * 
+	 * @param oth
+	 * @return
+	 */
+	public Double distance(Location oth) {
+		double lat1 = Math.toRadians(this.getLatitude());
+		double lat2 = Math.toRadians(oth.getLatitude());
+		double lon1 = Math.toRadians(this.getLongitude());
+		double lon2 = Math.toRadians(oth.getLongitude());
+		double dlat = lat2 - lat1;
+		double dlon = lon2 - lon1;
+		
+		double a = Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a) );
+		
+		// R = radius of the earth in meters = 6373000m
+		return 6373000 * c;
+	}
+	
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
