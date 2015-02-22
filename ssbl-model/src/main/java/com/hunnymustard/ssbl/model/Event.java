@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,6 +24,12 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@Entity
+@Table(name="events")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Event {
 
 	private Integer _id;
@@ -29,6 +40,23 @@ public class Event {
 	private Boolean _public;
 	private List<Game> _games;
 	private List<User> _users;
+	
+	public Event() {}
+	
+	public Event(Integer id, String title, String description, Location location, Long startTime,
+			Long endTime, User host, Boolean publc, List<Game> games, List<User> users) {	
+		
+		_id = id;
+		_title = title;
+		_description = description;
+		_location = location;
+		_startTime = startTime;
+		_endTime = endTime;
+		_host = host;
+		_public = publc;
+		_games = games;
+		_users = users;
+	}
 	
 	@Id
 	@GenericGenerator(name="gen",strategy="increment")
@@ -125,11 +153,11 @@ public class Event {
 		_users.add(user);
 	}
 	
-	@ManyToMany(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
-	@JoinTable(name="event_games",
-			joinColumns = { @JoinColumn(name="event_id") },
-			inverseJoinColumns = { @JoinColumn(name="game_id") })
+	@ElementCollection(targetClass=Game.class, fetch=FetchType.EAGER)
+    @JoinTable(name="event_games",
+            joinColumns = {@JoinColumn(name="event_id")})
+    @Column(name="game_id")
+	@Enumerated(EnumType.ORDINAL)
 	public List<Game> getGames() {
 		return _games;
 	}

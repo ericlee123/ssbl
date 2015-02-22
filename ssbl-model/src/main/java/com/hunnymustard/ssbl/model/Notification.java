@@ -2,6 +2,7 @@ package com.hunnymustard.ssbl.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -10,11 +11,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@Entity
+@Table(name="notifications")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Notification {
 	
 	private Integer _id;
@@ -25,6 +33,17 @@ public class Notification {
 	
 	public enum Type {
 		MESSAGE, SYSTEM, CHALLENGE;
+	}
+	
+	public Notification() {}
+	
+	public Notification(Integer id, User sender, User receiver, String message, Long sendTime, Type type) {
+		_id = id;
+		_sender = sender;
+		_receiver = receiver;
+		_message = message;
+		_sendTime = sendTime;
+		_type = type;
 	}
 	
 	@Id
@@ -40,7 +59,7 @@ public class Notification {
 	}
 	
 	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="sender", nullable=false)
+	@JoinColumn(name="sender_id", nullable=false)
 	public User getSender() {
 		return _sender;
 	}
@@ -50,7 +69,7 @@ public class Notification {
 	}
 	
 	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="receiver", nullable=false)
+	@JoinColumn(name="receiver_id", nullable=false)
 	public User getReceiver() {
 		return _receiver;
 	}

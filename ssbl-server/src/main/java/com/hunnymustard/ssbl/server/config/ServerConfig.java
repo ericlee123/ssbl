@@ -23,8 +23,8 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
-@PropertySource({"classpath:/messenger.properties"})
-@ComponentScan({"com.ashwin.messenger"})
+@PropertySource({"classpath:/ssbl.properties"})
+@ComponentScan({"com.hunnymustard.ssbl"})
 public class ServerConfig {
 
 //	http://stackoverflow.com/questions/22315672/how-to-configure-spring-mvc-with-pure-java-based-configuration

@@ -1,17 +1,33 @@
 package com.hunnymustard.ssbl.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@Entity
+@Table(name="locations")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Location {
 
 	private Integer _id;
 	private Double _lat, _lon;
+	
+	public Location() {}
+	
+	public Location(Integer id, Double lat, Double lon) {
+		_id = id;
+		_lat = lat;
+		_lon = lon;
+	}
 	
 	@Id
 	@GenericGenerator(name="gen",strategy="increment")

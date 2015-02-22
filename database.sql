@@ -1,4 +1,4 @@
-DROP DATABASE `test`;
+DROP DATABASE IF EXISTS `test`;
 CREATE DATABASE `test`;
 USE `test`;
 
@@ -10,7 +10,7 @@ CREATE TABLE `users` (
 	`email` VARCHAR(255) NOT NULL,
 	`location_id` INT,
 	`refresh_time` BIGINT(14),
-	`blurb` TEXT,
+	`blurb` VARCHAR(255),
 	PRIMARY KEY(user_id),
 	UNIQUE (username),
 	UNIQUE (email)
@@ -24,7 +24,7 @@ CREATE TABLE `events` (
 	`location_id` INT NOT NULL,
 	`start_time` BIGINT(14) NOT NULL,
 	`end_time` BIGINT(14), # Start is mandatory and end is optional?
-	`description` TEXT,
+	`description` VARCHAR(255),
 	`public` BOOLEAN NOT NULL,
 	PRIMARY KEY(event_id),
 	UNIQUE (host_id)

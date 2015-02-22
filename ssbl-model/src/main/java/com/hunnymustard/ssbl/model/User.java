@@ -6,7 +6,10 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,8 +22,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -38,6 +39,24 @@ public class User {
 	private List<Game> _games;
 	private List<Event> _events;
 	private List<Notification> _notifs;
+	
+	public User() {}
+	
+	public User(Integer id, String username, String password, String email, String blurb,
+			Location location, Long refreshTime, List<Game> games, List<Event> events,
+			List<Notification> notifs) {
+		
+		_id = id;
+		_username = username;
+		_password = password;
+		_email = email;
+		_blurb = blurb;
+		_location = location;
+		_refreshTime = refreshTime;
+		_games = games;
+		_events = events;
+		_notifs = notifs;
+	}
 	
 	@Id
 	@GenericGenerator(name="gen",strategy="increment")
@@ -109,11 +128,11 @@ public class User {
 		_blurb = blurb;
 	}
 	
-	@ManyToMany(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
-	@JoinTable(name="user_games",
-			joinColumns = { @JoinColumn(name="user_id") },
-			inverseJoinColumns = { @JoinColumn(name="game_id") })
+	@ElementCollection(targetClass=Game.class, fetch=FetchType.EAGER)
+    @JoinTable(name="user_games",
+            joinColumns = {@JoinColumn(name="user_id")})
+    @Column(name="game_id")
+	@Enumerated(EnumType.ORDINAL)
 	public List<Game> getGames() {
 		return _games;
 	}
