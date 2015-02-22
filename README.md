@@ -17,5 +17,5 @@ Super Smash Bros. Locator is an application designed to help people coordinate s
 - Created database.test.sql to inject test data into database
 - Updated README.md
 
-[ashwin]:http://daringfireball.net/
+[ashwin]:http://github.com/ashwin153
 [eric]:https://github.com/ericlee123
