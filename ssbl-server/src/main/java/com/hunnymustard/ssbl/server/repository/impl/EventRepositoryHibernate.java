@@ -1,4 +1,4 @@
-package com.hunnymustard.ssbl.server.repository.hibernate;
+package com.hunnymustard.ssbl.server.repository.impl;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
