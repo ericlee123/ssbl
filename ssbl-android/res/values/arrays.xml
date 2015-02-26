@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="planet_names">
+        <item>Hot as shit</item>
+        <item>Less hot</item>
+        <item>That\'s that shit i do like</item>
+        <item>Too cold</item>
+        <item>dafuq is my heater</item>
+    </string-array>
+</resources>

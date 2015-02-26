@@ -1,5 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ssbl-android</string>
+    <string name="app_name">Smash Bros. Locator</string>
+    <string name="title_activity_main">MainActivity</string>
+    
+    <!-- Navigation Drawer Sections -->
+    <string name="map">Map</string>
+    <string name="profile">Profile</string>
+    <string name="inbox">Inbox</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="notifications">Notifications</string>
+    <string name="explore">Explore</string>
+    
+    <!-- Misc. -->
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
