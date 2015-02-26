@@ -1,4 +1,4 @@
-package com.hunnymustard.ssbl.android.activities;
+package com.hunnymustard.ssbl.android;
 
 import android.app.Activity;
 import android.os.Bundle;
