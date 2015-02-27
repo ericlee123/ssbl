@@ -47,12 +47,13 @@ public class User {
 	private List<Game> _games;
 	private List<Event> _events;
 	private List<Notification> _notifs;
+	private List<User> _friends;
 	
 	public User() {}
 	
 	public User(Integer id, String username, String password, String email, String blurb,
 			Location location, Long refreshTime, List<Game> games, List<Event> events,
-			List<Notification> notifs) {
+			List<Notification> notifs, List<User> friends) {
 		
 		_id = id;
 		_username = username;
@@ -64,6 +65,7 @@ public class User {
 		_games = games;
 		_events = events;
 		_notifs = notifs;
+		_friends = friends;
 	}
 	
 	@Id
@@ -180,6 +182,23 @@ public class User {
 	public void addNotification(Notification notif) {
 		if(_notifs == null) _notifs = new ArrayList<Notification>();
 		_notifs.add(notif);
+	}
+	
+	@ManyToMany
+	@JoinTable(name="friends",
+            joinColumns=@JoinColumn(name="friender_id"),
+            inverseJoinColumns=@JoinColumn(name="friended_id"))
+	public List<User> getFriends() {
+		return _friends;
+	}
+	
+	public void setFriends(List<User> friends) {
+		_friends = friends;
+	}
+	
+	public void addFriend(User friend) {
+		if(_friends == null) _friends = new ArrayList<User>();
+		_friends.add(friend);
 	}
 	
 	@Override

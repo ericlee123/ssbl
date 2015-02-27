@@ -1,14 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Smash Locator</string>
-    <string name="hello">Hello SSBM!</string>
     
-    <!-- LoginActivity -->
-    <string name="username_hint">Username</string>
-    <string name="password_hint">Password</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
-    <string name="remember_me">Remember Me</string>
+    <string name="app_name">Smash Bros. Locator</string>
 
 </resources>

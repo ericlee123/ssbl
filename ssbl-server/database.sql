@@ -26,8 +26,7 @@ CREATE TABLE `events` (
 	`end_time` BIGINT(14), # Start is mandatory and end is optional?
 	`description` VARCHAR(255),
 	`public` BOOLEAN NOT NULL,
-	PRIMARY KEY(event_id),
-	UNIQUE (host_id)
+	PRIMARY KEY(event_id)
 );
 
 # Yes, users and events will share the same table.
@@ -57,6 +56,13 @@ CREATE TABLE `event_games` (
 	`game_id` INT NOT NULL
 );
 
+DROP TABLE IF EXISTS `friends`;
+CREATE TABLE `friends` (
+	`friender_id` INT NOT NULL,
+	`friended_id` INT NOT NULL,
+	UNIQUE(friender_id, friended_id)
+);
+
 DROP TABLE IF EXISTS `notifications`;
 CREATE TABLE `notifications` (
 	`notification_id` INT AUTO_INCREMENT,
@@ -82,6 +88,10 @@ ADD FOREIGN KEY (`user_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DEL
 
 ALTER TABLE `event_games`
 ADD FOREIGN KEY (`event_id`) REFERENCES events(`event_id`) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE `friends`
+ADD FOREIGN KEY (`friender_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE;
+ADD FOREIGN KEY (`friended_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE `event_users`
 ADD FOREIGN KEY (`event_id`) REFERENCES events(`event_id`) ON UPDATE CASCADE ON DELETE CASCADE,
