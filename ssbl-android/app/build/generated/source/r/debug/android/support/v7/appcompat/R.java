@@ -8,12 +8,12 @@ package android.support.v7.appcompat;
 
 public final class R {
 	public static final class anim {
-		public static final int abc_fade_in = 0x7f040000;
-		public static final int abc_fade_out = 0x7f040001;
-		public static final int abc_slide_in_bottom = 0x7f040002;
-		public static final int abc_slide_in_top = 0x7f040003;
-		public static final int abc_slide_out_bottom = 0x7f040004;
-		public static final int abc_slide_out_top = 0x7f040005;
+		public static final int abc_fade_in = 0x7f050000;
+		public static final int abc_fade_out = 0x7f050001;
+		public static final int abc_slide_in_bottom = 0x7f050002;
+		public static final int abc_slide_in_top = 0x7f050003;
+		public static final int abc_slide_out_bottom = 0x7f050004;
+		public static final int abc_slide_out_top = 0x7f050005;
 	}
 	public static final class attr {
 		public static final int actionBarDivider = 0x7f01008e;
@@ -421,30 +421,30 @@ public final class R {
 		public static final int abc_max_action_buttons = 0x7f0b0004;
 	}
 	public static final class layout {
-		public static final int abc_action_bar_title_item = 0x7f030000;
-		public static final int abc_action_bar_up_container = 0x7f030001;
-		public static final int abc_action_bar_view_list_nav_layout = 0x7f030002;
-		public static final int abc_action_menu_item_layout = 0x7f030003;
-		public static final int abc_action_menu_layout = 0x7f030004;
-		public static final int abc_action_mode_bar = 0x7f030005;
-		public static final int abc_action_mode_close_item_material = 0x7f030006;
-		public static final int abc_activity_chooser_view = 0x7f030007;
-		public static final int abc_activity_chooser_view_include = 0x7f030008;
-		public static final int abc_activity_chooser_view_list_item = 0x7f030009;
-		public static final int abc_expanded_menu_layout = 0x7f03000a;
-		public static final int abc_list_menu_item_checkbox = 0x7f03000b;
-		public static final int abc_list_menu_item_icon = 0x7f03000c;
-		public static final int abc_list_menu_item_layout = 0x7f03000d;
-		public static final int abc_list_menu_item_radio = 0x7f03000e;
-		public static final int abc_popup_menu_item_layout = 0x7f03000f;
-		public static final int abc_screen_content_include = 0x7f030010;
-		public static final int abc_screen_simple = 0x7f030011;
-		public static final int abc_screen_simple_overlay_action_mode = 0x7f030012;
-		public static final int abc_screen_toolbar = 0x7f030013;
-		public static final int abc_search_dropdown_item_icons_2line = 0x7f030014;
-		public static final int abc_search_view = 0x7f030015;
-		public static final int abc_simple_dropdown_hint = 0x7f030016;
-		public static final int support_simple_spinner_dropdown_item = 0x7f030026;
+		public static final int abc_action_bar_title_item = 0x7f040000;
+		public static final int abc_action_bar_up_container = 0x7f040001;
+		public static final int abc_action_bar_view_list_nav_layout = 0x7f040002;
+		public static final int abc_action_menu_item_layout = 0x7f040003;
+		public static final int abc_action_menu_layout = 0x7f040004;
+		public static final int abc_action_mode_bar = 0x7f040005;
+		public static final int abc_action_mode_close_item_material = 0x7f040006;
+		public static final int abc_activity_chooser_view = 0x7f040007;
+		public static final int abc_activity_chooser_view_include = 0x7f040008;
+		public static final int abc_activity_chooser_view_list_item = 0x7f040009;
+		public static final int abc_expanded_menu_layout = 0x7f04000a;
+		public static final int abc_list_menu_item_checkbox = 0x7f04000b;
+		public static final int abc_list_menu_item_icon = 0x7f04000c;
+		public static final int abc_list_menu_item_layout = 0x7f04000d;
+		public static final int abc_list_menu_item_radio = 0x7f04000e;
+		public static final int abc_popup_menu_item_layout = 0x7f04000f;
+		public static final int abc_screen_content_include = 0x7f040010;
+		public static final int abc_screen_simple = 0x7f040011;
+		public static final int abc_screen_simple_overlay_action_mode = 0x7f040012;
+		public static final int abc_screen_toolbar = 0x7f040013;
+		public static final int abc_search_dropdown_item_icons_2line = 0x7f040014;
+		public static final int abc_search_view = 0x7f040015;
+		public static final int abc_simple_dropdown_hint = 0x7f040016;
+		public static final int support_simple_spinner_dropdown_item = 0x7f040024;
 	}
 	public static final class string {
 		public static final int abc_action_bar_home_description = 0x7f0c0000;

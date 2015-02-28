@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
-    <eat-comment/>
-    <string-array name="planets_array">
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-    </string-array>
     <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>
@@ -236,7 +224,7 @@
     <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="action_websearch">Web search</string>
-    <string name="app_name">Navigation Drawer Example</string>
+    <string name="app_name">Smash Bros. Locator</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/common_strings.xml -->
     <eat-comment/>

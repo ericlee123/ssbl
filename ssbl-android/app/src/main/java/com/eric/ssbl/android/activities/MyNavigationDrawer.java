@@ -1,16 +1,10 @@
 package com.eric.ssbl.android.activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
+import com.eric.ssbl.android.fragments.ProfileFragment;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
@@ -20,25 +14,13 @@ public class MyNavigationDrawer extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle bundle) {
-        MaterialSection section = newSection("Section 1", new FragmentIndex());
-        MaterialSection section1 = newSection("Map", new ChartFragment());
+        MaterialSection map = newSection("Map", new ChartFragment());
+        MaterialSection profile = newSection("Profile", new ProfileFragment());
 
-        this.addSection(section);
-        this.addSection(section1);
+        this.addSection(map);
+        this.addSection(profile);
 
-        MaterialAccount account = new MaterialAccount(this.getResources(),"Milady","tips.fedora@reddit.com", R.drawable.jupiter, R.drawable.uranus);
+        MaterialAccount account = new MaterialAccount(this.getResources(),"Sanic Weedhog","gotta.go.fast@sanic.com", R.drawable.honey, R.drawable.nav_bar_cover_photo);
         this.addAccount(account);
-    }
-
-    public static class FragmentIndex extends Fragment {
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-            TextView text = new TextView(this.getActivity());
-            text.setText("Section");
-            text.setGravity(Gravity.CENTER);
-            return text;
-
-        }
     }
 }
