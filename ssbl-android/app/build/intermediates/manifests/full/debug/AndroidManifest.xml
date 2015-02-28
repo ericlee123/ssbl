@@ -32,14 +32,16 @@
             android:value="AIzaSyBg-9IAl0myr7r3kUfZltRHZGkqSohzP8I" /> <!-- debug -->
         <!-- android:value="AIzaSyDvDhEOHF_rRxwkMT1reYfGQiXPYU9-5jY" /> pub -->
 
-        <activity
-            android:name="com.eric.ssbl.android.activities.MyNavigationDrawer"
-            android:theme="@style/MyNavigationDrawerTheme" >
+        <activity android:name="com.eric.ssbl.android.activities.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.eric.ssbl.android.activities.MyNavigationDrawer"
+            android:theme="@style/MyNavigationDrawerTheme" >
         </activity>
     </application>
 

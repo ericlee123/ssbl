@@ -22,12 +22,17 @@
         <!-- 			android:value="AIzaSyDvDhEOHF_rRxwkMT1reYfGQiXPYU9-5jY" /> pub -->
 
         <activity
-            android:name=".android.activities.MyNavigationDrawer"
-            android:theme="@style/MyNavigationDrawerTheme">
+            android:name=".android.activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".android.activities.MyNavigationDrawer"
+            android:theme="@style/MyNavigationDrawerTheme">
+
         </activity>
     </application>
 
