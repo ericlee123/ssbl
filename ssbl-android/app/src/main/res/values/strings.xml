@@ -19,6 +19,13 @@
     <!-- Titles -->
     <string name="app_name">Smash Bros. Locator</string>
 
+    <!-- Login screen -->
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login">Login</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="register">Register</string>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>

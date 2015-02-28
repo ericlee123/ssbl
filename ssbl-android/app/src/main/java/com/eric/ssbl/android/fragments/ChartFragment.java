@@ -97,6 +97,6 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void displayElements() {
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 12));
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 13));
     }
 }

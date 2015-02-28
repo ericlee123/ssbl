@@ -28,11 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".android.activities.RegisterActivity" />
         <activity
             android:name=".android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme">
-
         </activity>
     </application>
 

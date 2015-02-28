@@ -20,6 +20,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addSection(map);
         this.addSection(profile);
 
+
         MaterialAccount account = new MaterialAccount(this.getResources(),"Sanic Weedhog","gotta.go.fast@sanic.com", R.drawable.honey, R.drawable.nav_bar_cover_photo);
         this.addAccount(account);
     }
