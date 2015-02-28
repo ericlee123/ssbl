@@ -10,7 +10,7 @@ import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
 import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
-public class MyNavigationDrawer extends MaterialNavigationDrawer {
+public class MainActivity extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle bundle) {

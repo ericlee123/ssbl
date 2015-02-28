@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.eric.ssbl.android.activities.MyNavigationDrawer"
+            android:name="com.eric.ssbl.android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme" >
         </activity>
     </application>

@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".android.activities.MyNavigationDrawer"
+            android:name=".android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme">
 
         </activity>
