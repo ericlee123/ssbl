@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_chart"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.google.android.gms.maps.MapFragment"
-    class="com.google.android.gms.maps.MapFragment" >
-</fragment><!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/src/main/res/layout/fragment_chart.xml -->
+    android:orientation="vertical">
+
+    <fragment
+        android:id="@+id/fragment_chart"
+        android:name="com.google.android.gms.maps.MapFragment"
+        class="com.google.android.gms.maps.MapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/fragment_chart.xml -->

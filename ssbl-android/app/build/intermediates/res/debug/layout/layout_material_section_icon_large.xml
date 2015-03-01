@@ -44,4 +44,4 @@
         android:gravity="center_horizontal"
         android:layout_centerVertical="true" />
 
-</RelativeLayout><!-- From: file:/Users/neokree/Progetti/AndroidStudioProjects/MaterialNavigationDrawerLibrary/app/src/main/res/layout/layout_material_section_icon_large.xml --><!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/layout/layout_material_section_icon_large.xml -->
+</RelativeLayout><!-- From: file:/Users/neokree/Progetti/AndroidStudioProjects/MaterialNavigationDrawerLibrary/app/src/main/res/layout/layout_material_section_icon_large.xml --><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/layout/layout_material_section_icon_large.xml -->

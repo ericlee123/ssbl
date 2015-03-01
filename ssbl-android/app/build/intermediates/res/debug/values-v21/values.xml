@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values-v21/values.xml -->
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values-v21/values.xml -->
     <eat-comment/>
     <dimen name="photoMarginTop">41dp</dimen>
     <dimen name="statusMargin">21dp</dimen>
     <dimen name="userSpace">189dp</dimen>
-    <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values-v21/values.xml -->
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values-v21/values.xml -->
     <eat-comment/>
     <style name="Base.TextAppearance.AppCompat" parent="android:TextAppearance.Material"/>
     <style name="Base.TextAppearance.AppCompat.Body1" parent="android:TextAppearance.Material.Body1"/>
@@ -258,7 +258,7 @@
         <item name="popupPromptView">@layout/abc_simple_dropdown_hint</item>
     </style>
     <style name="Base.Widget.AppCompat.Toolbar.Button.Navigation" parent="android:Widget.Material.Toolbar.Button.Navigation"/>
-    <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values-v21/values.xml -->
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values-v21/values.xml -->
     <eat-comment/>
     <style name="MaterialNavigationDrawerTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowTranslucentStatus">true</item>
@@ -301,7 +301,7 @@
     <style name="MaterialNavigationDrawerTheme.Light.DarkActionBar.TranslucentKitKatStatusBar" parent="MaterialNavigationDrawerTheme.Light.DarkActionBar"/>
     <style name="MaterialNavigationDrawerTheme.Light.TranslucentKitKatStatusBar" parent="MaterialNavigationDrawerTheme.Light"/>
     <style name="MaterialNavigationDrawerTheme.TranslucentKitKatStatusBar" parent="MaterialNavigationDrawerTheme"/>
-    <!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values-v21/values.xml -->
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values-v21/values.xml -->
     <eat-comment/>
     <style name="Platform.AppCompat" parent="android:Theme.Material">
         <item name="android:windowNoTitle">true</item>

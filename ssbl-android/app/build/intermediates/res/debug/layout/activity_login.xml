@@ -58,4 +58,4 @@
             android:onClick="registerAccount" />
     </LinearLayout>
 
-</LinearLayout><!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/src/main/res/layout/activity_login.xml -->
+</LinearLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/activity_login.xml -->

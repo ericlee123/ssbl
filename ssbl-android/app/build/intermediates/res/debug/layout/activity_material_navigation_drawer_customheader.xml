@@ -36,4 +36,4 @@
     <!-- RelativeLayout per il drawer da visualizzare -->
     <include layout="@layout/layout_drawer_customheader" />
 
-</it.neokree.materialnavigationdrawer.util.MaterialDrawerLayout><!-- From: file:/Users/neokree/Progetti/AndroidStudioProjects/MaterialNavigationDrawerLibrary/app/src/main/res/layout/activity_material_navigation_drawer_customheader.xml --><!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/layout/activity_material_navigation_drawer_customheader.xml -->
+</it.neokree.materialnavigationdrawer.util.MaterialDrawerLayout><!-- From: file:/Users/neokree/Progetti/AndroidStudioProjects/MaterialNavigationDrawerLibrary/app/src/main/res/layout/activity_material_navigation_drawer_customheader.xml --><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/layout/activity_material_navigation_drawer_customheader.xml -->

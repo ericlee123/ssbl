@@ -25,6 +25,10 @@
     <string name="login">Login</string>
     <string name="remember_me">Remember Me</string>
     <string name="register">Register</string>
+    <string name="enter_email">Enter email:</string>
+    <string name="enter_username">Enter username:</string>
+    <string name="enter_password">Enter password:</string>
+    <string name="confirm_password">Confirm password:</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

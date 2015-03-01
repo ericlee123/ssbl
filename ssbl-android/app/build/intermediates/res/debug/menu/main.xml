@@ -19,4 +19,4 @@
           android:icon="@drawable/action_search"
           android:title="@string/action_websearch"
           android:showAsAction="ifRoom|withText" />
-</menu><!-- From: file:/home/eric/Dev/Projects/ssbl/ssbl-android/app/src/main/res/menu/main.xml -->
+</menu><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/menu/main.xml -->
