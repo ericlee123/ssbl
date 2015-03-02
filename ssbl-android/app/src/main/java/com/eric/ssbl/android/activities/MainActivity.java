@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
+import com.eric.ssbl.android.fragments.Fragment;
+import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.ProfileFragment;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
@@ -20,11 +22,16 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         MaterialSection map = newSection("Map", new ChartFragment());
         MaterialSection profile = newSection("Profile", new ProfileFragment());
+        MaterialSection inbox = newSection("Inbox", new InboxFragment());
+        // divisor
+        MaterialSection settings = newSection("Settings", new Fragment());
 
         this.addSection(map);
         this.addSection(profile);
+        this.addSection(inbox);
 
+        this.addDivisor();
 
-
+        this.addSection(settings);
     }
 }

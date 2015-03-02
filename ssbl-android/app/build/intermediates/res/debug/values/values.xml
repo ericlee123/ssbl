@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/arrays.xml -->
+    <eat-comment/>
+    <string-array name="visibility_chocies">
+        <item>Show exact location</item>
+        <item>Don\'t show exact location</item>
+    </string-array>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>
@@ -47,6 +53,9 @@
     <color name="common_signin_btn_light_text_disabled">#FFAAAAAA</color>
     <color name="common_signin_btn_light_text_focused">#FF737373</color>
     <color name="common_signin_btn_light_text_pressed">@android:color/white</color>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="dark_gray">#433f45</color>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
     <eat-comment/>
     <color name="dim_foreground_disabled_material_dark">#80bebebe</color>
@@ -295,8 +304,11 @@
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="password_hint">Password</string>
+    <string name="privacy">Privacy</string>
     <string name="register">Register</string>
     <string name="remember_me">Remember Me</string>
+    <string name="set_privacy">Set privacy</string>
+    <string name="set_privacy_summary">Set visibility to other users</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_strings.xml -->
     <eat-comment/>
     <string name="store_picture_message">"Allow Ad to store image in Picture gallery?"</string>
@@ -1146,7 +1158,7 @@
         <item name="colorPrimaryDark">#558b2f</item>
         <item name="colorAccent">#FFFFFF</item>
 
-        <item name="drawerColor">@color/gc_gray</item>
+        <item name="drawerColor">@color/dark_gray</item>
         <item name="singleAccount">true</item>
 
         <item name="sectionStyle">@style/MySectionTheme</item>

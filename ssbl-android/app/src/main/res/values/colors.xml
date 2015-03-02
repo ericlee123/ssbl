@@ -3,6 +3,7 @@
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="dark_gray">#433f45</color>
 
     <!-- GameCube controller colors -->
     <color name="gc_purple">#4F3D8B</color>

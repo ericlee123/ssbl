@@ -30,6 +30,11 @@
     <string name="enter_password">Enter password:</string>
     <string name="confirm_password">Confirm password:</string>
 
+    <!-- Settings -->
+    <string name="privacy">Privacy</string>
+    <string name="set_privacy">Set privacy</string>
+    <string name="set_privacy_summary">Set visibility to other users</string>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>

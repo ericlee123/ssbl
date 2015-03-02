@@ -22,7 +22,7 @@
         <item name="colorPrimaryDark">#558b2f</item>
         <item name="colorAccent">#FFFFFF</item>
 
-        <item name="drawerColor">@color/gc_gray</item>
+        <item name="drawerColor">@color/dark_gray</item>
         <item name="singleAccount">true</item>
 
         <item name="sectionStyle">@style/MySectionTheme</item>

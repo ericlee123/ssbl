@@ -19,6 +19,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ChartFragment extends Fragment implements ConnectionCallbacks, OnConnectionFailedListener{
 
@@ -50,6 +52,16 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _init = true;
         _map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_chart)).getMap();
         buildGoogleApiClient();
+
+        _map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // pull up a list view
+                System.out.println("marker clicked");
+
+                return true;
+            }
+        });
     }
 
     // put all of these map operations in a class?
@@ -97,6 +109,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void displayElements() {
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 13));
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 17));
+
+        _map.addMarker(new MarkerOptions()
+                        .title("test marker")
+                        .snippet("this is a test marker")
+                        .position(new LatLng(30.288203, -97.739908)));
     }
 }
