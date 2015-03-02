@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.fragments;
 
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.activities.ProfileActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -66,7 +68,17 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Toast.makeText(getActivity(), "Window clicked", Toast.LENGTH_SHORT).show();
+//                ProfileFragment pf = new ProfileFragment();
+//
+//                FragmentManager fm = getActivity().getSupportFragmentManager();
+//                FragmentTransaction ft = fm.beginTransaction();
+//                ft.replace(R.id.fragment_chart, pf);
+//                ft.commit();
+                  Intent i = new Intent(getActivity(), ProfileActivity.class);
+                  Bundle b = new Bundle();
+                b.putBoolean("from_map", true);
+                i.putExtras(b);
+                startActivity(i);
             }
         });
     }

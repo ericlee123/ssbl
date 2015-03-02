@@ -43,6 +43,9 @@
             android:name="com.eric.ssbl.android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme" >
         </activity>
+        <activity
+            android:name="com.eric.ssbl.android.activities.ProfileActivity"
+            android:theme="@style/MyNavigationDrawerTheme" />
     </application>
 
 </manifest>

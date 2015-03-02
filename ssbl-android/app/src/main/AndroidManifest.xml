@@ -32,6 +32,9 @@
             android:name=".android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme">
         </activity>
+        <activity
+            android:name=".android.activities.ProfileActivity"
+            android:theme="@style/MyNavigationDrawerTheme" />
     </application>
 
     <!-- Stuff for Google Maps -->
