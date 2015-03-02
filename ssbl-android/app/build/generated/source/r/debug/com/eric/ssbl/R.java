@@ -2116,19 +2116,22 @@ containing a value of this type.
         public static final int activity_material_navigation_drawer=0x7f040019;
         public static final int activity_material_navigation_drawer_customheader=0x7f04001a;
         public static final int fragment_chart=0x7f04001b;
-        public static final int fragment_inbox=0x7f04001c;
-        public static final int fragment_notifications=0x7f04001d;
-        public static final int fragment_profile=0x7f04001e;
-        public static final int layout_drawer=0x7f04001f;
-        public static final int layout_drawer_customheader=0x7f040020;
-        public static final int layout_material_section=0x7f040021;
-        public static final int layout_material_section_icon=0x7f040022;
-        public static final int layout_material_section_icon_large=0x7f040023;
-        public static final int layout_material_section_icon_large_ripple=0x7f040024;
-        public static final int layout_material_section_icon_ripple=0x7f040025;
-        public static final int layout_material_section_ripple=0x7f040026;
-        public static final int prompt_register=0x7f040027;
-        public static final int support_simple_spinner_dropdown_item=0x7f040028;
+        public static final int fragment_event=0x7f04001c;
+        public static final int fragment_event_list=0x7f04001d;
+        public static final int fragment_inbox=0x7f04001e;
+        public static final int fragment_notifications=0x7f04001f;
+        public static final int fragment_profile=0x7f040020;
+        public static final int fragment_search=0x7f040021;
+        public static final int layout_drawer=0x7f040022;
+        public static final int layout_drawer_customheader=0x7f040023;
+        public static final int layout_material_section=0x7f040024;
+        public static final int layout_material_section_icon=0x7f040025;
+        public static final int layout_material_section_icon_large=0x7f040026;
+        public static final int layout_material_section_icon_large_ripple=0x7f040027;
+        public static final int layout_material_section_icon_ripple=0x7f040028;
+        public static final int layout_material_section_ripple=0x7f040029;
+        public static final int prompt_register=0x7f04002a;
+        public static final int support_simple_spinner_dropdown_item=0x7f04002b;
     }
     public static final class menu {
         public static final int main=0x7f100000;

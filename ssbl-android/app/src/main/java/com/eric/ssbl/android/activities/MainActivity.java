@@ -31,7 +31,6 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection settings = newSection("Settings", new SettingsFragment());
 
         this.addSection(map);
-        this.addSection(profile);
         this.addSection(inbox);
         this.addSection(events);
         this.addSection(profile);
