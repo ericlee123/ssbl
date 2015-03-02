@@ -75,6 +75,11 @@
     <color name="highlighted_text_material_light">#66009688</color>
     <color name="hint_foreground_material_dark">@color/bright_foreground_disabled_material_dark</color>
     <color name="hint_foreground_material_light">@color/bright_foreground_disabled_material_light</color>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/colors.xml -->
+    <eat-comment/>
+    <color name="less_white">#EEEEEE</color>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
+    <eat-comment/>
     <color name="link_text_material_dark">@color/material_deep_teal_200</color>
     <color name="link_text_material_light">@color/material_deep_teal_500</color>
     <color name="material_blue_grey_800">#ff37474f</color>
