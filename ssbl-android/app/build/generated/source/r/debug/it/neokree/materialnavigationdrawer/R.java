@@ -388,7 +388,7 @@ public final class R {
 		public static final int abc_textfield_search_activated_mtrl_alpha = 0x7f020030;
 		public static final int abc_textfield_search_default_mtrl_alpha = 0x7f020031;
 		public static final int abc_textfield_search_material = 0x7f020032;
-		public static final int black_gradient = 0x7f020035;
+		public static final int black_gradient = 0x7f020034;
 		public static final int ic_arrow_drop_down_white_24dp = 0x7f020053;
 		public static final int ic_arrow_drop_up_white_24dp = 0x7f020054;
 	}

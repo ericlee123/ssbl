@@ -8,7 +8,7 @@
         android:id="@+id/profile_cover_photo"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:src="@drawable/material_design"
+        android:src="@drawable/cover_photo"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true" />
 
