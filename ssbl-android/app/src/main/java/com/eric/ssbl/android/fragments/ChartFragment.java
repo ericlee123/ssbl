@@ -7,6 +7,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
@@ -45,6 +46,15 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         } catch (InflateException e) {
             /* map is already there, just return view as it is */
         }
+
+        ImageButton refresh = (ImageButton) _view.findViewById(R.id.chart_refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refresh(null);
+            }
+        });
+
         return _view;
     }
 
@@ -53,13 +63,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_chart)).getMap();
         buildGoogleApiClient();
 
-        _map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                // pull up a list view
-                System.out.println("marker clicked");
-
-                return true;
+            public void onInfoWindowClick(Marker marker) {
+                Toast.makeText(getActivity(), "Window clicked", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -115,5 +122,9 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                         .title("test marker")
                         .snippet("this is a test marker")
                         .position(new LatLng(30.288203, -97.739908)));
+    }
+
+    public void refresh(View view) {
+        Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
     }
 }
