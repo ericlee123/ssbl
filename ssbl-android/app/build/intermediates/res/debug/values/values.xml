@@ -255,6 +255,7 @@
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="action_websearch">Web search</string>
+    <string name="add_friend">Add friend</string>
     <string name="app_name">Smash Bros. Locator</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="bio">Bio</string>
@@ -325,6 +326,7 @@
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="username_hint">Username</string>
+    <string name="view_friends">View friends</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/wallet_strings.xml -->
     <eat-comment/>
     <string name="wallet_buy_button_place_holder" translation_description="Text on a button that allows a user to make a payment with Google Wallet [CHAR LIMIT=30]">Buy with Google</string>

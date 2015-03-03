@@ -34,7 +34,9 @@
     <string name="profile">Profile</string>
     <string name="games">Games</string>
     <string name="bio">Bio</string>
+    <string name="add_friend">Add friend</string>
     <string name="message">Message</string>
+    <string name="view_friends">View friends</string>
 
     <!-- Settings -->
     <string name="privacy">Privacy</string>

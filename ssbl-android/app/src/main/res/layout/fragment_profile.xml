@@ -11,7 +11,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/profile_cover_photo"
@@ -32,6 +32,7 @@
 
 
                 <TextView
+                    android:id="@+id/profile_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/username_hint"
@@ -39,6 +40,7 @@
                     android:textSize="22sp" />
 
                 <TextView
+                    android:id="@+id/profile_subtitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -56,6 +58,7 @@
             </LinearLayout>
 
             <ImageView
+                android:id="@+id/profile_icon"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
                 android:src="@drawable/honey"
@@ -106,7 +109,7 @@
                     android:id="@+id/profile_chat_button"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/purple_chat_button"
+                    android:src="@drawable/blue_chat_button"
                     android:onClick="startConversation"
                     android:background="@null"
                     android:adjustViewBounds="true"
@@ -121,6 +124,57 @@
                     android:layout_below="@id/profile_chat_button"
                     android:paddingTop="8dp"
                     android:text="@string/message"/>
+
+                <ImageButton
+                    android:id="@+id/profile_stranger_friend_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_toLeftOf="@id/profile_chat_button"
+                    android:layout_toStartOf="@id/profile_chat_button"
+                    android:layout_marginRight="44dp"
+                    android:layout_marginEnd="44dp"
+                    android:onClick="friendButton"
+                    android:background="@null"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:id="@+id/profile_stranger_friend_button_caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_stranger_friend_button"
+                    android:layout_alignLeft="@id/profile_stranger_friend_button"
+                    android:layout_alignStart="@id/profile_stranger_friend_button"
+                    android:layout_marginLeft="-2dp"
+                    android:layout_marginStart="-2dp"
+                    android:paddingTop="8dp"/>
+
+                <ImageButton
+                    android:id="@+id/profile_stranger_view_friends_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_toRightOf="@id/profile_chat_button"
+                    android:layout_toEndOf="@id/profile_chat_button"
+                    android:layout_marginLeft="44dp"
+                    android:layout_marginStart="44dp"
+                    android:onClick="viewFriends"
+                    android:src="@drawable/orange_search_button"
+                    android:background="@null"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/profile_stranger_view_friends_button"
+                    android:layout_alignLeft="@id/profile_stranger_view_friends_button"
+                    android:layout_alignStart="@id/profile_stranger_view_friends_button"
+                    android:layout_marginLeft="-8dp"
+                    android:layout_marginStart="-8dp"
+                    android:text="@string/view_friends"
+                    android:paddingTop="8dp"/>
 
             </RelativeLayout>
         </RelativeLayout>
