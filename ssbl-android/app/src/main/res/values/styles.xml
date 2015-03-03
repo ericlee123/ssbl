@@ -32,4 +32,13 @@
         <item name="sectionColorText">@color/white</item>
     </style>
 
+    <style name="LowerLevelTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/ImitationActionBar</item>
+    </style>
+
+    <style name="ImitationActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/gc_purple</item>
+        <item name="android:height">56dp</item>
+    </style>
+
 </resources>

@@ -30,6 +30,12 @@
     <string name="enter_password">Enter password:</string>
     <string name="confirm_password">Confirm password:</string>
 
+    <!-- ProfileActivity -->
+    <string name="profile">Profile</string>
+    <string name="games">Games</string>
+    <string name="bio">Bio</string>
+    <string name="message">Message</string>
+
     <!-- Settings -->
     <string name="privacy">Privacy</string>
     <string name="set_privacy">Set privacy</string>

@@ -68,14 +68,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-//                ProfileFragment pf = new ProfileFragment();
-//
-//                FragmentManager fm = getActivity().getSupportFragmentManager();
-//                FragmentTransaction ft = fm.beginTransaction();
-//                ft.replace(R.id.fragment_chart, pf);
-//                ft.commit();
-                  Intent i = new Intent(getActivity(), ProfileActivity.class);
-                  Bundle b = new Bundle();
+                Intent i = new Intent(getActivity(), ProfileActivity.class);
+                Bundle b = new Bundle();
                 b.putBoolean("from_map", true);
                 i.putExtras(b);
                 startActivity(i);
@@ -128,7 +122,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void displayElements() {
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 17));
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 15));
 
         _map.addMarker(new MarkerOptions()
                         .title("test marker")

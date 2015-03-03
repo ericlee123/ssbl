@@ -18,5 +18,5 @@
     <item android:id="@+id/action_websearch"
           android:icon="@drawable/action_search"
           android:title="@string/action_websearch"
-          android:showAsAction="ifRoom|withText" />
+          android:showAsAction="ifRoom" />
 </menu><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/menu/main.xml -->
