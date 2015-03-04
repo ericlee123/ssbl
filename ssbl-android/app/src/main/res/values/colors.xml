@@ -5,6 +5,7 @@
     <color name="less_white">#EEEEEE</color>
     <color name="black">#000000</color>
     <color name="dark_gray">#433f45</color>
+    <color name="subtitle_gray">#FF707070</color>
 
     <!-- GameCube controller colors -->
     <color name="gc_purple">#4F3D8B</color>

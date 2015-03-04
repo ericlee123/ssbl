@@ -35,6 +35,9 @@
         <activity
             android:name=".android.activities.ProfileActivity"
             android:theme="@style/LowerLevelTheme"/>
+        <activity
+            android:name=".android.activities.EventActivity"
+            android:theme="@style/LowerLevelTheme"/>
     </application>
 
     <!-- Stuff for Google Maps -->

@@ -32,11 +32,24 @@
 
     <!-- ProfileActivity -->
     <string name="profile">Profile</string>
+    <string name="casual">Casual</string>
+    <string name="competitive">Competitive</string>
     <string name="games">Games</string>
     <string name="bio">Bio</string>
     <string name="add_friend">Add friend</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
+
+    <!-- EventActivity -->
+    <string name="event">Event</string>
+    <string name="hosted_by">Hosted by</string>
+    <string name="description">Description</string>
+    <string name="time">Time</string>
+    <string name="attend_event">Attend event</string>
+    <string name="unattend_event">Unattend event</string>
+    <string name="message_host">Message host</string>
+    <string name="view_attendance">View attendance</string>
+    <string name="whos_going">Who\'s going</string>
 
     <!-- Settings -->
     <string name="privacy">Privacy</string>

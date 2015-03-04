@@ -7,7 +7,6 @@ import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.ProfileFragment;
-import com.eric.ssbl.android.fragments.SearchFragment;
 import com.eric.ssbl.android.fragments.SettingsFragment;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
@@ -26,7 +25,6 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection inbox = newSection("Inbox", new InboxFragment());
         MaterialSection events = newSection("Events", new EventListFragment());
         MaterialSection profile = newSection("Profile", new ProfileFragment());
-        MaterialSection search = newSection("Search", new SearchFragment());
         // divisor
         MaterialSection settings = newSection("Settings", new SettingsFragment());
 
@@ -34,7 +32,6 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addSection(inbox);
         this.addSection(events);
         this.addSection(profile);
-        this.addSection(search);
 
         this.addDivisor();
 

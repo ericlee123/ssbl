@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.activities.ProfileActivity;
+import com.eric.ssbl.android.activities.EventActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -68,10 +68,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent i = new Intent(getActivity(), ProfileActivity.class);
-                Bundle b = new Bundle();
-                b.putBoolean("from_map", true);
-                i.putExtras(b);
+                Intent i = new Intent(getActivity(), EventActivity.class);
                 startActivity(i);
             }
         });
