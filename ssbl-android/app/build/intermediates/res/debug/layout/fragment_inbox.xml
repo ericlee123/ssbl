@@ -12,9 +12,9 @@
         android:dividerHeight="0dp" />
 
     <ImageButton
+        android:id="@+id/new_message"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/chart_refresh"
         android:src="@drawable/purple_plus_button"
         android:background="@null"
         android:adjustViewBounds="true"

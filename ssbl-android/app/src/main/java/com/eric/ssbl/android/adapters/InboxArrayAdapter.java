@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eric.ssbl.R;
@@ -29,10 +28,7 @@ public class InboxArrayAdapter extends ArrayAdapter<String> {
         View rowView = inflater.inflate(R.layout.list_inbox, parent, false);
         TextView name = (TextView) rowView.findViewById(R.id.list_inbox_name);
         TextView preview = (TextView) rowView.findViewById(R.id.list_inbox_preview);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.list_inbox_icon);
         name.setText(_values[position]);
-
-        imageView.setImageResource(R.drawable.purple_chat_button);
 
         return rowView;
     }

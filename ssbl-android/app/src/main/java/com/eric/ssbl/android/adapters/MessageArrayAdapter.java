@@ -27,8 +27,8 @@ public class MessageArrayAdapter extends ArrayAdapter<String> {
 
         View rowView = inflater.inflate(R.layout.list_message, parent, false);
 
-        ImageView square = (ImageView) rowView.findViewById(R.id.message_square);
-//        square.setImageResource(R.drawable.purple_rounded_square);
+        if (position % 2 == 0)
+            ((ImageView) rowView.findViewById(R.id.message_square)).setImageResource(R.drawable.purple_rounded_square);
 
         TextView textView = (TextView) rowView.findViewById(R.id.message_unit);
         textView.setText(_values[position]);

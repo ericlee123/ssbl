@@ -22,7 +22,7 @@ public class InboxFragment extends ListFragment {
         setListAdapter(new InboxArrayAdapter(getActivity(), temp));
 
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
-        ImageButton createMessage = (ImageButton) v.findViewById(R.id.chart_refresh);
+        ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
         createMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

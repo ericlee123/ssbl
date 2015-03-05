@@ -23,7 +23,7 @@ public class ProfileActivity extends Activity {
 
         ActionBar ab = getActionBar();
         ab.setDisplayShowHomeEnabled(false);
-        View abv = getLayoutInflater().inflate(R.layout.action_bar_lower_level, null);
+        View abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 

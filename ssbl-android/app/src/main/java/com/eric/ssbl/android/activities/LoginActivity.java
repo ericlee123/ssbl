@@ -14,7 +14,7 @@ import com.eric.ssbl.R;
 
 public class LoginActivity extends Activity {
 
-    final Activity context = this;
+    final Activity _context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +32,10 @@ public class LoginActivity extends Activity {
     }
 
     public void registerAccount(View view) {
-        LayoutInflater li = LayoutInflater.from(context);
+        LayoutInflater li = LayoutInflater.from(_context);
         View registerPrompt = li.inflate(R.layout.prompt_register, null);
 
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        AlertDialog.Builder adb = new AlertDialog.Builder(_context);
         adb
                 .setView(registerPrompt)
                 .setTitle("Register an account")
@@ -44,7 +44,7 @@ public class LoginActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(context, "Registering...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(_context, "Registering...", Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNegativeButton("Cancel",
