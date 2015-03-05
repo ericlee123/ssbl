@@ -2,16 +2,20 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eric.ssbl.R;
 
 public class ProfileActivity extends Activity {
+
+    private final Context _context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,26 +53,39 @@ public class ProfileActivity extends Activity {
         // Check to see if it's the current user's profile
         if (true) {
 
-            Drawable lb = getResources().getDrawable(getResources().getIdentifier("@drawable/green_plus_button", null, getPackageName()));
-            ((ImageButton) findViewById(R.id.ep_button_left)).setImageDrawable(lb);
+            ImageButton lb = (ImageButton) findViewById(R.id.ep_button_left);
+            lb.setImageResource(R.drawable.green_plus_button);
+            lb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
+                }
+            });
             ((TextView) findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.add_friend));
 
-            Drawable mb = getResources().getDrawable(getResources().getIdentifier("@drawable/blue_chat_button", null, getPackageName()));
-            ((ImageButton) findViewById(R.id.ep_button_middle)).setImageDrawable(mb);
+            ImageButton mb = (ImageButton) findViewById(R.id.ep_button_middle);
+            mb.setImageResource(R.drawable.blue_chat_button);
+            mb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Create new message
+                }
+            });
             ((TextView) findViewById(R.id.ep_button_middle_caption)).setText(getString(R.string.message));
 
-            Drawable rb = getResources().getDrawable(getResources().getIdentifier("@drawable/orange_search_button", null, getPackageName()));
-            ((ImageButton) findViewById(R.id.ep_button_right)).setImageDrawable(rb);
+            ImageButton rb = (ImageButton) findViewById(R.id.ep_button_right);
+            rb.setImageResource(R.drawable.orange_search_button);
+            rb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Create new message
+                }
+            });
             ((TextView) findViewById(R.id.ep_button_right_caption)).setText(getString(R.string.view_friends));
+
         }
         else {
 
-//            Drawable lb = getResources().getDrawable(getResources().getIdentifier("@drawable/blue_chat_button", null, getPackageName()));
-//            ((ImageButton) findViewById(R.id.ep_personal_button_left)).setImageDrawable(lb);
-//
-//            Drawable rb = getResources().getDrawable(getResources().getIdentifier("@drawable/orange_search_button", null, getPackageName()));
-//            ((ImageButton) findViewById(R.id.ep_personal_button_right)).setImageDrawable(rb);
-//            ((TextView) findViewById(R.id.ep_personal_button_right_caption)).setText(getString(R.string.view_friends));
         }
     }
 
@@ -76,15 +93,4 @@ public class ProfileActivity extends Activity {
         finish();
     }
 
-    public void leftButton(View view) {
-
-    }
-
-    public void middleButton(View view) {
-
-    }
-
-    public void rightButton(View view) {
-
-    }
 }

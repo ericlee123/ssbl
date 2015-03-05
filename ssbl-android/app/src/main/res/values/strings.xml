@@ -51,6 +51,11 @@
     <string name="view_attendance">View attendance</string>
     <string name="whos_going">Who\'s going</string>
 
+    <!-- MessageActivity -->
+    <string name="delete_message">Delete message</string>
+    <string name="enter_message">Enter message</string>
+    <string name="talk_trash">Talk trash</string>
+
     <!-- Settings -->
     <string name="privacy">Privacy</string>
     <string name="set_privacy">Set privacy</string>

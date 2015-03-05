@@ -38,6 +38,11 @@
         <activity
             android:name=".android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme"/>
+        <activity
+            android:name=".android.activities.MessageActivity"
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
     <!-- Stuff for Google Maps -->

@@ -49,6 +49,10 @@
         <activity
             android:name="com.eric.ssbl.android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme" />
+        <activity
+            android:name="com.eric.ssbl.android.activities.MessageActivity"
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

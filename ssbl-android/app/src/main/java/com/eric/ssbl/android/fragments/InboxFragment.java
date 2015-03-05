@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -7,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.activities.MessageActivity;
 import com.eric.ssbl.android.adapters.InboxArrayAdapter;
 
 public class InboxFragment extends ListFragment {
@@ -34,8 +35,7 @@ public class InboxFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
-        // Open message
-        String clicked = (String) getListAdapter().getItem(position);
-        Toast.makeText(getActivity(), clicked, Toast.LENGTH_SHORT).show();
+        Intent i = new Intent(getActivity(), MessageActivity.class);
+        startActivity(i);
     }
 }

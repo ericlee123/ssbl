@@ -307,10 +307,12 @@
     <string name="decline">Decline</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="delete_message">Delete message</string>
     <string name="description">Description</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="enter_email">Enter email:</string>
+    <string name="enter_message">Enter message</string>
     <string name="enter_password">Enter password:</string>
     <string name="enter_username">Enter username:</string>
     <string name="event">Event</string>
@@ -337,6 +339,7 @@
     <string name="store_picture_title">Save image</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="talk_trash">Talk trash</string>
     <string name="time">Time</string>
     <string name="unattend_event">Unattend event</string>
     <string name="username_hint">Username</string>
