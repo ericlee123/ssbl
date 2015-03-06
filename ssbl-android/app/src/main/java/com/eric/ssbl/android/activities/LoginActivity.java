@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,11 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 public class LoginActivity extends Activity {
 
@@ -20,6 +26,14 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        try {
+//            // Check for hashed login data
+//            File login = new File("/SSBL/");
+//            if (!login.exists())
+//                login.createNewFile();
+//        } catch (IOException e) {
+//            Toast.makeText(this, R.string.error_creating_directory, Toast.LENGTH_SHORT).show();
+//        }
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -57,4 +71,62 @@ public class LoginActivity extends Activity {
 
         adb.create().show();
     }
+
+    private class HttpLogin extends AsyncTask<Void, Void, Void> {
+
+        private String _errorMessage = null;
+
+        private void httpLogin() {
+
+            try {
+                // Use HttpGet b/c HTTP specs
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet("dummy url");
+
+                HttpResponse response = client.execute(request);
+
+            } catch (Exception e) {
+                _errorMessage = "Something went exceptionally wrong. :(";
+                e.printStackTrace();
+            }
+        }
+
+
+        private String bytesToHex(byte[] bytes) {
+            char[] hexArray = "0123456789ABCDEF".toCharArray();
+            char[] hexChars = new char[bytes.length * 2];
+            for ( int j = 0; j < bytes.length; j++ ) {
+                int v = bytes[j] & 0xFF;
+                hexChars[j * 2] = hexArray[v >>> 4];
+                hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            }
+            return new String(hexChars);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            httpLogin();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+
+        }
+    }
+
+    private class HttpRegister extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+
+        }
+    }
+
 }

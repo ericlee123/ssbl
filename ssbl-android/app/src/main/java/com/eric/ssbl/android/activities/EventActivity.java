@@ -3,7 +3,6 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -32,8 +31,8 @@ public class EventActivity extends Activity {
         setContentView(R.layout.fragment_ep);
 
         // Fill in the deets
-        Drawable icon = getResources().getDrawable(getResources().getIdentifier("@drawable/red_explosion", null, getPackageName()));
-        ((ImageView) findViewById(R.id.ep_icon)).setImageDrawable(icon);
+        ((ImageView) findViewById(R.id.ep_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) findViewById(R.id.ep_icon)).setImageResource(R.drawable.red_explosion);
         ((TextView) findViewById(R.id.ep_title)).setText("Smashfest 2015");
         ((TextView) findViewById(R.id.ep_subtitle)).setText(getString(R.string.hosted_by) + " m2k");
 

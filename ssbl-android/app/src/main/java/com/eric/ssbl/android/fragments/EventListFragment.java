@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.activities.EditEventActivity;
 import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.adapters.EventListAdapter;
 
@@ -26,7 +27,11 @@ public class EventListFragment extends ListFragment {
         createMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create new message
+                Intent i = new Intent(getActivity(), EditEventActivity.class);
+                Bundle b = new Bundle();
+                b.putBoolean("new_event", true);
+                i.putExtras(b);
+                startActivity(i);
             }
         });
         return v;

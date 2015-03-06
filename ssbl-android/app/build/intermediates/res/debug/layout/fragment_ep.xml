@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/less_white">
@@ -9,7 +8,6 @@
         android:id="@+id/ep_cover_photo"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:src="@drawable/cover_photo"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true" />
 

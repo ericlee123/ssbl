@@ -3,7 +3,6 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -32,8 +31,8 @@ public class ProfileActivity extends Activity {
         setContentView(R.layout.fragment_ep);
 
         // Fill in the details
-        Drawable icon = getResources().getDrawable(getResources().getIdentifier("@drawable/honey", null, getPackageName()));
-        ((ImageView) findViewById(R.id.ep_icon)).setImageDrawable(icon);
+        ((ImageView) findViewById(R.id.ep_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) findViewById(R.id.ep_icon)).setImageResource(R.drawable.honey);
         ((TextView) findViewById(R.id.ep_title)).setText("timeline62x");
         ((TextView) findViewById(R.id.ep_subtitle)).setText("Competitive");
 

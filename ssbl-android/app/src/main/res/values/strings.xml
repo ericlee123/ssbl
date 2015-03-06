@@ -50,6 +50,9 @@
     <string name="message_host">Message host</string>
     <string name="view_attendance">View attendance</string>
     <string name="whos_going">Who\'s going</string>
+    <string name="create_event">Create Event</string>
+    <string name="edit_event">Edit Event</string>
+    <string name="save">Save</string>
 
     <!-- MessageActivity -->
     <string name="delete_message">Delete message</string>
@@ -60,6 +63,9 @@
     <string name="privacy">Privacy</string>
     <string name="set_privacy">Set privacy</string>
     <string name="set_privacy_summary">Set visibility to other users</string>
+
+    <!-- Miscellaneous -->
+    <string name="error_creating_directory">Error creating directory to save login info</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

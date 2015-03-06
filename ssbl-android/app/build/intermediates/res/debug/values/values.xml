@@ -304,6 +304,11 @@
     <eat-comment/>
     <string name="create_calendar_message">Allow Ad to create a calendar event?</string>
     <string name="create_calendar_title">Create calendar event</string>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="create_event">Create Event</string>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_strings.xml -->
+    <eat-comment/>
     <string name="decline">Decline</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
@@ -311,10 +316,12 @@
     <string name="description">Description</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_open">Open navigation drawer</string>
+    <string name="edit_event">Edit Event</string>
     <string name="enter_email">Enter email:</string>
     <string name="enter_message">Enter message</string>
     <string name="enter_password">Enter password:</string>
     <string name="enter_username">Enter username:</string>
+    <string name="error_creating_directory">Error creating directory to save login info</string>
     <string name="event">Event</string>
     <string name="games">Games</string>
     <string name="hosted_by">Hosted by</string>
@@ -331,6 +338,7 @@
     <string name="profile">Profile</string>
     <string name="register">Register</string>
     <string name="remember_me">Remember Me</string>
+    <string name="save">Save</string>
     <string name="set_privacy">Set privacy</string>
     <string name="set_privacy_summary">Set visibility to other users</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_strings.xml -->

@@ -1,6 +1,5 @@
 package com.eric.ssbl.android.fragments;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,8 +20,9 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_ep, container, false);
 
         // Fill in the details
-        Drawable icon = getResources().getDrawable(getResources().getIdentifier("@drawable/honey", null, getActivity().getPackageName()));
-        ((ImageView) v.findViewById(R.id.ep_icon)).setImageDrawable(icon);
+        ((ImageView) v.findViewById(R.id.ep_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+
+        ((ImageView) v.findViewById(R.id.ep_icon)).setImageResource(R.drawable.honey);
         ((TextView) v.findViewById(R.id.ep_title)).setText("timeline62x");
         ((TextView) v.findViewById(R.id.ep_subtitle)).setText("Competitive");
 
@@ -42,9 +42,8 @@ public class ProfileFragment extends Fragment {
         // Check to see if it's the current user's profile
         if (true) {
 
-            Drawable lbdraw = getResources().getDrawable(getResources().getIdentifier("@drawable/green_plus_button", null, getActivity().getPackageName()));
             ImageButton lb = (ImageButton) v.findViewById(R.id.ep_button_left);
-            lb.setImageDrawable(lbdraw);
+            lb.setImageResource(R.drawable.green_plus_button);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -53,9 +52,8 @@ public class ProfileFragment extends Fragment {
             });
             ((TextView) v.findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.add_friend));
 
-            Drawable mbdraw = getResources().getDrawable(getResources().getIdentifier("@drawable/blue_chat_button", null, getActivity().getPackageName()));
             ImageButton mb = (ImageButton) v.findViewById(R.id.ep_button_middle);
-            mb.setImageDrawable(mbdraw);
+            mb.setImageResource(R.drawable.blue_chat_button);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -64,9 +62,8 @@ public class ProfileFragment extends Fragment {
             });
             ((TextView) v.findViewById(R.id.ep_button_middle_caption)).setText(getString(R.string.message));
 
-            Drawable rbdraw = getResources().getDrawable(getResources().getIdentifier("@drawable/orange_search_button", null, getActivity().getPackageName()));
             ImageButton rb = (ImageButton) v.findViewById(R.id.ep_button_right);
-            rb.setImageDrawable(rbdraw);
+            rb.setImageResource(R.drawable.orange_search_button);
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -77,12 +74,6 @@ public class ProfileFragment extends Fragment {
         }
         else {
 
-//            Drawable lb = getResources().getDrawable(getResources().getIdentifier("@drawable/blue_chat_button", null, getPackageName()));
-//            ((ImageButton) findViewById(R.id.ep_personal_button_left)).setImageDrawable(lb);
-//
-//            Drawable rb = getResources().getDrawable(getResources().getIdentifier("@drawable/orange_search_button", null, getPackageName()));
-//            ((ImageButton) findViewById(R.id.ep_personal_button_right)).setImageDrawable(rb);
-//            ((TextView) findViewById(R.id.ep_personal_button_right_caption)).setText(getString(R.string.view_friends));
         }
 
         return v;

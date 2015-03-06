@@ -47,12 +47,20 @@
             android:name="com.eric.ssbl.android.activities.ProfileActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
+            android:name="com.eric.ssbl.android.activities.EditProfileActivity"
+            android:theme="@style/LowerLevelTheme" />
+        <activity
             android:name="com.eric.ssbl.android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
+            android:name="com.eric.ssbl.android.activities.EditEventActivity"
+            android:theme="@style/LowerLevelTheme" />
+        <activity
             android:name="com.eric.ssbl.android.activities.MessageActivity"
-            android:theme="@style/LowerLevelTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/LowerLevelTheme" />
+        <activity
+            android:name="com.eric.ssbl.android.activities.NewMessageActivity"
+            android:theme="@style/LowerLevelTheme" />
     </application>
 
 </manifest>
