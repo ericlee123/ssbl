@@ -55,39 +55,35 @@ public class EventActivity extends Activity {
 
         if (true) {
 
-            ((ImageButton) findViewById(R.id.ep_button_left)).setImageResource(R.drawable.green_attend_button);
-            ((TextView) findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.attend_event));
-
-            ((ImageButton) findViewById(R.id.ep_button_middle)).setImageResource(R.drawable.blue_chat_button);
-            TextView midCap = (TextView) findViewById(R.id.ep_button_middle_caption);
-            midCap.setText(getString(R.string.message_host));
-
-            ((ImageButton) findViewById(R.id.ep_button_right)).setImageResource(R.drawable.orange_search_button);
-            ((TextView) findViewById(R.id.ep_button_right_caption)).setText(getString(R.string.whos_going));
-
-            ImageButton leftButton = (ImageButton) findViewById(R.id.ep_button_left);
-            leftButton.setOnClickListener(new View.OnClickListener() {
+            ImageButton lb = (ImageButton) findViewById(R.id.ep_button_left);
+            lb.setImageResource(R.drawable.green_attend_button);
+            lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
                 }
             });
+            ((TextView) findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.attend_event));
 
-            ImageButton middleButton = (ImageButton) findViewById(R.id.ep_button_middle);
-            leftButton.setOnClickListener(new View.OnClickListener() {
+            ImageButton mb = (ImageButton) findViewById(R.id.ep_button_middle);
+            mb.setImageResource(R.drawable.blue_chat_button);
+            mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Create new message
                 }
             });
+            ((TextView) findViewById(R.id.ep_button_middle_caption)).setText(getString(R.string.message_host));
 
-            ImageButton rightButton = (ImageButton) findViewById(R.id.ep_button_right);
-            leftButton.setOnClickListener(new View.OnClickListener() {
+            ImageButton rb = (ImageButton) findViewById(R.id.ep_button_right);
+            rb.setImageResource(R.drawable.orange_search_button);
+            rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Create new message
                 }
             });
+            ((TextView) findViewById(R.id.ep_button_right_caption)).setText(getString(R.string.whos_going));
         }
         else {
 

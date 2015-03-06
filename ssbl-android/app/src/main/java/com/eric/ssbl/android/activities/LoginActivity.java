@@ -43,6 +43,22 @@ public class LoginActivity extends Activity {
     public void loginAccount(View view) {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+
+//        NotificationCompat.Builder builder =
+//                new NotificationCompat.Builder(this)
+//                        .setSmallIcon(R.mipmap.ic_launcher)
+//                        .setContentTitle("My notification")
+//                        .setContentText("Hello World!");
+//
+//        Intent i = new Intent(this, ProfileActivity.class);
+//        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//        builder.setContentIntent(pi);
+//
+//        NotificationManager notifMngr =
+//                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        // Builds the notification and issues it.
+//        notifMngr.notify(1, builder.build());
     }
 
     public void registerAccount(View view) {
