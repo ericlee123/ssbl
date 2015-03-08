@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -29,12 +30,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 public class Conversation {
 
 	private Integer _id;
-	private List<Recipient> _recipients;
+	private List<User> _recipients;
 	private List<Message> _messages;
 	
 	public Conversation() {}
 	
-	public Conversation(Integer id, List<Recipient> recipients, List<Message> messages) {
+	public Conversation(Integer id, List<User> recipients, List<Message> messages) {
 		_id = id;
 		_recipients = recipients;
 		_messages = messages;
@@ -52,28 +53,17 @@ public class Conversation {
 		_id = id;
 	}
 	
-	@OneToMany(mappedBy="conversation", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-	public List<Recipient> getRecipients() {
+    @ManyToMany(mappedBy="conversations", fetch=FetchType.EAGER)
+	public List<User> getRecipients() {
 		return _recipients;
 	}
 	
-	public void setRecipients(List<Recipient> recipients) {
+	public void setRecipients(List<User> recipients) {
 		_recipients = recipients;
 	}
 	
-	// Returns the recipient for a particular student, or null if the student is not a recipient
-	// to the conversation or the conversations does not have any recipients.
-	@Transient
-	public Recipient getRecipient(User user) {
-		if(_recipients != null)
-			for(Recipient recipient : _recipients)
-				if(recipient.getUser().equals(user))
-					return recipient;
-		return null;
-	}
-	
-	public void addRecipient(Recipient recipient) {
-		if(_recipients == null) _recipients = new ArrayList<Recipient>();
+	public void addRecipient(User recipient) {
+		if(_recipients == null) _recipients = new ArrayList<User>();
 		_recipients.add(recipient);
 	}
 	

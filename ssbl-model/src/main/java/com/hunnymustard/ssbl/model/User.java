@@ -43,17 +43,21 @@ public class User {
 	private Integer _id;
 	private String _username, _password, _email, _blurb;
 	private Location _location;
-	private Long _refreshTime;
+	private Long _lastLoginTime;
+	private Long _lastLocationTime;
+	private Long _lastMessageTime;
 	private List<Game> _games;
 	private List<Event> _events;
 	private List<Notification> _notifs;
 	private List<User> _friends;
+	private List<Conversation> _conversations;
 	
 	public User() {}
 	
 	public User(Integer id, String username, String password, String email, String blurb,
-			Location location, Long refreshTime, List<Game> games, List<Event> events,
-			List<Notification> notifs, List<User> friends) {
+			Location location, Long lastLoginTime, Long lastLocationTime, Long lastMessageTime, 
+			List<Game> games, List<Event> events, List<Notification> notifs, List<User> friends, 
+			List<Conversation> conversations) {
 		
 		_id = id;
 		_username = username;
@@ -61,11 +65,14 @@ public class User {
 		_email = email;
 		_blurb = blurb;
 		_location = location;
-		_refreshTime = refreshTime;
+		_lastLoginTime = lastLoginTime;
+		_lastLocationTime = lastLocationTime;
+		_lastMessageTime = lastMessageTime;
 		_games = games;
 		_events = events;
 		_notifs = notifs;
 		_friends = friends;
+		_conversations = conversations;
 	}
 	
 	@Id
@@ -119,14 +126,34 @@ public class User {
 		_location = location;
 	}
 	
-	@Column(name="refresh_time")
+	@Column(name="last_login_time")
 	@Basic(fetch=FetchType.LAZY)
-	public Long getRefreshTime() {
-		return _refreshTime;
+	public Long getLastLoginTime() {
+		return _lastLoginTime;
 	}
 	
-	public void setRefreshTime(long refreshTime) {
-		_refreshTime = refreshTime;
+	public void setLastLoginTime(long lastLoginTime) {
+		_lastLoginTime = lastLoginTime;
+	}
+	
+	@Column(name="last_location_time")
+	@Basic(fetch=FetchType.LAZY)
+	public Long getLastLocationTime() {
+		return _lastLocationTime;
+	}
+	
+	public void setLastLocationTime(long lastLocationTime) {
+		_lastLocationTime = lastLocationTime;
+	}
+	
+	@Column(name="last_message_time")
+	@Basic(fetch=FetchType.LAZY)
+	public Long getLastMessageTime() {
+		return _lastMessageTime;
+	}
+	
+	public void setLastMessageTime(long lastMessageTime) {
+		_lastMessageTime = lastMessageTime;
 	}
 	
 	@Column(name="blurb")
@@ -199,6 +226,23 @@ public class User {
 	public void addFriend(User friend) {
 		if(_friends == null) _friends = new ArrayList<User>();
 		_friends.add(friend);
+	}
+	
+	@ManyToMany
+	@JoinTable(name="conversation_users",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="conversation_id"))
+	public List<Conversation> getConversations() {
+		return _conversations;
+	}
+	
+	public void setConversations(List<Conversation> conversations) {
+		_conversations = conversations;
+	}
+	
+	public void addConversation(Conversation conversation) {
+		if(_conversations == null) _conversations = new ArrayList<Conversation>();
+		_conversations.add(conversation);
 	}
 	
 	@Override

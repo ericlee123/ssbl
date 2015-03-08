@@ -9,7 +9,9 @@ CREATE TABLE `users` (
 	`password` VARCHAR(255) NOT NULL,
 	`email` VARCHAR(255) NOT NULL,
 	`location_id` INT,
-	`refresh_time` BIGINT(14),
+	`last_login_time` BIGINT(14),
+	`last_location_time` BIGINT(14),
+	`last_message_time` BIGINT(14),
 	`blurb` VARCHAR(255),
 	PRIMARY KEY(user_id),
 	UNIQUE (username),
@@ -93,16 +95,13 @@ CREATE TABLE `messages` (
 	FOREIGN KEY (`sender_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS `recipient`;
+DROP TABLE IF EXISTS `conversation_users`;
 CREATE TABLE `recipients` (
-	`recipient_id` INT  AUTO_INCREMENT,
 	`user_id` INT NOT NULL,
 	`conversation_id` INT NOT NULL,
-	`last_view_time` BIGINT(14),
 	
-	PRIMARY KEY (`recipient_id`),
-	FOREIGN KEY (`conversation_id`) REFERENCES conversations(`conversation_id`) ON UPDATE CASCADE ON DELETE CASCADE,
-	FOREIGN KEY (`user_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE
+	FOREIGN KEY (`user_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (`conversation_id`) REFERENCES conversations(`conversation_id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 # Added UPDATE cascade relationships for users and events (for safety), and UPDATE

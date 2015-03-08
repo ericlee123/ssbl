@@ -41,6 +41,24 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 		
 		return user;
 	}
+	
+	@Override
+	public User findByParameters(String username, Integer id) {
+		User user = (User) getSession().createCriteria(User.class)
+				.add(Restrictions.eq("username", username))
+				.add(Restrictions.idEq(id))
+				.uniqueResult();
+		
+		if(user != null) {
+			Hibernate.initialize(user.getEmail());
+			Hibernate.initialize(user.getLocation());
+			Hibernate.initialize(user.getGames());
+			Hibernate.initialize(user.getNotifications());
+			Hibernate.initialize(user.getEvents());
+		}
+		
+		return user;
+	}
 
 	@Override
 	@SuppressWarnings("unchecked")
