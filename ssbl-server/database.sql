@@ -74,6 +74,37 @@ CREATE TABLE `notifications` (
 	PRIMARY KEY(`notification_id`)
 );
 
+DROP TABLE IF EXISTS `conversations`;
+CREATE TABLE `conversations` (
+	`conversation_id` INT AUTO_INCREMENT,
+	PRIMARY KEY(`conversation_id`)
+);
+
+DROP TABLE IF EXISTS `messages`;
+CREATE TABLE `messages` (
+	`message_id` INT AUTO_INCREMENT,
+	`conversation_id` INT NOT NULL,
+	`sender_id` INT NOT NULL,
+	`sent_time` BIGINT(14),
+	`body` TEXT,
+	
+	PRIMARY KEY (`message_id`),
+	FOREIGN KEY (`conversation_id`) REFERENCES conversations(`conversation_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (`sender_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS `recipient`;
+CREATE TABLE `recipients` (
+	`recipient_id` INT  AUTO_INCREMENT,
+	`user_id` INT NOT NULL,
+	`conversation_id` INT NOT NULL,
+	`last_view_time` BIGINT(14),
+	
+	PRIMARY KEY (`recipient_id`),
+	FOREIGN KEY (`conversation_id`) REFERENCES conversations(`conversation_id`) ON UPDATE CASCADE ON DELETE CASCADE,
+	FOREIGN KEY (`user_id`) REFERENCES users(`user_id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 # Added UPDATE cascade relationships for users and events (for safety), and UPDATE
 # and DELETE cascade relationships for all the other tables.
 ALTER TABLE `users`

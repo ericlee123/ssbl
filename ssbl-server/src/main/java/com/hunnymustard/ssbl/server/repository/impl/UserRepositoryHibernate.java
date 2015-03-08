@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
+import org.hibernate.criterion.Example;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,6 +45,8 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<User> findByProximity(Location cur, Double radius) {
+		// https://docs.jboss.org/hibernate/search/4.2/reference/en-US/html/spatial.html way to improve
+		// using spatial hibernate queries.
 		String hql = "from User user inner join fetch user.location as loc where loc.id != :id and acos("
 				+ "sin(:lat1/57.2958) * sin(loc.latitude/57.2958) + cos(:lat1/57.2958) "
 				+ "* cos(loc.latitude/57.2958) *  cos((loc.longitude - :lon1)/57.2958)) * 3956 <= :dist";
@@ -52,7 +56,30 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 		query.setDouble("lat1", cur.getLatitude());
 		query.setDouble("lon1", cur.getLongitude());
 		query.setDouble("dist", radius);
-		return (List<User>) query.list();
+		
+		List<User> users = (List<User>) query.list();
+		for(User user : users) {
+			Hibernate.initialize(user.getLocation());
+			Hibernate.initialize(user.getGames());
+			Hibernate.initialize(user.getEvents());
+		}
+		
+		return users;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<User> findByExample(User example) {
+		List<User> users = (List<User>) getSession()
+				.createCriteria(User.class)
+				.add(Example.create(example).enableLike(MatchMode.ANYWHERE))
+				.list();
+		
+		for(User user : users) {
+			Hibernate.initialize(user.getLocation());
+			Hibernate.initialize(user.getGames());
+			Hibernate.initialize(user.getEvents());
+		}
+		
+		return users;
+	}
 }
