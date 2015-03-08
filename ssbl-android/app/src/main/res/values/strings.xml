@@ -50,8 +50,12 @@
     <string name="message_host">Message host</string>
     <string name="view_attendance">View attendance</string>
     <string name="whos_going">Who\'s going</string>
+
+    <!-- EditEventActivity -->
     <string name="create_event">Create Event</string>
     <string name="edit_event">Edit Event</string>
+    <string name="event_title">Event title</string>
+    <string name="event_location">Event location</string>
     <string name="save">Save</string>
 
     <!-- MessageActivity -->

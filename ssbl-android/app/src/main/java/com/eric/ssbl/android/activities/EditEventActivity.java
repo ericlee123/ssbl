@@ -20,10 +20,14 @@ public class EditEventActivity extends Activity {
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-        ((TextView) abv.findViewById(R.id.lower_level_title))
-                .setText(getString(savedInstanceState.getBoolean("new_event") ? R.string.create_event : R.string.edit_event));
+        Bundle extras = getIntent().getExtras();
+        ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(extras.getBoolean("new_event") ? R.string.create_event : R.string.edit_event));
 
         setContentView(R.layout.activity_edit_event);
+    }
+
+    public void setLocationMap(View view) {
+        // Open the interactive map
     }
 
     public void saveEvent(View view) {

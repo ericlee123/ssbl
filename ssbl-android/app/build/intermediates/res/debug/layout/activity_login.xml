@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/register"
             android:textColorHint="@color/white"
-            android:onClick="registerAccount" />
+            android:onClick="promptRegister" />
     </LinearLayout>
 
 </LinearLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/activity_login.xml -->

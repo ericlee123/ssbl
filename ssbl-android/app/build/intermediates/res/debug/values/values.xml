@@ -201,6 +201,13 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16dp</dimen>
     <dimen name="abc_text_size_title_material">20sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20dp</dimen>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="action_bar_padding">16dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
+    <eat-comment/>
     <item name="dialog_fixed_height_major" type="dimen">80%</item>
     <item name="dialog_fixed_height_minor" type="dimen">100%</item>
     <item name="dialog_fixed_width_major" type="dimen">320dp</item>
@@ -323,6 +330,8 @@
     <string name="enter_username">Enter username:</string>
     <string name="error_creating_directory">Error creating directory to save login info</string>
     <string name="event">Event</string>
+    <string name="event_location">Event location</string>
+    <string name="event_title">Event title</string>
     <string name="games">Games</string>
     <string name="hosted_by">Hosted by</string>
     <string name="login">Login</string>

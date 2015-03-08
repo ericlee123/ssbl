@@ -61,7 +61,7 @@ public class LoginActivity extends Activity {
 //        notifMngr.notify(1, builder.build());
     }
 
-    public void registerAccount(View view) {
+    public void promptRegister(View view) {
         LayoutInflater li = LayoutInflater.from(_context);
         View registerPrompt = li.inflate(R.layout.prompt_register, null);
 

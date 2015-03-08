@@ -2,40 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gc_purple">
+    android:background="@color/gc_purple"
+    android:padding="14dp">
 
     <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:padding="14dp"
+        android:id="@+id/action_bar_back_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:src="@drawable/back_arrow"
         android:onClick="goBack"
         android:background="@null"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY"/>
+        android:scaleType="centerInside"/>
 
     <TextView
-        android:id="@+id/lower_level_title"
+        android:id="@+id/action_bar_title"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/back_button"
-        android:layout_toEndOf="@id/back_button"
-        android:layout_marginLeft="4dp"
-        android:layout_marginStart="4dp"
+        android:layout_toRightOf="@id/action_bar_back_button"
+        android:layout_toEndOf="@id/action_bar_back_button"
+        android:layout_marginLeft="18dp"
+        android:layout_marginStart="18dp"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:gravity="center_vertical"/>
-
-    <ImageButton
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentRight="true"
-        android:padding="14dp"
-        android:src="@drawable/ic_action_delete"
-        android:onClick="deleteMessage"
-        android:background="@null"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
 
 </RelativeLayout>

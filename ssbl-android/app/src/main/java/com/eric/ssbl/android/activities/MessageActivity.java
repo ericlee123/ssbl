@@ -28,7 +28,7 @@ public class MessageActivity extends ListActivity {
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-        ((TextView) abv.findViewById(R.id.lower_level_title)).setText("Swag Lord");
+        ((TextView) abv.findViewById(R.id.action_bar_title)).setText("Swag Lord");
 
         String temp[] = new String[]{"hello fellow gamer j;;as ad d a s s a s as d as d", "sad f asd fa sdf asdf ads fa s fa ds",
                 "fa dsf asd fad u u u ", "u  tyu", " nt ynu t yun ty", "untynut;lkynutynut yun ty un ty ",

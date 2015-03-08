@@ -23,8 +23,8 @@ public class EventListFragment extends ListFragment {
         setListAdapter(new EventListAdapter(getActivity(), temp));
 
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
-        ImageButton createMessage = (ImageButton) v.findViewById(R.id.create_event);
-        createMessage.setOnClickListener(new View.OnClickListener() {
+        ImageButton createEvent = (ImageButton) v.findViewById(R.id.create_event);
+        createEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), EditEventActivity.class);

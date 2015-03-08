@@ -23,8 +23,7 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:background="@color/gc_purple"
-        android:paddingLeft="8dp"
-        android:paddingBottom="8dp"
+        android:padding="8dp"
         android:orientation="horizontal">
 
         <EditText
@@ -32,14 +31,13 @@
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:textColor="@color/white"
             android:hint="@string/enter_message"
             android:textColorHint="@color/white" />
 
         <ImageButton
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:paddingRight="8dp"
-            android:paddingTop="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:onClick="sendMessage"
             android:src="@drawable/ic_action_send"
             android:background="@null" />

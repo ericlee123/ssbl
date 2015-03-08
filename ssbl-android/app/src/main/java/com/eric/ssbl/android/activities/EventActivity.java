@@ -26,7 +26,7 @@ public class EventActivity extends Activity {
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-        ((TextView) abv.findViewById(R.id.lower_level_title)).setText(getString(R.string.event));
+        ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.event));
 
         setContentView(R.layout.fragment_ep);
 
