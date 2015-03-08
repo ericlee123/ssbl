@@ -4,12 +4,16 @@ import java.util.List;
 
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.hunnymustard.ssbl.model.Conversation;
 import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.MessageRepository;
 
+@Repository("messageRepository")
+@Transactional(propagation = Propagation.REQUIRED, readOnly=false)
 public class MessageRepositoryHibernate extends HibernateRepository<Message, Integer>
 		implements MessageRepository {
 

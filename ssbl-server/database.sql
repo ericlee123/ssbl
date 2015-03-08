@@ -96,7 +96,7 @@ CREATE TABLE `messages` (
 );
 
 DROP TABLE IF EXISTS `conversation_users`;
-CREATE TABLE `recipients` (
+CREATE TABLE `conversation_users` (
 	`user_id` INT NOT NULL,
 	`conversation_id` INT NOT NULL,
 	

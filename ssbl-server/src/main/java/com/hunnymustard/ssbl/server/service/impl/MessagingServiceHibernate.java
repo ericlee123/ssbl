@@ -3,6 +3,9 @@ package com.hunnymustard.ssbl.server.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.User;
@@ -11,6 +14,8 @@ import com.hunnymustard.ssbl.server.repository.MessageRepository;
 import com.hunnymustard.ssbl.server.repository.UserRepository;
 import com.hunnymustard.ssbl.server.service.MessagingService;
 
+@Service("messagingService")
+@Transactional(propagation = Propagation.REQUIRED, readOnly=false)
 public class MessagingServiceHibernate implements MessagingService {
 
 	@Autowired

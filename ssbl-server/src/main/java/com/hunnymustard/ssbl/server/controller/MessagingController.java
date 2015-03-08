@@ -16,6 +16,8 @@ import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.service.AuthService;
 import com.hunnymustard.ssbl.server.service.MessagingService;
 
+// ssbl-server/ssbl/URL
+
 @Controller
 @RequestMapping("/ssbl")
 public class MessagingController {
