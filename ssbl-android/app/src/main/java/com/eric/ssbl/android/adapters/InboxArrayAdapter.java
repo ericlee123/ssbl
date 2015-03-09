@@ -8,16 +8,22 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.managers.CUEManager;
+import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Message;
+import com.eric.ssbl.android.pojos.User;
 
-public class InboxArrayAdapter extends ArrayAdapter<String> {
+import java.util.Iterator;
+
+public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
 
     private final Context _context;
-    private final String[] _values;
+    private final Conversation[] _conversations;
 
-    public InboxArrayAdapter(Context context, String[] values) {
-        super(context, R.layout.list_inbox, values);
+    public InboxArrayAdapter(Context context, Conversation[] conversations) {
+        super(context, R.layout.list_inbox, conversations);
         _context = context;
-        _values = values;
+        _conversations = conversations;
     }
 
     @Override
@@ -25,11 +31,30 @@ public class InboxArrayAdapter extends ArrayAdapter<String> {
         LayoutInflater inflater = (LayoutInflater) _context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View rowView = inflater.inflate(R.layout.list_inbox, parent, false);
-        TextView name = (TextView) rowView.findViewById(R.id.list_inbox_name);
-        TextView preview = (TextView) rowView.findViewById(R.id.list_inbox_preview);
-        name.setText(_values[position]);
+        Conversation c = _conversations[position];
+        View singleConversation = inflater.inflate(R.layout.list_inbox, parent, false);
+        TextView title = (TextView) singleConversation.findViewById(R.id.list_inbox_title);
+        TextView preview = (TextView) singleConversation.findViewById(R.id.list_inbox_preview);
 
-        return rowView;
+        StringBuilder titleText = new StringBuilder();
+        Iterator<User> i = c.getRecipients().iterator();
+        while (i.hasNext()) {
+            String temp = i.next().getUsername();
+            if (!temp.equals(CUEManager.getCurUser()))
+                titleText.append(temp + ", ");
+        }
+        if (titleText.length() >= 2)
+            titleText.delete(titleText.length() - 2, titleText.length());
+
+        title.setText(titleText.toString());
+
+        StringBuilder previewText = new StringBuilder();
+        Message last = c.getMessages().get(c.getMessages().size() - 1);
+        if (last.getSender().getUsername().equals(CUEManager.getCurUser()))
+            previewText.append("You: ");
+        previewText.append(last.getBody());
+        preview.setText(previewText.toString());
+
+        return singleConversation;
     }
 }

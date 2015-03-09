@@ -28,13 +28,13 @@ public class ProfileActivity extends Activity {
 
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.profile));
 
-        setContentView(R.layout.fragment_ep);
+        setContentView(R.layout.fragment_eu);
 
         // Fill in the details
-        ((ImageView) findViewById(R.id.ep_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
-        ((ImageView) findViewById(R.id.ep_icon)).setImageResource(R.drawable.honey);
-        ((TextView) findViewById(R.id.ep_title)).setText("timeline62x");
-        ((TextView) findViewById(R.id.ep_subtitle)).setText("Competitive");
+        ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
+        ((TextView) findViewById(R.id.eu_title)).setText("timeline62x");
+        ((TextView) findViewById(R.id.eu_subtitle)).setText("Competitive");
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
@@ -42,17 +42,17 @@ public class ProfileActivity extends Activity {
         games.append("\t\t\t\tProject M.\n");
         games.append("\t\t\t\tSmash 64\n");
         games.append("\t\t\t\tSmash 4");
-        ((TextView) findViewById(R.id.ep_games)).setText(games.toString());
+        ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.bio) + "\n\t\t\t\t");
         bio.append("I'm down to smash whenever and whichever corner of a dark alleyway. ;)");
-        ((TextView) findViewById(R.id.ep_description)).setText(bio.toString());
+        ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         // Check to see if it's the current user's profile
         if (true) {
 
-            ImageButton lb = (ImageButton) findViewById(R.id.ep_button_left);
+            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(R.drawable.green_plus_button);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -60,9 +60,9 @@ public class ProfileActivity extends Activity {
                     Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.add_friend));
+            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.add_friend));
 
-            ImageButton mb = (ImageButton) findViewById(R.id.ep_button_middle);
+            ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
             mb.setImageResource(R.drawable.blue_chat_button);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -70,9 +70,9 @@ public class ProfileActivity extends Activity {
                     // Create new message
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_middle_caption)).setText(getString(R.string.message));
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
 
-            ImageButton rb = (ImageButton) findViewById(R.id.ep_button_right);
+            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
             rb.setImageResource(R.drawable.orange_search_button);
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -80,7 +80,7 @@ public class ProfileActivity extends Activity {
                     // Create new message
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_right_caption)).setText(getString(R.string.view_friends));
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
 
         }
         else {

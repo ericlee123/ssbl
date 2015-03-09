@@ -110,7 +110,7 @@ ADDED from AndroidManifest.xml:44:9
 		ADDED from AndroidManifest.xml:46:13
 	android:name
 		ADDED from AndroidManifest.xml:45:13
-activity#com.eric.ssbl.android.activities.MessageActivity
+activity#com.eric.ssbl.android.activities.ConversationActivity
 ADDED from AndroidManifest.xml:47:9
 	android:theme
 		ADDED from AndroidManifest.xml:49:13

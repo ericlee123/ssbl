@@ -45,7 +45,7 @@
             android:name=".android.activities.EditEventActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
-            android:name=".android.activities.MessageActivity"
+            android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
             android:name=".android.activities.NewMessageActivity"

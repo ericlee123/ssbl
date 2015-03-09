@@ -28,13 +28,13 @@ public class EventActivity extends Activity {
 
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.event));
 
-        setContentView(R.layout.fragment_ep);
+        setContentView(R.layout.fragment_eu);
 
         // Fill in the deets
-        ((ImageView) findViewById(R.id.ep_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
-        ((ImageView) findViewById(R.id.ep_icon)).setImageResource(R.drawable.red_explosion);
-        ((TextView) findViewById(R.id.ep_title)).setText("Smashfest 2015");
-        ((TextView) findViewById(R.id.ep_subtitle)).setText(getString(R.string.hosted_by) + " m2k");
+        ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.red_explosion);
+        ((TextView) findViewById(R.id.eu_title)).setText("Smashfest 2015");
+        ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " m2k");
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
@@ -42,7 +42,7 @@ public class EventActivity extends Activity {
         games.append("\t\t\t\tProject M.\n");
         games.append("\t\t\t\tSmash 64\n");
         games.append("\t\t\t\tSmash 4");
-        ((TextView) findViewById(R.id.ep_games)).setText(games.toString());
+        ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         TextView time = ((TextView) findViewById(R.id.event_time));
         time.setVisibility(View.VISIBLE);
@@ -51,11 +51,11 @@ public class EventActivity extends Activity {
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.description) + "\n\t\t\t\t");
         bio.append("Don't even knock. Just fucking come in. ;)");
-        ((TextView) findViewById(R.id.ep_description)).setText(bio.toString());
+        ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         if (true) {
 
-            ImageButton lb = (ImageButton) findViewById(R.id.ep_button_left);
+            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(R.drawable.green_attend_button);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -63,9 +63,9 @@ public class EventActivity extends Activity {
                     Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_left_caption)).setText(getString(R.string.attend_event));
+            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.attend_event));
 
-            ImageButton mb = (ImageButton) findViewById(R.id.ep_button_middle);
+            ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
             mb.setImageResource(R.drawable.blue_chat_button);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -73,17 +73,17 @@ public class EventActivity extends Activity {
                     // Create new message
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_middle_caption)).setText(getString(R.string.message_host));
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
 
-            ImageButton rb = (ImageButton) findViewById(R.id.ep_button_right);
-            rb.setImageResource(R.drawable.orange_search_button);
+            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+            rb.setImageResource(R.drawable.orange_gps_button);
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Create new message
+                    // Open up map
                 }
             });
-            ((TextView) findViewById(R.id.ep_button_right_caption)).setText(getString(R.string.whos_going));
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.show_on_map);
         }
         else {
 

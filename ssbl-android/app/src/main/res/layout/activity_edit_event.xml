@@ -5,49 +5,128 @@
     android:layout_height="match_parent"
     android:background="@color/less_white">
 
-    <LinearLayout
-        android:id="@+id/edit_event_details"
-        android:layout_height="wrap_content"
+    <ScrollView
         android:layout_width="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/edit_event_event_title"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/edit_event_details"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:hint="@string/event_title" />
-
-        <RelativeLayout
-            android:id="@+id/edit_event_location"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/edit_event_location_title"
+            <EditText
+                android:id="@+id/edit_event_event_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/event_location"
-                android:textSize="18sp"/>
+                android:layout_margin="8dp"
+                android:hint="@string/event_title" />
 
-            <ImageButton
-                android:id="@+id/edit_event_location_button"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_below="@id/edit_event_location_title"
-                android:onClick="setLocationMap" />
+            <RelativeLayout
+                android:id="@+id/edit_event_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/edit_event_location_status"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:padding="16dp"
-                android:layout_alignParentRight="true"/>
+                <TextView
+                    android:id="@+id/edit_event_location_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/event_location"
+                    android:textSize="22sp" />
 
-        </RelativeLayout>
+                <ImageButton
+                    android:id="@+id/edit_event_location_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_below="@id/edit_event_location_title"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/blue_pointer_button"
+                    android:background="@null"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:scaleType="centerInside"
+                    android:onClick="setLocationMap" />
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/edit_event_location_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/edit_event_location_button"
+                    android:layout_toEndOf="@id/edit_event_location_button"
+                    android:textSize="18sp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/edit_event_games_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="22dp"
+                    android:text="@string/games" />
+
+                <CheckBox
+                    android:id="@+id/edit_event_games_ssb64"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/ssb64" />
+
+                <CheckBox
+                    android:id="@+id/edit_event_games_melee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/melee" />
+
+                <CheckBox
+                    android:id="@+id/edit_event_games_brawl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/brawl" />
+
+                <CheckBox
+                    android:id="@+id/edit_event_games_pm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pm" />
+
+                <CheckBox
+                    android:id="@+id/edit_event_games_smash4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/smash4" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:textSize="22sp"
+                     android:text="@string/time" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/other"
+                android:textSize="22sp"
+                android:padding="16dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <Button
         android:id="@+id/edit_event_save_button"
@@ -57,7 +136,7 @@
         android:text="@string/save"
         android:textColor="@color/white"
         android:onClick="saveEvent"
-        android:background="@color/gc_purple"/>
+        android:background="@color/gc_purple" />
 
 
 </RelativeLayout>

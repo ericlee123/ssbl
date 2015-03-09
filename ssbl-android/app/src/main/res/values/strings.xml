@@ -50,12 +50,15 @@
     <string name="message_host">Message host</string>
     <string name="view_attendance">View attendance</string>
     <string name="whos_going">Who\'s going</string>
+    <string name="show_on_map">Show on map</string>
 
     <!-- EditEventActivity -->
     <string name="create_event">Create Event</string>
     <string name="edit_event">Edit Event</string>
     <string name="event_title">Event title</string>
     <string name="event_location">Event location</string>
+    <string name="location">Location</string>
+    <string name="other">Other</string>
     <string name="save">Save</string>
 
     <!-- MessageActivity -->
@@ -67,6 +70,13 @@
     <string name="privacy">Privacy</string>
     <string name="set_privacy">Set privacy</string>
     <string name="set_privacy_summary">Set visibility to other users</string>
+
+    <!-- Games -->
+    <string name="ssb64">Smash 64</string>
+    <string name="melee">Melee</string>
+    <string name="brawl">Brawl</string>
+    <string name="pm">Project M.</string>
+    <string name="smash4">Smash 4</string>
 
     <!-- Miscellaneous -->
     <string name="error_creating_directory">Error creating directory to save login info</string>

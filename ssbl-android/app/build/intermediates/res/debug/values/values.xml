@@ -272,6 +272,7 @@
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     <string name="attend_event">Attend event</string>
     <string name="bio">Bio</string>
+    <string name="brawl">Brawl</string>
     <string name="casual">Casual</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/common_strings.xml -->
     <eat-comment/>
@@ -334,7 +335,9 @@
     <string name="event_title">Event title</string>
     <string name="games">Games</string>
     <string name="hosted_by">Hosted by</string>
+    <string name="location">Location</string>
     <string name="login">Login</string>
+    <string name="melee">Melee</string>
     <string name="message">Message</string>
     <string name="message_host">Message host</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values/values.xml -->
@@ -342,7 +345,9 @@
     <string name="nothing"/>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="other">Other</string>
     <string name="password_hint">Password</string>
+    <string name="pm">Project M.</string>
     <string name="privacy">Privacy</string>
     <string name="profile">Profile</string>
     <string name="register">Register</string>
@@ -350,6 +355,9 @@
     <string name="save">Save</string>
     <string name="set_privacy">Set privacy</string>
     <string name="set_privacy_summary">Set visibility to other users</string>
+    <string name="show_on_map">Show on map</string>
+    <string name="smash4">Smash 4</string>
+    <string name="ssb64">Smash 64</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/admob_strings.xml -->
     <eat-comment/>
     <string name="store_picture_message">"Allow Ad to store image in Picture gallery?"</string>
