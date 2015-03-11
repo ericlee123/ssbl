@@ -28,11 +28,14 @@
     <string name="password_hint">Password</string>
     <string name="log_in">Log in</string>
     <string name="remember_me">Remember Me</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="chill_out">Just chill out for a bit</string>
     <string name="register">Register</string>
     <string name="enter_email">Enter email:</string>
     <string name="enter_username">Enter username:</string>
     <string name="enter_password">Enter password:</string>
     <string name="confirm_password">Confirm password:</string>
+    <string name="registering">Registering...</string>
 
     <!-- ProfileActivity -->
     <string name="profile">Profile</string>
@@ -84,7 +87,7 @@
 
     <!-- Miscellaneous -->
     <string name="sww_error">Something went wrong :(</string>
-    <string name="remember_me_error">Error storing login info</string>
+    <string name="remember_me_error">Error saving login info</string>
     <string name="log_out">Log out</string>
 
 </resources>

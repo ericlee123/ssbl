@@ -201,13 +201,6 @@
     <dimen name="abc_text_size_subtitle_material_toolbar">16dp</dimen>
     <dimen name="abc_text_size_title_material">20sp</dimen>
     <dimen name="abc_text_size_title_material_toolbar">20dp</dimen>
-    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/dimens.xml -->
-    <eat-comment/>
-    <dimen name="action_bar_padding">16dp</dimen>
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
-    <eat-comment/>
     <item name="dialog_fixed_height_major" type="dimen">80%</item>
     <item name="dialog_fixed_height_minor" type="dimen">100%</item>
     <item name="dialog_fixed_width_major" type="dimen">320dp</item>
@@ -272,6 +265,7 @@
     <string name="bio">Bio</string>
     <string name="brawl">Brawl</string>
     <string name="casual">Casual</string>
+    <string name="chill_out">Just chill out for a bit</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.5.87/res/values/common_strings.xml -->
     <eat-comment/>
     <string name="common_android_wear_notification_needs_update_text">An application requires an update to the Android Wear app.</string>
@@ -335,6 +329,7 @@
     <string name="location">Location</string>
     <string name="log_in">Log in</string>
     <string name="log_out">Log out</string>
+    <string name="logging_in">Logging in...</string>
     <string name="map">Map</string>
     <string name="melee">Melee</string>
     <string name="message">Message</string>
@@ -350,8 +345,9 @@
     <string name="privacy">Privacy</string>
     <string name="profile">Profile</string>
     <string name="register">Register</string>
+    <string name="registering">Registering...</string>
     <string name="remember_me">Remember Me</string>
-    <string name="remember_me_error">Error storing login info</string>
+    <string name="remember_me_error">Error saving login info</string>
     <string name="save">Save</string>
     <string name="set_privacy">Set privacy</string>
     <string name="set_privacy_summary">Set visibility to other users</string>

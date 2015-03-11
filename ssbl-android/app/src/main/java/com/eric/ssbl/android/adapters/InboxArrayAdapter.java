@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.managers.GeneralManager;
+import com.eric.ssbl.android.managers.Manager;
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
@@ -40,7 +40,7 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         Iterator<User> i = c.getRecipients().iterator();
         while (i.hasNext()) {
             String temp = i.next().getUsername();
-            if (!temp.equals(GeneralManager.getCurUser()))
+            if (!temp.equals(Manager.getCurUser().getUsername()))
                 titleText.append(temp + ", ");
         }
         if (titleText.length() >= 2)
@@ -50,7 +50,7 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
 
         StringBuilder previewText = new StringBuilder();
         Message last = c.getMessages().get(c.getMessages().size() - 1);
-        if (last.getSender().getUsername().equals(GeneralManager.getCurUser()))
+        if (last.getSender().getUsername().equals(Manager.getCurUser().getUsername()))
             previewText.append("You: ");
         previewText.append(last.getBody());
         preview.setText(previewText.toString());

@@ -11,7 +11,6 @@ import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.ProfileFragment;
-import com.eric.ssbl.android.fragments.SettingsFragment;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
@@ -30,7 +29,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
         MaterialSection profile = newSection(getString(R.string.profile), new ProfileFragment());
         // divisor
-        MaterialSection settings = newSection(getString(R.string.settings), new SettingsFragment());
+//        MaterialSection settings = newSection(getString(R.string.settings), new SettingsFragment());
 
         this.addSection(map);
         this.addSection(inbox);
@@ -39,7 +38,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         this.addDivisor();
 
-        this.addSection(settings);
+//        this.addSection(settings);
     }
 
     @Override
@@ -47,6 +46,9 @@ public class MainActivity extends MaterialNavigationDrawer {
         int id = item.getItemId();
         Intent intent;
         switch (id) {
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
             case R.id.action_log_out:
                 // Clean ModelManager data
                 intent = new Intent(this, LoginActivity.class);

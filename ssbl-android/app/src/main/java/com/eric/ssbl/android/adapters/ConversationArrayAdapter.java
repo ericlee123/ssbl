@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.managers.GeneralManager;
+import com.eric.ssbl.android.managers.Manager;
 import com.eric.ssbl.android.pojos.Message;
 
 public class ConversationArrayAdapter extends ArrayAdapter<Message> {
@@ -45,7 +45,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
         TextView sender = (TextView) messageView.findViewById(R.id.message_sender);
         sender.setText(m.getSender().getUsername());
 
-        if (m.getSender().equals(GeneralManager.getCurUser())) {
+        if (m.getSender().getUsername().equals(Manager.getCurUser().getUsername())) {
             square.setImageResource(R.drawable.purple_rounded_square);
             squareLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
