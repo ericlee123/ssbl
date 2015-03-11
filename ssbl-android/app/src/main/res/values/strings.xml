@@ -76,7 +76,10 @@
     <!-- SettingsActivity -->
     <string name="receive_alerts">Receive alerts</string>
     <string name="private_location">Keep location private</string>
-    <string name="map_radius">Set map radius</string>
+    <string name="map_radius">Set map radius (miles)</string>
+    <string name="error_loading_settings">Error loading preferences</string>
+    <string name="error_saving_settings">Error saving preferences</string>
+    <string name="saved_settings">Settings saved</string>
 
     <!-- Games -->
     <string name="ssb64">Smash 64</string>

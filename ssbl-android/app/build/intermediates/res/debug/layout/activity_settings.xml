@@ -22,7 +22,7 @@
             android:textSize="20sp" />
 
         <CheckBox
-            android:id="@+id/settings_notifications_checkbox"
+            android:id="@+id/settings_notifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

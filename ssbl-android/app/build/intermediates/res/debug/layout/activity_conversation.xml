@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:textColor="@color/white"
-            android:hint="@string/enter_message"
+            android:hint="@string/talk_trash"
             android:textColorHint="@color/white" />
 
         <ImageButton
