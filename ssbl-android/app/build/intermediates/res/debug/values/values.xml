@@ -324,6 +324,7 @@
     <string name="enter_message">Enter message</string>
     <string name="enter_password">Enter password:</string>
     <string name="enter_username">Enter username:</string>
+    <string name="error_loading_profile">Error displaying profile :(</string>
     <string name="error_loading_settings">Error loading preferences</string>
     <string name="error_saving_settings">Error saving preferences</string>
     <string name="event">Event</string>

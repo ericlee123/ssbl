@@ -389,8 +389,8 @@ public final class R {
 		public static final int abc_textfield_search_default_mtrl_alpha = 0x7f020031;
 		public static final int abc_textfield_search_material = 0x7f020032;
 		public static final int black_gradient = 0x7f020034;
-		public static final int ic_arrow_drop_down_white_24dp = 0x7f020059;
-		public static final int ic_arrow_drop_up_white_24dp = 0x7f02005a;
+		public static final int ic_arrow_drop_down_white_24dp = 0x7f02005b;
+		public static final int ic_arrow_drop_up_white_24dp = 0x7f02005c;
 	}
 	public static final class id {
 		public static final int action_bar = 0x7f0b0045;
@@ -540,7 +540,7 @@ public final class R {
 		public static final int abc_shareactionprovider_share_with = 0x7f0d000d;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0d000e;
 		public static final int abc_toolbar_collapse_description = 0x7f0d000f;
-		public static final int nothing = 0x7f0d0053;
+		public static final int nothing = 0x7f0d0054;
 	}
 	public static final class style {
 		public static final int Base_TextAppearance_AppCompat = 0x7f0e0002;

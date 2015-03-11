@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.Manager;
-import com.eric.ssbl.android.pojos.User;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -66,9 +65,7 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        User u = new User();
-        u.setUsername("current user");
-        Manager.setCurUser(u);
+        Manager.init();
 
         startActivity(new Intent(this, MainActivity.class));
         finish();
@@ -148,7 +145,6 @@ public class LoginActivity extends Activity {
     private void goToMain() {
 
         // set the current user in the general manager
-
         if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
             rememberMe();
 

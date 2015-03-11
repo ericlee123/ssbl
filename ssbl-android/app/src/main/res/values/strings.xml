@@ -46,6 +46,7 @@
     <string name="add_friend">Add friend</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
+    <string name="error_loading_profile">Error displaying profile :(</string>
 
     <!-- EventActivity -->
     <string name="event">Event</string>

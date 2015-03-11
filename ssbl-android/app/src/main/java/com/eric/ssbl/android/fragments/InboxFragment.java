@@ -22,7 +22,7 @@ public class InboxFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        List<Conversation> conversations = Manager.getConversations();
+        List<Conversation> conversations = Manager.getAllConversations();
         Conversation[] arr = new Conversation[conversations.size()];
         arr = conversations.toArray(arr);
 

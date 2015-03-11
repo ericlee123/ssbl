@@ -11,10 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.User;
 
 public class ProfileActivity extends Activity {
 
     private final Context _context = this;
+    private User _user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,27 +34,51 @@ public class ProfileActivity extends Activity {
 
         setContentView(R.layout.fragment_eu);
 
+        Integer id;
+        try {
+            id = getIntent().getExtras().getInt("user_id");
+        } catch (NullPointerException e) {
+            Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        _user = Manager.getUser(id);
+
         // Fill in the details
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
-        ((TextView) findViewById(R.id.eu_title)).setText("timeline62x");
-        ((TextView) findViewById(R.id.eu_subtitle)).setText("Competitive");
+        ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
+        ((TextView) findViewById(R.id.eu_subtitle)).setText("Smasher");
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        games.append("\t\t\t\tMelee\n");
-        games.append("\t\t\t\tProject M.\n");
-        games.append("\t\t\t\tSmash 64\n");
-        games.append("\t\t\t\tSmash 4");
+        for (Game g: _user.getGames()) {
+            games.append("\t\t\t\t");
+            if (g == Game.SSB64)
+                games.append("Smash 64");
+            else if (g == Game.MELEE)
+                games.append("Melee");
+            else if (g == Game.BRAWL)
+                games.append("Brawl");
+            else if (g == Game.PM)
+                games.append("Project M.");
+            else if (g == Game.SMASH4)
+                games.append("Smash 4");
+            games.append("\n");
+        }
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.bio) + "\n\t\t\t\t");
-        bio.append("I'm down to smash whenever and whichever corner of a dark alleyway. ;)");
+        bio.append(_user.getBlurb());
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         // Check to see if it's the current user's profile
-        if (true) {
+        if (_user.equals(Manager.getCurUser())) {
+
+
+
+        }
+        else {
 
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(R.drawable.green_plus_button);
@@ -81,10 +109,6 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
-
-        }
-        else {
-
         }
     }
 

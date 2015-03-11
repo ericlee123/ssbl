@@ -38,7 +38,7 @@ public class ConversationActivity extends ListActivity {
         abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
         Bundle b = getIntent().getExtras();
-        Conversation c = Manager.getConversations().get(b.getInt("index"));
+        Conversation c = Manager.getAllConversations().get(b.getInt("index"));
 
         StringBuilder title = new StringBuilder();
         Iterator<User> iu = c.getRecipients().iterator();
