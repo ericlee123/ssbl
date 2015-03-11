@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="visibility_chocies">
-        <item>Show exact location</item>
-        <item>Don\'t show exact location</item>
+    <string-array name="map_radii_array">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+        <item>Unlimited</item>
     </string-array>
 
 </resources>

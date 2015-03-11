@@ -51,6 +51,8 @@ public class MainActivity extends MaterialNavigationDrawer {
                 break;
             case R.id.action_log_out:
                 // Clean ModelManager data
+                ChartFragment.reset();
+
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();

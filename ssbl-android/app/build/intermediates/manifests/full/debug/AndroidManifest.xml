@@ -61,6 +61,9 @@
         <activity
             android:name="com.eric.ssbl.android.activities.NewConversationActivity"
             android:theme="@style/LowerLevelTheme" />
+        <activity
+            android:name="com.eric.ssbl.android.activities.SettingsActivity"
+            android:theme="@style/LowerLevelTheme" />
     </application>
 
 </manifest>

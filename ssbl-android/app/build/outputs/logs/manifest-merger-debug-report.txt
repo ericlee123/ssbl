@@ -122,29 +122,35 @@ ADDED from AndroidManifest.xml:50:9
 		ADDED from AndroidManifest.xml:52:13
 	android:name
 		ADDED from AndroidManifest.xml:51:13
+activity#com.eric.ssbl.android.activities.SettingsActivity
+ADDED from AndroidManifest.xml:53:9
+	android:theme
+		ADDED from AndroidManifest.xml:55:13
+	android:name
+		ADDED from AndroidManifest.xml:54:13
 uses-permission#android.permission.INTERNET
-ADDED from AndroidManifest.xml:56:5
-	android:name
-		ADDED from AndroidManifest.xml:56:22
-uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from AndroidManifest.xml:57:5
-	android:name
-		ADDED from AndroidManifest.xml:57:22
-uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from AndroidManifest.xml:58:5
-	android:name
-		ADDED from AndroidManifest.xml:58:22
-uses-permission#android.permission.ACCESS_COARSE_LOCATION
 ADDED from AndroidManifest.xml:59:5
 	android:name
 		ADDED from AndroidManifest.xml:59:22
-uses-permission#android.permission.ACCESS_FINE_LOCATION
+uses-permission#android.permission.ACCESS_NETWORK_STATE
 ADDED from AndroidManifest.xml:60:5
 	android:name
 		ADDED from AndroidManifest.xml:60:22
-uses-feature#0x00020000
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from AndroidManifest.xml:61:5
+	android:name
+		ADDED from AndroidManifest.xml:61:22
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
 ADDED from AndroidManifest.xml:62:5
+	android:name
+		ADDED from AndroidManifest.xml:62:22
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from AndroidManifest.xml:63:5
+	android:name
+		ADDED from AndroidManifest.xml:63:22
+uses-feature#0x00020000
+ADDED from AndroidManifest.xml:65:5
 	android:required
-		ADDED from AndroidManifest.xml:64:9
+		ADDED from AndroidManifest.xml:67:9
 	android:glEsVersion
-		ADDED from AndroidManifest.xml:63:9
+		ADDED from AndroidManifest.xml:66:9

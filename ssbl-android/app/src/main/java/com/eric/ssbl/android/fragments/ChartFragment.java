@@ -33,7 +33,6 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private GoogleApiClient _googleApiClient;
     private LatLng _curLoc;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (_view != null) {
@@ -129,5 +128,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     public void refresh(View view) {
         Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+    }
+
+    public static void reset() {
+        _map.clear();
+        _init = false;
     }
 }

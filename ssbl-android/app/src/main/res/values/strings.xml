@@ -73,10 +73,10 @@
     <string name="enter_message">Enter message</string>
     <string name="talk_trash">Talk trash</string>
 
-    <!-- Settings -->
-    <string name="privacy">Privacy</string>
-    <string name="set_privacy">Set privacy</string>
-    <string name="set_privacy_summary">Set visibility to other users</string>
+    <!-- SettingsActivity -->
+    <string name="receive_alerts">Receive alerts</string>
+    <string name="private_location">Keep location private</string>
+    <string name="map_radius">Set map radius</string>
 
     <!-- Games -->
     <string name="ssb64">Smash 64</string>
