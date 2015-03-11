@@ -28,7 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:textColor="@color/gc_gray"
+        android:textColor="@color/subtitle_gray"
         android:textSize="10sp"
         android:visibility="gone"/>
 

@@ -27,7 +27,7 @@
             android:imeOptions="actionNext"
             android:singleLine="true"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/gc_gray" />
 
         <EditText
             android:layout_width="match_parent"
@@ -35,12 +35,12 @@
             android:hint="@string/password_hint"
             android:inputType="textPassword"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/gc_gray" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login"
+            android:text="@string/log_in"
             android:textColor="@color/white"
             android:onClick="loginAccount" />
 

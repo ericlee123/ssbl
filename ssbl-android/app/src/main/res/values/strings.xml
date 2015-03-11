@@ -18,11 +18,15 @@
 
     <!-- Titles -->
     <string name="app_name">Smash Bros. Locator</string>
+    <string name="map">Map</string>
+    <string name="inbox">Inbox</string>
+    <string name="events">Events</string>
+    <string name="settings">Settings</string>
 
     <!-- Login screen -->
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
-    <string name="login">Login</string>
+    <string name="log_in">Log in</string>
     <string name="remember_me">Remember Me</string>
     <string name="register">Register</string>
     <string name="enter_email">Enter email:</string>
@@ -79,10 +83,8 @@
     <string name="smash4">Smash 4</string>
 
     <!-- Miscellaneous -->
-    <string name="error_creating_directory">Error creating directory to save login info</string>
+    <string name="sww_error">Something went wrong :(</string>
+    <string name="remember_me_error">Error storing login info</string>
+    <string name="log_out">Log out</string>
 
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_websearch">Web search</string>
-    <string name="app_not_available">Sorry, there\'s no web browser available</string>
 </resources>

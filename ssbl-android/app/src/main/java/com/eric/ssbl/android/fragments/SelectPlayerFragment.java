@@ -13,6 +13,7 @@ public class SelectPlayerFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // friends and nearby players
         return inflater.inflate(R.layout.fragment_select_player, container, false);
     }
 }

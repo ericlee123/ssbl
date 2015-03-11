@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.ConversationActivity;
 import com.eric.ssbl.android.adapters.InboxArrayAdapter;
-import com.eric.ssbl.android.managers.CUEManager;
+import com.eric.ssbl.android.managers.GeneralManager;
 import com.eric.ssbl.android.pojos.Conversation;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class InboxFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        List<Conversation> conversations = CUEManager.getConversations();
+        List<Conversation> conversations = GeneralManager.getConversations();
         Conversation[] arr = new Conversation[conversations.size()];
         arr = conversations.toArray(arr);
 

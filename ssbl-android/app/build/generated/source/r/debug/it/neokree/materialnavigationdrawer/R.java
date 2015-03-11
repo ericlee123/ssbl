@@ -521,7 +521,7 @@ public final class R {
 		public static final int layout_material_section_icon_large_ripple = 0x7f04002a;
 		public static final int layout_material_section_icon_ripple = 0x7f04002b;
 		public static final int layout_material_section_ripple = 0x7f04002c;
-		public static final int support_simple_spinner_dropdown_item = 0x7f040031;
+		public static final int support_simple_spinner_dropdown_item = 0x7f040032;
 	}
 	public static final class string {
 		public static final int abc_action_bar_home_description = 0x7f0e0000;
@@ -540,7 +540,7 @@ public final class R {
 		public static final int abc_shareactionprovider_share_with = 0x7f0e000d;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0e000e;
 		public static final int abc_toolbar_collapse_description = 0x7f0e000f;
-		public static final int nothing = 0x7f0e004f;
+		public static final int nothing = 0x7f0e004e;
 	}
 	public static final class style {
 		public static final int Base_TextAppearance_AppCompat = 0x7f0f0002;

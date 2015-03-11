@@ -59,7 +59,7 @@
             android:name="com.eric.ssbl.android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
-            android:name="com.eric.ssbl.android.activities.NewMessageActivity"
+            android:name="com.eric.ssbl.android.activities.NewConversationActivity"
             android:theme="@style/LowerLevelTheme" />
     </application>
 

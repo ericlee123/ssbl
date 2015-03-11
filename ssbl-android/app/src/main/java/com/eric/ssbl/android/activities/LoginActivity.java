@@ -9,40 +9,57 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.managers.GeneralManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class LoginActivity extends Activity {
 
-    final Activity _context = this;
+    private File _loginFile;
+    private JSONObject _loginObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        try {
-//            // Check for hashed login data
-//            File login = new File("/SSBL/");
-//            if (!login.exists())
-//                login.createNewFile();
-//        } catch (IOException e) {
-//            Toast.makeText(this, R.string.error_creating_directory, Toast.LENGTH_SHORT).show();
-//        }
+        _loginFile = new File(getFilesDir(), "file.mystery");
+
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_login);
+
+        // check for stored login info
+        if (_loginFile.exists()) {
+            try {
+                Scanner sc = new Scanner(_loginFile);
+                sc.useDelimiter("\\Z");
+                _loginObj = new JSONObject(sc.next());
+                ((EditText) findViewById(R.id.login_username)).setText(_loginObj.getString("username"));
+                ((EditText) findViewById(R.id.login_password)).setText(_loginObj.getString("password"));
+            } catch (Exception e) {
+                _loginFile.delete(); // The file may have issues, do not cause infinite loop of failure for users
+                e.printStackTrace();
+            }
+        }
     }
 
     public void loginAccount(View view) {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+
+        new HttpLogin().execute();
 
 //        NotificationCompat.Builder builder =
 //                new NotificationCompat.Builder(this)
@@ -61,11 +78,25 @@ public class LoginActivity extends Activity {
 //        notifMngr.notify(1, builder.build());
     }
 
+    private void rememberMe() {
+
+        try {
+            _loginObj.put("username", "hello");
+            _loginObj.put("password", "derp");
+            PrintWriter out = new PrintWriter(_loginFile);
+            out.print(_loginObj);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void promptRegister(View view) {
-        LayoutInflater li = LayoutInflater.from(_context);
+        LayoutInflater li = LayoutInflater.from(this);
         View registerPrompt = li.inflate(R.layout.prompt_register, null);
 
-        AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb
                 .setView(registerPrompt)
                 .setTitle("Register an account")
@@ -74,7 +105,7 @@ public class LoginActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(_context, "Registering...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Registering...", Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -88,25 +119,60 @@ public class LoginActivity extends Activity {
         adb.create().show();
     }
 
+    private void goToMain() {
+
+        if (((CheckBox) findViewById(R.id.login_password)).isChecked())
+            rememberMe();
+
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
+    private Activity getActivity() {
+        return this;
+    }
+
     private class HttpLogin extends AsyncTask<Void, Void, Void> {
 
-        private String _errorMessage = null;
+        private boolean _success;
 
         private void httpLogin() {
+
+            String url = GeneralManager.getServerUrl();
 
             try {
                 // Use HttpGet b/c HTTP specs
                 HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet("dummy url");
+                HttpGet request = new HttpGet(url);
 
                 HttpResponse response = client.execute(request);
 
+                // get status codes
+
             } catch (Exception e) {
-                _errorMessage = "Something went exceptionally wrong. :(";
+                Toast.makeText(getActivity(), getString(R.string.sww_error), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
         }
 
+
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            httpLogin();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (_success)
+                goToMain();
+            else {
+                // display error message
+            }
+
+        }
 
         private String bytesToHex(byte[] bytes) {
             char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -117,17 +183,6 @@ public class LoginActivity extends Activity {
                 hexChars[j * 2 + 1] = hexArray[v & 0x0F];
             }
             return new String(hexChars);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            httpLogin();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-
         }
     }
 
