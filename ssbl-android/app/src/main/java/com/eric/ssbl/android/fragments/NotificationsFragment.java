@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.ConversationActivity;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class NotificationsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        List<Conversation> conversations = Manager.getAllConversations();
+        List<Conversation> conversations = DataManager.getAllConversations();
         Conversation[] arr = new Conversation[conversations.size()];
         arr = conversations.toArray(arr);
 

@@ -13,16 +13,22 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EditEventActivity;
 import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.adapters.EventListAdapter;
+import com.eric.ssbl.android.managers.DataManager;
+
+import java.util.List;
 
 public class EventListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        String[] temp = new String[]{"one", "two", "three", "four", "six", "ten", "fuck", "what"};
-        setListAdapter(new EventListAdapter(getActivity(), temp));
-
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
+
+        ListView hosting = (ListView) v.findViewById(R.id.event_list);
+
+        hosting.setAdapter(new EventListAdapter(getActivity(), (List) DataManager.getAllEvents()));
+
+
         ImageButton createEvent = (ImageButton) v.findViewById(R.id.create_event);
         createEvent.setOnClickListener(new View.OnClickListener() {
             @Override

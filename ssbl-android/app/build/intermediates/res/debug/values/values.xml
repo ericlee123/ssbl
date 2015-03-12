@@ -354,6 +354,7 @@
     <string name="private_location">Keep location private</string>
     <string name="profile">Profile</string>
     <string name="receive_alerts">Receive alerts</string>
+    <string name="refreshing">Refreshing...</string>
     <string name="register">Register</string>
     <string name="registering">Registering...</string>
     <string name="remember_me">Remember Me</string>

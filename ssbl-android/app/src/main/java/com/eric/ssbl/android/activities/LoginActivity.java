@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -65,7 +65,7 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        Manager.init();
+        DataManager.init();
 
         startActivity(new Intent(this, MainActivity.class));
         finish();
@@ -162,7 +162,7 @@ public class LoginActivity extends Activity {
 
         private void httpLogin() {
 
-            String url = Manager.getServerUrl();
+            String url = DataManager.getServerUrl();
 
             try {
                 // Use HttpGet b/c HTTP specs
@@ -219,7 +219,7 @@ public class LoginActivity extends Activity {
         private boolean _success;
 
         private void httpRegister(JSONObject login) {
-            String url = Manager.getServerUrl();
+            String url = DataManager.getServerUrl();
 
             try {
                 // Use HttpGet b/c HTTP specs

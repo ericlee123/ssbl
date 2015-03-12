@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.activities.ProfileActivity;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.User;
 import com.google.android.gms.common.ConnectionResult;
@@ -144,7 +144,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         long now = System.currentTimeMillis();
 
-        for (User u: Manager.getAllUsers()) {
+        for (User u: DataManager.getAllUsers()) {
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Updated ";
@@ -161,13 +161,13 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                     .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
 
-            if (u.equals(Manager.getCurUser()))
+            if (u.equals(DataManager.getCurUser()))
                 marker.showInfoWindow();
 
             _id.put(marker, u.getUserId());
         }
 
-        for (Event e: Manager.getAllEvents()) {
+        for (Event e: DataManager.getAllEvents()) {
 
             Marker marker = _map.addMarker(new MarkerOptions()
                             .title(e.getTitle())
@@ -182,7 +182,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void refresh(View view) {
-        Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), getString(R.string.refreshing), Toast.LENGTH_SHORT).show();
     }
 
     public static void reset() {

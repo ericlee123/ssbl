@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 
@@ -23,7 +23,7 @@ public class ProfileFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_eu, container, false);
 
         // Fill in the details
-        User _user = Manager.getCurUser();
+        User _user = DataManager.getCurUser();
         if (_user == null) {
             Toast.makeText(getActivity(), getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
             return v;
@@ -49,6 +49,8 @@ public class ProfileFragment extends Fragment {
                 games.append("Smash 4");
             games.append("\n");
         }
+        if (games.length() != 0)
+            games.delete(games.length() - 1, games.length());
         ((TextView) v.findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();

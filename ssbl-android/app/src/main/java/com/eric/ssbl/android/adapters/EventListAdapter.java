@@ -8,16 +8,19 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.pojos.Event;
 
-public class EventListAdapter extends ArrayAdapter<String> {
+import java.util.List;
+
+public class EventListAdapter extends ArrayAdapter<Event> {
 
     private final Context _context;
-    private final String[] _values;
+    private final List<Event> _events;
 
-    public EventListAdapter(Context context, String[] values) {
-        super(context, R.layout.list_inbox, values);
+    public EventListAdapter(Context context, List<Event> events) {
+        super(context, R.layout.list_inbox, events);
         _context = context;
-        _values = values;
+        _events = events;
     }
 
     @Override
@@ -26,10 +29,11 @@ public class EventListAdapter extends ArrayAdapter<String> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View rowView = inflater.inflate(R.layout.list_event, parent, false);
-        TextView name = (TextView) rowView.findViewById(R.id.list_event_name);
+        TextView title = (TextView) rowView.findViewById(R.id.list_event_name);
         TextView preview = (TextView) rowView.findViewById(R.id.list_event_preview);
-        preview.setText("it will b fun");
-        name.setText(_values[position]);
+
+        title.setText(_events.get(position).getTitle());
+        preview.setText("Hosted by " + _events.get(position).getHost().getUsername());
 
         return rowView;
     }

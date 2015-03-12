@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
@@ -38,13 +38,13 @@ public class ConversationActivity extends ListActivity {
         abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
         Bundle b = getIntent().getExtras();
-        Conversation c = Manager.getAllConversations().get(b.getInt("index"));
+        Conversation c = DataManager.getAllConversations().get(b.getInt("index"));
 
         StringBuilder title = new StringBuilder();
         Iterator<User> iu = c.getRecipients().iterator();
         while (iu.hasNext()) {
             String recip = iu.next().getUsername();
-            if (!recip.equals(Manager.getCurUser().getUsername()))
+            if (!recip.equals(DataManager.getCurUser().getUsername()))
                 title.append(recip + ", ");
         }
         title.delete(title.length() - 2, title.length());

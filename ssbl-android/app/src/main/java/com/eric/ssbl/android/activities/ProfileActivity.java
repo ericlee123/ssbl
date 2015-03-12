@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.managers.Manager;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 
@@ -41,13 +41,24 @@ public class ProfileActivity extends Activity {
             Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
             return;
         }
-        _user = Manager.getUser(id);
+        _user = DataManager.getUser(id);
 
         // Fill in the details
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
-        ((TextView) findViewById(R.id.eu_subtitle)).setText("Smasher");
+
+        String lastLogin = "Logged in ";
+        long now = System.currentTimeMillis();
+        int elapsed = (int) ((now - _user.getLastLoginTime()) / 60000);
+        if (elapsed < 60)
+            lastLogin += elapsed + " minutes ago";
+        else if (elapsed < 1440)
+            lastLogin += (elapsed / 60) + " hours ago";
+        else
+            lastLogin += (elapsed / 1440) + " days ago";
+
+        ((TextView) findViewById(R.id.eu_subtitle)).setText(lastLogin);
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
@@ -65,6 +76,8 @@ public class ProfileActivity extends Activity {
                 games.append("Smash 4");
             games.append("\n");
         }
+        if (games.length() != 0)
+            games.delete(games.length() - 1, games.length());
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
@@ -73,7 +86,7 @@ public class ProfileActivity extends Activity {
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         // Check to see if it's the current user's profile
-        if (_user.equals(Manager.getCurUser())) {
+        if (_user.equals(DataManager.getCurUser())) {
 
 
 

@@ -93,5 +93,6 @@
     <string name="sww_error">Something went wrong :(</string>
     <string name="remember_me_error">Error saving login info</string>
     <string name="log_out">Log out</string>
+    <string name="refreshing">Refreshing...</string>
 
 </resources>
