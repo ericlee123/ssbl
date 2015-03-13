@@ -89,13 +89,13 @@ public class ProfileActivity extends Activity {
 
         StringBuilder attendingEvents = new StringBuilder();
         attendingEvents.append("Attending events\n");
-        for (Event e: _user.getEvents())
-            attendingEvents.append("\t\t\t\t" + e.getTitle() + "\n");
-
-        if (_user.getEvents().size() == 0)
-            attendingEvents.append("\t\t\t\tNot attending anything. Lame.");
-        else
+        if (_user.getEvents() == null)
+            attendingEvents.append("\t\t\t\tNot attending anything.");
+        else {
+            for (Event e : _user.getEvents())
+                attendingEvents.append("\t\t\t\t" + e.getTitle() + "\n");
             attendingEvents.delete(attendingEvents.length() - 1, attendingEvents.length());
+        }
         ((TextView) findViewById(R.id.event_attending_list)).setText(attendingEvents);
 
         // Check to see if it's the current user's profile

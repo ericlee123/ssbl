@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EditProfileActivity;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 
@@ -60,6 +61,16 @@ public class ProfileFragment extends Fragment {
         bio.append(_user.getBlurb());
         ((TextView) v.findViewById(R.id.eu_description)).setText(bio.toString());
 
+        StringBuilder attendingEvents = new StringBuilder();
+        attendingEvents.append("Attending events\n");
+        if (_user.getEvents() == null)
+            attendingEvents.append("\t\t\t\tNot attending anything.");
+        else {
+            for (Event e : _user.getEvents())
+                attendingEvents.append("\t\t\t\t" + e.getTitle() + "\n");
+            attendingEvents.delete(attendingEvents.length() - 1, attendingEvents.length());
+        }
+        ((TextView) v.findViewById(R.id.event_attending_list)).setText(attendingEvents);
 
         ImageButton lb = (ImageButton) v.findViewById(R.id.eu_button_left);
         lb.setImageResource(R.drawable.blue_pencil);

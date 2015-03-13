@@ -36,7 +36,7 @@ public class NotificationsFragment extends ListFragment {
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
         Intent i = new Intent(getActivity(), ConversationActivity.class);
-        i.putExtra("index", position);
+        i.putExtra("notif_id", _notifs.get(position).getNotificationId());
         startActivity(i);
     }
 }

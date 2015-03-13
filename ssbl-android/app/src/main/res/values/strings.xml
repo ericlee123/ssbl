@@ -47,6 +47,8 @@
     <string name="edit_profile">Edit profile</string>
     <string name="set_mood">Set mood</string>
     <string name="add_friend">Add friend</string>
+    <string name="friends">Friends</string>
+    <string name="nearby_users">Nearby users</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
     <string name="error_loading_profile">Error displaying profile :(</string>

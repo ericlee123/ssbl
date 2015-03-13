@@ -35,6 +35,7 @@ public class DataManager {
         User u1 = new User();
         u1.setUserId(1);
         u1.setUsername("test");
+        u1.setEmail("test@test.com");
         u1.setBlurb("I am a test account square up");
         Location l1 = new Location(11, 30.287714, -97.739243);
         u1.setLocation(l1);
@@ -186,14 +187,21 @@ public class DataManager {
     }
 
     public static List<Notification> getNotifications() {
-        return new LinkedList<Notification>();
+        return new ArrayList<Notification>();
     }
 
     public static void clearData() {
-        _users.clear();
-        _events.clear();
-        _conversations.clear();
-        _notifications.clear();
+        if (_users != null)
+            _users.clear();
+
+        if (_events != null)
+            _events.clear();
+
+        if (_conversations != null)
+            _conversations.clear();
+
+        if (_notifications != null)
+            _notifications.clear();
     }
 
     public static String getServerUrl() {

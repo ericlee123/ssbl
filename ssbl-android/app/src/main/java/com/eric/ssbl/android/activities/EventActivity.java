@@ -98,15 +98,13 @@ public class EventActivity extends Activity {
         // set attendance list
         StringBuilder attendance = new StringBuilder();
         attendance.append(getString(R.string.whos_going) + "\n");
-        if (_event.getUsers()
-        for (User u: _event.getUsers())
-            attendance.append("\t\t\t\t" + u.getUsername() + "\n");
-
-        if (_event.getUsers().size() == 0)
+        if (_event.getUsers() == null)
             attendance.append("\t\t\t\tNo one is going to this event");
-        else
+        else {
+            for (User u : _event.getUsers())
+                attendance.append("\t\t\t\t" + u.getUsername() + "\n");
             attendance.delete(attendance.length() - 1, attendance.length());
-
+        }
         ((TextView) findViewById(R.id.event_attending_list)).setText(attendance.toString());
 
         // Manage buttons

@@ -142,6 +142,7 @@ public class LoginActivity extends Activity {
         adb.create().show();
     }
 
+
     private void goToMain() {
 
         // set the current user in the general manager

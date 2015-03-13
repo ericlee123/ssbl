@@ -16,7 +16,7 @@ import com.eric.ssbl.android.adapters.EventListAdapter;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventListFragment extends ListFragment {
@@ -28,7 +28,7 @@ public class EventListFragment extends ListFragment {
 
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-        _allEvents = new LinkedList<Event>();
+        _allEvents = new ArrayList<Event>();
         List<Event> hosting = DataManager.getHostingEvents();
         List<Event> attending = DataManager.getAttendingEvents();
         List<Event> nearby = DataManager.getNearbyEvents();
@@ -65,5 +65,10 @@ public class EventListFragment extends ListFragment {
         b.putInt("event_id", _allEvents.get(position).getEventId());
         i.putExtras(b);
         startActivity(i);
+    }
+
+    public void reset() {
+        if (_allEvents != null)
+            _allEvents.clear();
     }
 }
