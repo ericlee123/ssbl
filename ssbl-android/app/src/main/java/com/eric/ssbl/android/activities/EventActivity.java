@@ -11,10 +11,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Game;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class EventActivity extends Activity {
 
     private final Context _context = this;
+    private Event _event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,33 +38,66 @@ public class EventActivity extends Activity {
 
         setContentView(R.layout.fragment_eu);
 
+        Integer id;
+        try {
+            id = getIntent().getExtras().getInt("event_id");
+        } catch (NullPointerException e) {
+            Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        _event = DataManager.getEvent(id);
+
         // Fill in the deets
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.red_explosion);
-        ((TextView) findViewById(R.id.eu_title)).setText("Smashfest 2015");
-        ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " m2k");
+        ((TextView) findViewById(R.id.eu_title)).setText(_event.getTitle());
+        ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " " + _event.getHost().getUsername());
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        games.append("\t\t\t\tMelee\n");
-        games.append("\t\t\t\tProject M.\n");
-        games.append("\t\t\t\tSmash 64\n");
-        games.append("\t\t\t\tSmash 4");
+        for (Game g: _event.getGames()) {
+            games.append("\t\t\t\t");
+            if (g == Game.SSB64)
+                games.append("Smash 64");
+            else if (g == Game.MELEE)
+                games.append("Melee");
+            else if (g == Game.BRAWL)
+                games.append("Brawl");
+            else if (g == Game.PM)
+                games.append("Project M.");
+            else if (g == Game.SMASH4)
+                games.append("Smash 4");
+            games.append("\n");
+        }
+        if (games.length() != 0)
+            games.delete(games.length() - 1, games.length());
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
+        // set time description
         TextView time = ((TextView) findViewById(R.id.event_time));
         time.setVisibility(View.VISIBLE);
-        time.setText(getString(R.string.time) + " -> 8:30 - 9:45");
 
-        StringBuilder bio = new StringBuilder();
-        bio.append(getString(R.string.description) + "\n\t\t\t\t");
-        bio.append("Don't even knock. Just fucking come in. ;)");
-        ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date start = new Date(_event.getStartTime());
+        Date end = new Date(_event.getEndTime());
+        String startFormatted = formatter.format(start);
+        String endFormatted = formatter.format(end);
+        StringBuilder timeString = new StringBuilder();
+        timeString.append(getString(R.string.start_time) + " - " + startFormatted + "\n");
+        timeString.append(getString(R.string.end_time) + " - " + endFormatted);
 
-        if (true) {
+        time.setText(timeString.toString());
+
+        // set description
+        StringBuilder description = new StringBuilder();
+        description.append(getString(R.string.description) + "\n\t\t\t\t");
+        description.append(_event.getDescription());
+        ((TextView) findViewById(R.id.eu_description)).setText(description.toString());
+
+        if (!_event.getHost().equals(DataManager.getCurUser())) {
 
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
-            lb.setImageResource(R.drawable.green_attend_button);
+            lb.setImageResource(R.drawable.green_up_arrow);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -66,7 +107,7 @@ public class EventActivity extends Activity {
             ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.attend_event));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
-            mb.setImageResource(R.drawable.blue_chat_button);
+            mb.setImageResource(R.drawable.blue_chat);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -76,7 +117,7 @@ public class EventActivity extends Activity {
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
 
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_gps_button);
+            rb.setImageResource(R.drawable.orange_gps);
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

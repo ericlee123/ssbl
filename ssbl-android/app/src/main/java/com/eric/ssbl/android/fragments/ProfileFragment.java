@@ -60,7 +60,7 @@ public class ProfileFragment extends Fragment {
 
 
         ImageButton lb = (ImageButton) v.findViewById(R.id.eu_button_left);
-        lb.setImageResource(R.drawable.green_plus_button);
+        lb.setImageResource(R.drawable.green_plus);
         lb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +70,7 @@ public class ProfileFragment extends Fragment {
         ((TextView) v.findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.add_friend));
 
         ImageButton mb = (ImageButton) v.findViewById(R.id.eu_button_middle);
-        mb.setImageResource(R.drawable.blue_chat_button);
+        mb.setImageResource(R.drawable.blue_chat);
         mb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +80,7 @@ public class ProfileFragment extends Fragment {
         ((TextView) v.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
 
         ImageButton rb = (ImageButton) v.findViewById(R.id.eu_button_right);
-        rb.setImageResource(R.drawable.orange_search_button);
+        rb.setImageResource(R.drawable.orange_search);
         rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

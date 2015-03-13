@@ -182,7 +182,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void centerMapOnSelf() {
-        Toast.makeText(getActivity(), getString(R.string.refreshing), Toast.LENGTH_SHORT).show();
+        if (_curLoc == null || _map == null) {
+            Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 15));
     }
 
     public static void reset() {

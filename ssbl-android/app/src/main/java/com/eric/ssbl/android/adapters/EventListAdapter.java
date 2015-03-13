@@ -16,9 +16,9 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
     private final Context _context;
     private final List<Event> _events;
-    private final int _hostingIndex;
-    private final int _attendingIndex;
-    private final int _nearbyIndex;
+    private int _hostingIndex;
+    private int _attendingIndex;
+    private int _nearbyIndex;
 
     public EventListAdapter(Context context, List<Event> events, int hostingIndex, int attendingIndex, int nearbyIndex) {
         super(context, R.layout.list_inbox, events);
