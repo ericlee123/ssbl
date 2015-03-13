@@ -21,6 +21,7 @@
     <string name="map">Map</string>
     <string name="inbox">Inbox</string>
     <string name="events">Events</string>
+    <string name="notifications">Notifications</string>
     <string name="settings">Settings</string>
 
     <!-- Login screen -->
@@ -47,6 +48,11 @@
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
     <string name="error_loading_profile">Error displaying profile :(</string>
+
+    <!-- EventListActivity -->
+    <string name="hosting_events">Hosting events</string>
+    <string name="attending_events">Attending events</string>
+    <string name="nearby_events">Nearby events</string>
 
     <!-- EventActivity -->
     <string name="event">Event</string>
@@ -92,6 +98,7 @@
     <!-- Miscellaneous -->
     <string name="sww_error">Something went wrong :(</string>
     <string name="remember_me_error">Error saving login info</string>
+    <string name="refresh">Refresh</string>
     <string name="log_out">Log out</string>
     <string name="refreshing">Refreshing...</string>
 

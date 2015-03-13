@@ -10,6 +10,7 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
+import com.eric.ssbl.android.fragments.NotificationsFragment;
 import com.eric.ssbl.android.fragments.ProfileFragment;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
@@ -25,20 +26,21 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addAccount(account);
 
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());
-        MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
-        MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
         MaterialSection profile = newSection(getString(R.string.profile), new ProfileFragment());
+        MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
+        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
+        MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
+
         // divisor
-//        MaterialSection settings = newSection(getString(R.string.settings), new SettingsFragment());
 
         this.addSection(map);
+        this.addSection(profile);
+        this.addSection(notifs);
         this.addSection(inbox);
         this.addSection(events);
-        this.addSection(profile);
 
         this.addDivisor();
 
-//        this.addSection(settings);
     }
 
     @Override
@@ -46,6 +48,9 @@ public class MainActivity extends MaterialNavigationDrawer {
         int id = item.getItemId();
         Intent intent;
         switch (id) {
+            case R.id.action_refresh:
+                // refresh all fragments
+                break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;

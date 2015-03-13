@@ -16,11 +16,18 @@ public class EventListAdapter extends ArrayAdapter<Event> {
 
     private final Context _context;
     private final List<Event> _events;
+    private final int _hostingIndex;
+    private final int _attendingIndex;
+    private final int _nearbyIndex;
 
-    public EventListAdapter(Context context, List<Event> events) {
+    public EventListAdapter(Context context, List<Event> events, int hostingIndex, int attendingIndex, int nearbyIndex) {
         super(context, R.layout.list_inbox, events);
         _context = context;
         _events = events;
+
+        _hostingIndex = hostingIndex;
+        _attendingIndex = attendingIndex;
+        _nearbyIndex = nearbyIndex;
     }
 
     @Override
@@ -29,6 +36,19 @@ public class EventListAdapter extends ArrayAdapter<Event> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View rowView = inflater.inflate(R.layout.list_event, parent, false);
+
+        // this code is so ugly
+        if (position == _hostingIndex || position == _attendingIndex || position == _nearbyIndex) {
+            TextView category = (TextView) rowView.findViewById(R.id.list_event_category);
+            if (position == _hostingIndex)
+                category.setText(getContext().getString(R.string.hosting_events));
+            else if (position == _attendingIndex)
+                category.setText(getContext().getString(R.string.attending_events));
+            else
+                category.setText(getContext().getString(R.string.nearby_events));
+            category.setVisibility(View.VISIBLE);
+        }
+
         TextView title = (TextView) rowView.findViewById(R.id.list_event_name);
         TextView preview = (TextView) rowView.findViewById(R.id.list_event_preview);
 

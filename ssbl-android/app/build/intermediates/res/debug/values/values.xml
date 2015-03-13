@@ -267,6 +267,7 @@
     <string name="add_friend">Add friend</string>
     <string name="app_name">Smash Bros. Locator</string>
     <string name="attend_event">Attend event</string>
+    <string name="attending_events">Attending events</string>
     <string name="bio">Bio</string>
     <string name="brawl">Brawl</string>
     <string name="casual">Casual</string>
@@ -333,6 +334,7 @@
     <string name="events">Events</string>
     <string name="games">Games</string>
     <string name="hosted_by">Hosted by</string>
+    <string name="hosting_events">Hosting events</string>
     <string name="inbox">Inbox</string>
     <string name="location">Location</string>
     <string name="log_in">Log in</string>
@@ -343,17 +345,20 @@
     <string name="melee">Melee</string>
     <string name="message">Message</string>
     <string name="message_host">Message host</string>
+    <string name="nearby_events">Nearby events</string>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/it.neokree/MaterialNavigationDrawer/1.3.2/res/values/values.xml -->
     <eat-comment/>
     <string name="nothing"/>
     <!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="notifications">Notifications</string>
     <string name="other">Other</string>
     <string name="password_hint">Password</string>
     <string name="pm">Project M.</string>
     <string name="private_location">Keep location private</string>
     <string name="profile">Profile</string>
     <string name="receive_alerts">Receive alerts</string>
+    <string name="refresh">Refresh</string>
     <string name="refreshing">Refreshing...</string>
     <string name="register">Register</string>
     <string name="registering">Registering...</string>

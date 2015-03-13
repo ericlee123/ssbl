@@ -60,7 +60,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refresh(null);
+                centerMapOnSelf();
             }
         });
 
@@ -181,7 +181,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     }
 
-    public void refresh(View view) {
+    public void centerMapOnSelf() {
         Toast.makeText(getActivity(), getString(R.string.refreshing), Toast.LENGTH_SHORT).show();
     }
 

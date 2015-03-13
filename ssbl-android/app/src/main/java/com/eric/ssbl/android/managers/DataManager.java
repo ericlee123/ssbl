@@ -1,5 +1,7 @@
 package com.eric.ssbl.android.managers;
 
+import android.os.AsyncTask;
+
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
@@ -94,6 +96,42 @@ public class DataManager {
         // set update to server
     }
 
+    public static List<Event> getHostingEvents() {
+        List<Event> temp = new LinkedList<>();
+        for (Event e: _events.values()) {
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+        }
+        return temp;
+    }
+
+    public static List<Event> getAttendingEvents() {
+        List<Event> temp = new LinkedList<>();
+        for (Event e: _events.values()) {
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+            temp.add(e);
+
+        }
+        return temp;
+    }
+
+    public static List<Event> getNearbyEvents() {
+        return new LinkedList<Event>();
+    }
+
     public static Collection<Event> getAllEvents() {
         return _events.values();
     }
@@ -151,15 +189,28 @@ public class DataManager {
         return (List<Notification>) _notifications.values();
     }
 
-    public static Notification getNotification(int id) {
-        return _notifications.get(id);
-    }
-
-    public static void setNotification(Notification n) {
-        _notifications.put(n.getNotificationId(), n);
-    }
 
     public static String getServerUrl() {
         return _serverURL;
+    }
+
+    public static void syncWithServer() {
+        new HttpSynchronizer().execute();
+    }
+
+    private static class HttpSynchronizer extends AsyncTask<Void, Void, Void> {
+
+        private void synchronize() {
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+        }
     }
 }
