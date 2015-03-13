@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 
@@ -85,13 +87,19 @@ public class ProfileActivity extends Activity {
         bio.append(_user.getBlurb());
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
+        StringBuilder attendingEvents = new StringBuilder();
+        attendingEvents.append("Attending events\n");
+        for (Event e: _user.getEvents())
+            attendingEvents.append("\t\t\t\t" + e.getTitle() + "\n");
+
+        if (_user.getEvents().size() == 0)
+            attendingEvents.append("\t\t\t\tNot attending anything. Lame.");
+        else
+            attendingEvents.delete(attendingEvents.length() - 1, attendingEvents.length());
+        ((TextView) findViewById(R.id.event_attending_list)).setText(attendingEvents);
+
         // Check to see if it's the current user's profile
-        if (_user.equals(DataManager.getCurUser())) {
-
-
-
-        }
-        else {
+        if (!_user.equals(DataManager.getCurUser())) {
 
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(R.drawable.green_plus);
@@ -112,6 +120,39 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
+
+            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+            rb.setImageResource(R.drawable.orange_search);
+            rb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Create new message
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
+
+        }
+        else {
+
+            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
+            lb.setImageResource(R.drawable.blue_pencil);
+            lb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(_context, EditProfileActivity.class));
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_profile));
+
+            ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
+            mb.setImageResource(R.drawable.green_face);
+            mb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Create new message
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.set_mood));
 
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
             rb.setImageResource(R.drawable.orange_search);

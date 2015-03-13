@@ -2,42 +2,33 @@ package com.eric.ssbl.android.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.ConversationActivity;
+import com.eric.ssbl.android.adapters.NotificationArrayAdapter;
 import com.eric.ssbl.android.managers.DataManager;
-import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Notification;
 
 import java.util.List;
 
-/**
- * Created by eric on 3/1/15.
- */
-public class NotificationsFragment extends Fragment {
+public class NotificationsFragment extends ListFragment {
+
+    private List<Notification> _notifs;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        List<Conversation> conversations = DataManager.getAllConversations();
-        Conversation[] arr = new Conversation[conversations.size()];
-        arr = conversations.toArray(arr);
+        _notifs = DataManager.getNotifications();
 
-//        setListAdapter(new InboxArrayAdapter(getActivity(), arr));
+        setListAdapter(new NotificationArrayAdapter(getActivity(), _notifs));
 
-        View v = inflater.inflate(R.layout.fragment_inbox, container, false);
-        ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
-        createMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Create new message
-            }
-        });
+        View v = inflater.inflate(R.layout.fragment_notifications, container, false);
+
         return v;
     }
 

@@ -389,8 +389,8 @@ public final class R {
 		public static final int abc_textfield_search_default_mtrl_alpha = 0x7f020031;
 		public static final int abc_textfield_search_material = 0x7f020032;
 		public static final int black_gradient = 0x7f020034;
-		public static final int ic_arrow_drop_down_white_24dp = 0x7f02005b;
-		public static final int ic_arrow_drop_up_white_24dp = 0x7f02005c;
+		public static final int ic_arrow_drop_down_white_24dp = 0x7f02005d;
+		public static final int ic_arrow_drop_up_white_24dp = 0x7f02005e;
 	}
 	public static final class id {
 		public static final int action_bar = 0x7f0b0045;
@@ -409,7 +409,7 @@ public final class R {
 		public static final int activity_chooser_view_content = 0x7f0b0035;
 		public static final int always = 0x7f0b001b;
 		public static final int beginning = 0x7f0b0013;
-		public static final int bottom_sections = 0x7f0b0084;
+		public static final int bottom_sections = 0x7f0b0085;
 		public static final int checkbox = 0x7f0b003d;
 		public static final int collapseActionView = 0x7f0b001c;
 		public static final int content = 0x7f0b006b;
@@ -417,8 +417,8 @@ public final class R {
 		public static final int default_activity_button = 0x7f0b0038;
 		public static final int dialog = 0x7f0b0020;
 		public static final int disableHome = 0x7f0b000c;
-		public static final int drawer = 0x7f0b0083;
-		public static final int drawer_header = 0x7f0b008f;
+		public static final int drawer = 0x7f0b0084;
+		public static final int drawer_header = 0x7f0b0090;
 		public static final int drawer_layout = 0x7f0b0066;
 		public static final int dropdown = 0x7f0b0021;
 		public static final int edit_query = 0x7f0b0047;
@@ -426,7 +426,7 @@ public final class R {
 		public static final int expand_activities_button = 0x7f0b0036;
 		public static final int expanded_menu = 0x7f0b003c;
 		public static final int frame_container = 0x7f0b0067;
-		public static final int gradient = 0x7f0b008b;
+		public static final int gradient = 0x7f0b008c;
 		public static final int home = 0x7f0b0004;
 		public static final int homeAsUp = 0x7f0b000d;
 		public static final int icon = 0x7f0b003a;
@@ -451,11 +451,11 @@ public final class R {
 		public static final int search_plate = 0x7f0b004d;
 		public static final int search_src_text = 0x7f0b004e;
 		public static final int search_voice_btn = 0x7f0b0052;
-		public static final int section_icon = 0x7f0b0092;
-		public static final int section_notification = 0x7f0b0091;
-		public static final int section_ripple = 0x7f0b0093;
-		public static final int section_text = 0x7f0b0090;
-		public static final int sections = 0x7f0b008a;
+		public static final int section_icon = 0x7f0b0093;
+		public static final int section_notification = 0x7f0b0092;
+		public static final int section_ripple = 0x7f0b0094;
+		public static final int section_text = 0x7f0b0091;
+		public static final int sections = 0x7f0b008b;
 		public static final int shortcut = 0x7f0b003e;
 		public static final int showCustom = 0x7f0b000f;
 		public static final int showHome = 0x7f0b0010;
@@ -468,14 +468,14 @@ public final class R {
 		public static final int toolbar = 0x7f0b0065;
 		public static final int up = 0x7f0b0008;
 		public static final int useLogo = 0x7f0b0012;
-		public static final int user_cover = 0x7f0b0086;
-		public static final int user_cover_switcher = 0x7f0b0085;
-		public static final int user_email = 0x7f0b008d;
-		public static final int user_nome = 0x7f0b008c;
-		public static final int user_photo = 0x7f0b0087;
-		public static final int user_photo_2 = 0x7f0b0088;
-		public static final int user_photo_3 = 0x7f0b0089;
-		public static final int user_switcher = 0x7f0b008e;
+		public static final int user_cover = 0x7f0b0087;
+		public static final int user_cover_switcher = 0x7f0b0086;
+		public static final int user_email = 0x7f0b008e;
+		public static final int user_nome = 0x7f0b008d;
+		public static final int user_photo = 0x7f0b0088;
+		public static final int user_photo_2 = 0x7f0b0089;
+		public static final int user_photo_3 = 0x7f0b008a;
+		public static final int user_switcher = 0x7f0b008f;
 		public static final int withText = 0x7f0b001f;
 		public static final int wrap_content = 0x7f0b0022;
 	}
@@ -540,7 +540,7 @@ public final class R {
 		public static final int abc_shareactionprovider_share_with = 0x7f0d000d;
 		public static final int abc_shareactionprovider_share_with_application = 0x7f0d000e;
 		public static final int abc_toolbar_collapse_description = 0x7f0d000f;
-		public static final int nothing = 0x7f0d0059;
+		public static final int nothing = 0x7f0d005a;
 	}
 	public static final class style {
 		public static final int Base_TextAppearance_AppCompat = 0x7f0e0002;

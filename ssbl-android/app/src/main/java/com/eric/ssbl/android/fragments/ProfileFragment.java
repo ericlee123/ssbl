@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.activities.EditProfileActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
@@ -60,24 +62,24 @@ public class ProfileFragment extends Fragment {
 
 
         ImageButton lb = (ImageButton) v.findViewById(R.id.eu_button_left);
-        lb.setImageResource(R.drawable.green_plus);
+        lb.setImageResource(R.drawable.blue_pencil);
         lb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "leftButton", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), EditProfileActivity.class));
             }
         });
-        ((TextView) v.findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.add_friend));
+        ((TextView) v.findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_profile));
 
         ImageButton mb = (ImageButton) v.findViewById(R.id.eu_button_middle);
-        mb.setImageResource(R.drawable.blue_chat);
+        mb.setImageResource(R.drawable.green_face);
         mb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Create new message
             }
         });
-        ((TextView) v.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
+        ((TextView) v.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.set_mood));
 
         ImageButton rb = (ImageButton) v.findViewById(R.id.eu_button_right);
         rb.setImageResource(R.drawable.orange_search);

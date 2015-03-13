@@ -44,6 +44,8 @@
     <string name="competitive">Competitive</string>
     <string name="games">Games</string>
     <string name="bio">Bio</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="set_mood">Set mood</string>
     <string name="add_friend">Add friend</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>

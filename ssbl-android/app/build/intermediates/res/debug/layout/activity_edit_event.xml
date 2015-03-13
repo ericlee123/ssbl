@@ -41,7 +41,7 @@
                     android:layout_height="60dp"
                     android:layout_below="@id/edit_event_location_title"
                     android:layout_marginTop="8dp"
-                    android:src="@drawable/blue_pointer_button"
+                    android:src="@drawable/blue_pointer"
                     android:background="@null"
                     android:adjustViewBounds="true"
                     android:cropToPadding="false"

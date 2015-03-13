@@ -12,6 +12,7 @@ import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.NotificationsFragment;
 import com.eric.ssbl.android.fragments.ProfileFragment;
+import com.eric.ssbl.android.managers.DataManager;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
@@ -55,9 +56,9 @@ public class MainActivity extends MaterialNavigationDrawer {
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.action_log_out:
-                // Clean ModelManager data
+                // first ask to verify?
                 ChartFragment.reset();
-
+                DataManager.clearData();
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();

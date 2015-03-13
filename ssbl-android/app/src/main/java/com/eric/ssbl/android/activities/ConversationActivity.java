@@ -14,12 +14,9 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
-import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class ConversationActivity extends ListActivity {
 
@@ -50,14 +47,7 @@ public class ConversationActivity extends ListActivity {
         title.delete(title.length() - 2, title.length());
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(title.toString());
 
-        List<Message> messages = new ArrayList<Message>();
-        Iterator<Message> im = c.getMessages().iterator();
-        while (im.hasNext()) {
-            messages.add(im.next());
-        }
-        Message[] m = new Message[messages.size()];
-        m = messages.toArray(m);
-        setListAdapter(new ConversationArrayAdapter(this, m));
+        setListAdapter(new ConversationArrayAdapter(this, c.getMessages()));
         getListView().setSelection(getListAdapter().getCount() - 1);
     }
 
@@ -70,13 +60,14 @@ public class ConversationActivity extends ListActivity {
 
         AlertDialog.Builder adb = new AlertDialog.Builder(_context);
         adb
-                .setTitle("You sure bout dat?")
+                .setTitle("Are you sure?")
                 .setCancelable(true)
                 .setPositiveButton("Delete",
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(_context, "Message deleted", Toast.LENGTH_SHORT).show();
+                                finish();
                             }
                         })
                 .setNegativeButton("Cancel",

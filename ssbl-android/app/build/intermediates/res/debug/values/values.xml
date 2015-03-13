@@ -321,6 +321,7 @@
     <string name="delete_message">Delete message</string>
     <string name="description">Description</string>
     <string name="edit_event">Edit Event</string>
+    <string name="edit_profile">Edit profile</string>
     <string name="end_time">End time</string>
     <string name="enter_email">Enter email:</string>
     <string name="enter_message">Enter message</string>
@@ -356,6 +357,7 @@
     <string name="notifications">Notifications</string>
     <string name="other">Other</string>
     <string name="password_hint">Password</string>
+    <string name="please_wait">Please wait...</string>
     <string name="pm">Project M.</string>
     <string name="private_location">Keep location private</string>
     <string name="profile">Profile</string>
@@ -368,6 +370,7 @@
     <string name="remember_me_error">Error saving login info</string>
     <string name="save">Save</string>
     <string name="saved_settings">Settings saved</string>
+    <string name="set_mood">Set mood</string>
     <string name="settings">Settings</string>
     <string name="show_on_map">Show on map</string>
     <string name="smash4">Smash 4</string>

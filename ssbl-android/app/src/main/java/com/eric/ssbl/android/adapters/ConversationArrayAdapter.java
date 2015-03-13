@@ -13,12 +13,14 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Message;
 
+import java.util.List;
+
 public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 
     private Context _context;
-    private Message[] _messages;
+    private List<Message> _messages;
 
-    public ConversationArrayAdapter(Context context, Message[] messages) {
+    public ConversationArrayAdapter(Context context, List<Message> messages) {
         super(context, R.layout.list_message, messages);
         _context = context;
         _messages = messages;
@@ -28,7 +30,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Message m = _messages[position];
+        Message m = _messages.get(position);
 
         View messageView = inflater.inflate(R.layout.list_message, parent, false);
 

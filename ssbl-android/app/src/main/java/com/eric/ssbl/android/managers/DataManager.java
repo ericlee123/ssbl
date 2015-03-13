@@ -62,7 +62,7 @@ public class DataManager {
         e1.setLocation(l2);
         e1.setStartTime(1426121640403L);
         e1.setEndTime(1426131640403L);
-        e1.setHost(u1);
+        e1.setHost(u2);
         e1.setPublic(true);
         e1.setGames(g1);
         List<User> fuck = new ArrayList<User>();
@@ -185,10 +185,16 @@ public class DataManager {
         _conversations.put(c.getConversationId(), c);
     }
 
-    public static List<Notification> getAllNotifications() {
-        return (List<Notification>) _notifications.values();
+    public static List<Notification> getNotifications() {
+        return new LinkedList<Notification>();
     }
 
+    public static void clearData() {
+        _users.clear();
+        _events.clear();
+        _conversations.clear();
+        _notifications.clear();
+    }
 
     public static String getServerUrl() {
         return _serverURL;

@@ -15,7 +15,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:id="@+id/chart_refresh"
-        android:src="@drawable/purple_refresh_button"
+        android:src="@drawable/purple_gps"
         android:background="@null"
         android:adjustViewBounds="true"
         android:cropToPadding="false"
@@ -23,10 +23,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_margin="24dp" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/red_explosion"/>
 
 </RelativeLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/fragment_chart.xml -->

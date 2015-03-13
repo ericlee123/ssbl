@@ -14,6 +14,7 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.User;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -94,6 +95,21 @@ public class EventActivity extends Activity {
         description.append(_event.getDescription());
         ((TextView) findViewById(R.id.eu_description)).setText(description.toString());
 
+        // set attendance list
+        StringBuilder attendance = new StringBuilder();
+        attendance.append(getString(R.string.whos_going) + "\n");
+        if (_event.getUsers()
+        for (User u: _event.getUsers())
+            attendance.append("\t\t\t\t" + u.getUsername() + "\n");
+
+        if (_event.getUsers().size() == 0)
+            attendance.append("\t\t\t\tNo one is going to this event");
+        else
+            attendance.delete(attendance.length() - 1, attendance.length());
+
+        ((TextView) findViewById(R.id.event_attending_list)).setText(attendance.toString());
+
+        // Manage buttons
         if (!_event.getHost().equals(DataManager.getCurUser())) {
 
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);

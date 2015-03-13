@@ -40,6 +40,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private GoogleApiClient _googleApiClient;
     private LatLng _curLoc;
     private static HashMap<Marker, Integer> _id;
+    private int _defaultZoom = 13;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -138,7 +139,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     public void displayElements() {
         _map.clear();
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 15));
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
 
         _id = new HashMap<Marker, Integer>();
 
@@ -186,7 +187,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
             return;
         }
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 15));
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
     }
 
     public static void reset() {
