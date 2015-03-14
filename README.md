@@ -16,10 +16,12 @@ Users Hibernate Initialization
 	- Last Login Time
 	- Last Location Time
 
-Users Model Update
-- Private (Whether or not they appear on the map)
+## Server Changelog
+### 0.0.3 (3-14-2015) [ashwin]
+- Added messaging, auth, and search services
+- Updated POJOs
+- Created messaging controller
 
-## Changelog
 ### 0.0.2 (2-22-2015) [ashwin]
 - Minor bug fixes to repository layer
 - Enabled ProGuard to shrink and obfuscate Android code at runtime
