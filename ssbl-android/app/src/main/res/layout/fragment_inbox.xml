@@ -14,7 +14,7 @@
         android:id="@+id/new_message"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/purple_plus_button"
+        android:src="@drawable/purple_plus"
         android:background="@null"
         android:adjustViewBounds="true"
         android:cropToPadding="false"

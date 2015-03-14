@@ -27,4 +27,17 @@
         android:textSize="20sp"
         android:gravity="center_vertical"/>
 
+    <ImageButton
+        android:id="@+id/action_bar_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_action_delete"
+        android:onClick="deleteButton"
+        android:background="@null"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:visibility="gone" />
+
 </RelativeLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/action_bar_back.xml -->

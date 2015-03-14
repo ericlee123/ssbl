@@ -15,8 +15,19 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<item android:id="@+id/action_websearch"-->
-          <!--android:icon="@drawable/action_search"-->
-          <!--android:title="@string/action_websearch"-->
-          <!--android:showAsAction="ifRoom" />-->
+
+    <item
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_log_out"
+        android:title="@string/log_out"
+        android:showAsAction="always" />
 </menu>

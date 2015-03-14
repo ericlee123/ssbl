@@ -7,12 +7,12 @@
 
     <ImageView
         android:id="@+id/list_inbox_icon"
-        android:src="@drawable/purple_chat_button"
+        android:src="@drawable/purple_chat"
         android:layout_width="54dp"
         android:layout_height="54dp" />
 
     <TextView
-        android:id="@+id/list_inbox_name"
+        android:id="@+id/list_inbox_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/list_inbox_icon"
@@ -27,7 +27,7 @@
         android:id="@+id/list_inbox_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/list_inbox_name"
+        android:layout_below="@id/list_inbox_title"
         android:layout_toRightOf="@id/list_inbox_icon"
         android:layout_toEndOf="@id/list_inbox_icon"
         android:layout_marginLeft="16dp"

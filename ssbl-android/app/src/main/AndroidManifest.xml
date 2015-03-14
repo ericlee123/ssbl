@@ -45,10 +45,13 @@
             android:name=".android.activities.EditEventActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
-            android:name=".android.activities.MessageActivity"
+            android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
-            android:name=".android.activities.NewMessageActivity"
+            android:name=".android.activities.NewConversationActivity"
+            android:theme="@style/LowerLevelTheme" />
+        <activity
+            android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />
     </application>
 

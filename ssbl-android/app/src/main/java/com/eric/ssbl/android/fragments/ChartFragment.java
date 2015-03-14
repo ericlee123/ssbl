@@ -12,7 +12,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.activities.ProfileActivity;
+import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -21,9 +25,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
 
 public class ChartFragment extends Fragment implements ConnectionCallbacks, OnConnectionFailedListener{
 
@@ -32,7 +39,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private static GoogleMap _map;
     private GoogleApiClient _googleApiClient;
     private LatLng _curLoc;
-
+    private static HashMap<Marker, Integer> _id;
+    private int _defaultZoom = 13;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,7 +61,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refresh(null);
+                centerMapOnSelf();
             }
         });
 
@@ -68,7 +76,18 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Intent i = new Intent(getActivity(), ProfileActivity.class);
+
+                Intent i;
+                Bundle b = new Bundle();
+                if (marker.getAlpha() == 0.99F) {
+                    i = new Intent(getActivity(), EventActivity.class);
+                    b.putInt("event_id", _id.get(marker));
+                }
+                else {
+                    i = new Intent(getActivity(), ProfileActivity.class);
+                    b.putInt("user_id", _id.get(marker));
+                }
+                i.putExtras(b);
                 startActivity(i);
             }
         });
@@ -119,15 +138,60 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     }
 
     public void displayElements() {
-        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, 15));
+        _map.clear();
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
 
-        _map.addMarker(new MarkerOptions()
-                        .title("test marker")
-                        .snippet("this is a test marker")
-                        .position(new LatLng(30.288203, -97.739908)));
+        _id = new HashMap<Marker, Integer>();
+
+        long now = System.currentTimeMillis();
+
+        for (User u: DataManager.getAllUsers()) {
+
+            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
+            String updated = "Updated ";
+            if (elapsed < 60)
+                updated += elapsed + " minutes ago";
+            else if (elapsed < 1440)
+                updated += (elapsed / 60) + " hours ago";
+            else
+                updated += (elapsed / 1440) + " days ago";
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                    .title(u.getUsername())
+                    .snippet(updated)
+                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
+
+            if (u.equals(DataManager.getCurUser()))
+                marker.showInfoWindow();
+
+            _id.put(marker, u.getUserId());
+        }
+
+        for (Event e: DataManager.getAllEvents()) {
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                            .title(e.getTitle())
+                            .snippet("Hosted by " + e.getHost().getUsername())
+                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
+                            .alpha(0.99F)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
+
+            _id.put(marker, e.getEventId());
+        }
+
     }
 
-    public void refresh(View view) {
-        Toast.makeText(getActivity(), "Refreshing...", Toast.LENGTH_SHORT).show();
+    public void centerMapOnSelf() {
+        if (_curLoc == null || _map == null) {
+            Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
+    }
+
+    public static void reset() {
+        _map.clear();
+        _init = false;
     }
 }

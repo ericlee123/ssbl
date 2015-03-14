@@ -1,32 +1,71 @@
 package com.eric.ssbl.android.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.activities.MessageActivity;
+import com.eric.ssbl.android.activities.ConversationActivity;
 import com.eric.ssbl.android.adapters.InboxArrayAdapter;
+import com.eric.ssbl.android.adapters.UserListAdapter;
+import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InboxFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        String[] temp = new String[]{"one", "two", "three", "four", "six", "ten", "fuck", "what"};
-        setListAdapter(new InboxArrayAdapter(getActivity(), temp));
+        List<Conversation> conversations = DataManager.getAllConversations();
+        Conversation[] arr = new Conversation[conversations.size()];
+        arr = conversations.toArray(arr);
+
+        setListAdapter(new InboxArrayAdapter(getActivity(), arr));
 
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
         ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
         createMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create new message
+                LayoutInflater li = LayoutInflater.from(getActivity());
+                View userList = li.inflate(R.layout.prompt_select_user, null);
+
+                List<User> users = new ArrayList<User>();
+                users.add(DataManager.getCurUser());
+                ListView ul = (ListView) userList.findViewById(R.id.prompt_list_user);
+                ul.setAdapter(new UserListAdapter(getActivity(), users));
+                ul.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // create a new conversation and go to conversation activity
+                    }
+                });
+
+                AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                adb
+                        .setView(ul)
+                        .setTitle("Choose a user")
+                        .setCancelable(true)
+                        .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                adb.create().show();
             }
         });
         return v;
@@ -35,7 +74,8 @@ public class InboxFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
-        Intent i = new Intent(getActivity(), MessageActivity.class);
+        Intent i = new Intent(getActivity(), ConversationActivity.class);
+        i.putExtra("index", position);
         startActivity(i);
     }
 }

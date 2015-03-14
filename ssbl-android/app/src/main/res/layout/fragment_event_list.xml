@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/less_white">
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        android:dividerHeight="0dp" />
+        android:layout_height="wrap_content" />
 
     <ImageButton
         android:id="@+id/create_event"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@drawable/purple_plus_button"
+        android:src="@drawable/purple_plus"
         android:background="@null"
         android:adjustViewBounds="true"
         android:cropToPadding="false"

@@ -18,17 +18,25 @@
 
     <!-- Titles -->
     <string name="app_name">Smash Bros. Locator</string>
+    <string name="map">Map</string>
+    <string name="inbox">Inbox</string>
+    <string name="events">Events</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
 
     <!-- Login screen -->
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
-    <string name="login">Login</string>
+    <string name="log_in">Log in</string>
     <string name="remember_me">Remember Me</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="chill_out">Just chill out for a bit</string>
     <string name="register">Register</string>
     <string name="enter_email">Enter email:</string>
     <string name="enter_username">Enter username:</string>
     <string name="enter_password">Enter password:</string>
     <string name="confirm_password">Confirm password:</string>
+    <string name="registering">Registering...</string>
 
     <!-- ProfileActivity -->
     <string name="profile">Profile</string>
@@ -36,26 +44,41 @@
     <string name="competitive">Competitive</string>
     <string name="games">Games</string>
     <string name="bio">Bio</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="set_mood">Set mood</string>
     <string name="add_friend">Add friend</string>
+    <string name="friends">Friends</string>
+    <string name="nearby_users">Nearby users</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
+    <string name="error_loading_profile">Error displaying profile :(</string>
+
+    <!-- EventListActivity -->
+    <string name="hosting_events">Hosting events</string>
+    <string name="attending_events">Attending events</string>
+    <string name="nearby_events">Nearby events</string>
 
     <!-- EventActivity -->
     <string name="event">Event</string>
     <string name="hosted_by">Hosted by</string>
     <string name="description">Description</string>
-    <string name="time">Time</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End time</string>
     <string name="attend_event">Attend event</string>
     <string name="unattend_event">Unattend event</string>
     <string name="message_host">Message host</string>
     <string name="view_attendance">View attendance</string>
     <string name="whos_going">Who\'s going</string>
+    <string name="show_on_map">Show on map</string>
+    <string name="error_loading_event">Error displaying event :(</string>
 
     <!-- EditEventActivity -->
     <string name="create_event">Create Event</string>
     <string name="edit_event">Edit Event</string>
     <string name="event_title">Event title</string>
     <string name="event_location">Event location</string>
+    <string name="location">Location</string>
+    <string name="other">Other</string>
     <string name="save">Save</string>
 
     <!-- MessageActivity -->
@@ -63,16 +86,27 @@
     <string name="enter_message">Enter message</string>
     <string name="talk_trash">Talk trash</string>
 
-    <!-- Settings -->
-    <string name="privacy">Privacy</string>
-    <string name="set_privacy">Set privacy</string>
-    <string name="set_privacy_summary">Set visibility to other users</string>
+    <!-- SettingsActivity -->
+    <string name="receive_alerts">Receive alerts</string>
+    <string name="private_location">Keep location private</string>
+    <string name="map_radius">Set map radius (miles)</string>
+    <string name="error_loading_settings">Error loading preferences</string>
+    <string name="error_saving_settings">Error saving preferences</string>
+    <string name="saved_settings">Settings saved</string>
+
+    <!-- Games -->
+    <string name="ssb64">Smash 64</string>
+    <string name="melee">Melee</string>
+    <string name="brawl">Brawl</string>
+    <string name="pm">Project M.</string>
+    <string name="smash4">Smash 4</string>
 
     <!-- Miscellaneous -->
-    <string name="error_creating_directory">Error creating directory to save login info</string>
+    <string name="sww_error">Something went wrong :(</string>
+    <string name="remember_me_error">Error saving login info</string>
+    <string name="refresh">Refresh</string>
+    <string name="log_out">Log out</string>
+    <string name="refreshing">Refreshing...</string>
+    <string name="please_wait">Please wait...</string>
 
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
-    <string name="action_websearch">Web search</string>
-    <string name="app_not_available">Sorry, there\'s no web browser available</string>
 </resources>
