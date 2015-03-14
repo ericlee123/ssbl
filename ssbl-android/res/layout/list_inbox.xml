@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/less_white">
+
+    <ImageView
+        android:id="@+id/list_inbox_icon"
+        android:src="@drawable/purple_chat_button"
+        android:layout_width="54dp"
+        android:layout_height="54dp" />
+
+    <TextView
+        android:id="@+id/list_inbox_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/list_inbox_icon"
+        android:layout_toEndOf="@id/list_inbox_icon"
+        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/list_inbox_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/list_inbox_name"
+        android:layout_toRightOf="@id/list_inbox_icon"
+        android:layout_toEndOf="@id/list_inbox_icon"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/dark_gray"
+        android:text="hell e eaew;ofuhtfg"
+        android:textSize="14sp" />
+
+</RelativeLayout>

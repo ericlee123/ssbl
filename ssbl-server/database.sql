@@ -13,6 +13,7 @@ CREATE TABLE `users` (
 	`last_location_time` BIGINT(14),
 	`last_message_time` BIGINT(14),
 	`blurb` VARCHAR(255),
+	`private` BOOLEAN,
 	PRIMARY KEY(user_id),
 	UNIQUE (username),
 	UNIQUE (email)

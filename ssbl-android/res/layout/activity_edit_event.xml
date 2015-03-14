@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/less_white">
+
+    <LinearLayout
+        android:id="@+id/edit_event_details"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_event_event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:hint="@string/event_title" />
+
+        <RelativeLayout
+            android:id="@+id/edit_event_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/edit_event_location_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/event_location"
+                android:textSize="18sp"/>
+
+            <ImageButton
+                android:id="@+id/edit_event_location_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@id/edit_event_location_title"
+                android:onClick="setLocationMap" />
+
+            <ImageView
+                android:id="@+id/edit_event_location_status"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="16dp"
+                android:layout_alignParentRight="true"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/edit_event_save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        android:onClick="saveEvent"
+        android:background="@color/gc_purple"/>
+
+
+</RelativeLayout>
