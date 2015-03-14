@@ -26,6 +26,7 @@ public class User {
 	private Long _lastLoginTime;
 	private Long _lastLocationTime;
 	private Long _lastMessageTime;
+	private Boolean _isPrivate;
 	private List<Game> _games;
 	private List<Event> _events;
 	private List<Notification> _notifs;
@@ -36,8 +37,8 @@ public class User {
 	
 	public User(Integer id, String username, String password, String email, String blurb,
 			Location location, Long lastLoginTime, Long lastLocationTime, Long lastMessageTime, 
-			List<Game> games, List<Event> events, List<Notification> notifs, List<User> friends, 
-			List<Conversation> conversations) {
+			Boolean isPrivate, List<Game> games, List<Event> events, List<Notification> notifs, 
+			List<User> friends, List<Conversation> conversations) {
 		
 		_id = id;
 		_username = username;
@@ -53,6 +54,7 @@ public class User {
 		_notifs = notifs;
 		_friends = friends;
 		_conversations = conversations;
+		_isPrivate = isPrivate;
 	}
 
 	public Integer getUserId() {
@@ -125,6 +127,14 @@ public class User {
 	
 	public void setBlurb(String blurb) {
 		_blurb = blurb;
+	}
+
+	public Boolean isPrivate() {
+		return _isPrivate;
+	}
+	
+	public void setPrivate(Boolean isPrivate) {
+		_isPrivate = isPrivate;
 	}
 
 	public List<Game> getGames() {

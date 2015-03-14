@@ -9,8 +9,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Conversation {
 
@@ -25,7 +23,6 @@ public class Conversation {
 		_recipients = recipients;
 		_messages = messages;
 	}
-	
 
 	public Integer getConversationId() {
 		return _id;
@@ -47,7 +44,6 @@ public class Conversation {
 		if(_recipients == null) _recipients = new ArrayList<User>();
 		_recipients.add(recipient);
 	}
-	
 
 	public List<Message> getMessages() {
 		return _messages;

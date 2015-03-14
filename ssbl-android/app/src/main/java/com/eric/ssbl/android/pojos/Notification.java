@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.pojos;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -62,7 +63,7 @@ public class Notification {
 	public void setReceiver(User receiver) {
 		_receiver = receiver;
 	}
-	
+
 	public String getMessage() {
 		return _message;
 	}
@@ -70,7 +71,7 @@ public class Notification {
 	public void setMessage(String message) {
 		_message = message;
 	}
-	
+
 	public Long getSendTime() {
 		return _sendTime;
 	}

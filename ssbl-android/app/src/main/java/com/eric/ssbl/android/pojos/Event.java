@@ -3,6 +3,7 @@ package com.eric.ssbl.android.pojos;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -94,7 +95,7 @@ public class Event {
 	public void setEndTime(Long endTime) {
 		_endTime = endTime;
 	}
-	
+
 	public String getDescription() {
 		return _description;
 	}
@@ -102,7 +103,7 @@ public class Event {
 	public void setDescription(String description) {
 		_description = description;
 	}
-	
+
 	public Boolean isPublic() {
 		return _public;
 	}
