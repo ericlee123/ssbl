@@ -28,14 +28,14 @@ public class UserListAdapter extends ArrayAdapter<User> {
         _nearbyIndex = -1;
     }
 
-    public UserListAdapter(Context context, List<User> users, int friendsIndex, int nearbyIndex) {
-        super(context, R.layout.list_user);
-        _context = context;
-        _users = users;
-
-        _friendsIndex = friendsIndex;
-        _nearbyIndex = nearbyIndex;
-    }
+//    public UserListAdapter(Context context, List<User> users, int friendsIndex, int nearbyIndex) {
+//        super(context, R.layout.list_user);
+//        _context = context;
+//        _users = users;
+//
+//        _friendsIndex = friendsIndex;
+//        _nearbyIndex = nearbyIndex;
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/less_white">
+
+    <ImageView
+        android:id="@+id/list_notification_icon"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:src="@drawable/yellow_exclamation" />
+
+    <TextView
+        android:id="@+id/list_notification_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/list_notification_icon"
+        android:layout_toEndOf="@id/list_notification_icon"
+        android:textStyle="bold"
+        android:textColor="@color/dark_gray"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/list_notification_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/subtitle_gray"
+        android:textSize="10sp" />
 
 </RelativeLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/list_notification.xml -->

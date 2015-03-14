@@ -7,6 +7,6 @@
     <ListView
         android:id="@+id/prompt_list_user"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
 </LinearLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/prompt_select_user.xml -->
