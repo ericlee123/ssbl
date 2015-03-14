@@ -36,9 +36,25 @@ public class InboxFragment extends ListFragment {
 
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
         ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
+
+
         createMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("Select a user");
+//
+//                ListView modeList = (ListView)
+//                List<User> users = new ArrayList<User>();
+//                users.add(DataManager.getCurUser());
+//                modeList.setAdapter(new UserListAdapter(getActivity(), users));
+//
+//                builder.setView(modeList);
+//                final Dialog dialog = builder.create();
+//
+//                dialog.show();
+
                 LayoutInflater li = LayoutInflater.from(getActivity());
                 View userList = li.inflate(R.layout.prompt_select_user, null);
 
@@ -55,7 +71,7 @@ public class InboxFragment extends ListFragment {
 
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 adb
-                        .setView(ul)
+                        .setView(userList)
                         .setTitle("Choose a user")
                         .setCancelable(true)
                         .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
