@@ -33,7 +33,6 @@ public class EditEventActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(extras.getBoolean("new_event") ? R.string.create_event : R.string.edit_event));
-
         setContentView(R.layout.activity_edit_event);
 
         _locationStatus = (TextView) findViewById(R.id.edit_event_location_status);
