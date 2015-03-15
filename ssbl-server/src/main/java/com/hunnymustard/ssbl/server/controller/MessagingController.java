@@ -19,7 +19,7 @@ import com.hunnymustard.ssbl.server.service.MessagingService;
 // ssbl-server/ssbl/URL
 
 @Controller
-@RequestMapping("/ssbl")
+@RequestMapping("/messaging/{username}/{id}")
 public class MessagingController {
 
 	@Autowired
@@ -28,7 +28,7 @@ public class MessagingController {
 	@Autowired
 	private AuthService _authService;
 	
-	@RequestMapping(method=RequestMethod.GET, value="{username}/{id}/messaging/new")
+	@RequestMapping(method=RequestMethod.GET, value="/new")
 	public @ResponseBody List<Message> getNewMessages(@PathVariable String username, @PathVariable Integer id) {
 		User user = _authService.getByParameters(username, id);
 		if(user == null) return null;
@@ -36,7 +36,7 @@ public class MessagingController {
 		return _messagingService.getNewMessages(user);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value="{username}/{id}/messaging")
+	@RequestMapping(method=RequestMethod.GET, value="/")
 	public @ResponseBody List<Message> getAdditionalMessages(@PathVariable String username, @PathVariable Integer id,
 			@RequestParam("conversation") Integer conversationId, @RequestParam("size") Integer size, 
 			@RequestParam("additional") Integer additional) {
@@ -47,7 +47,7 @@ public class MessagingController {
 		return _messagingService.getAdditionalMessages(conversationId, size, additional);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/{username}/{id}/messaging/send")
+	@RequestMapping(method=RequestMethod.POST, value="/send")
 	public @ResponseBody Message sendMessage(@PathVariable String username, 
 			@PathVariable Integer id, @RequestBody Message message) {
 		
