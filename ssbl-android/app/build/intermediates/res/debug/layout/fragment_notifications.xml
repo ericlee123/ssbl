@@ -7,7 +7,7 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/dark_gray"
-        android:dividerHeight="2dp" />
+        android:divider="@null"
+        android:dividerHeight="0dp" />
 
 </RelativeLayout><!-- From: file:/home/eric/dev/projects/ssbl/ssbl-android/app/src/main/res/layout/fragment_notifications.xml -->

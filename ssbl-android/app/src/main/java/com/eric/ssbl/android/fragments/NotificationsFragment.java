@@ -28,6 +28,15 @@ public class NotificationsFragment extends ListFragment {
         temp.setMessage("Welcome to Super Smash Bros. Locator");
         temp.setSendTime(System.currentTimeMillis() - 9L);
         _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
+        _notifs.add(temp);
         setListAdapter(new NotificationArrayAdapter(getActivity(), _notifs));
 
         View v = inflater.inflate(R.layout.fragment_notifications, container, false);
