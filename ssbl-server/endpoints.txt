@@ -1,0 +1,23 @@
+/ssbl-server/messaging/{username}/{id}
+	[GET]
+		- Query Params: ?conversation={id}&size={size}&additional={additional}
+		- Get additional messages for a particular conversation
+	/new [GET]
+		- Get new messages
+	/send [POST]
+		- Request Body: Message
+		- Send a message
+
+/ssbl-server/search/{username}/{id}
+	/user [GET]
+		- Query Params: ?lat={latitude}&lon={longitude}&radius={radius}
+		- Get users within a proximity
+	/user [POST]
+		- Request Body: Example User
+		- Get user by example
+	/event [GET]
+		- Query Params: ?lat={latitude}&lon={longitude}&radius={radius}
+		- Get events within a proximity
+	/event [POST]
+		- Request Body: Example Event
+		- Get event by example
