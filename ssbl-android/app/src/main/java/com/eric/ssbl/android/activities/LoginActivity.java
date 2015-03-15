@@ -16,6 +16,9 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Location;
+import com.eric.ssbl.android.pojos.User;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,6 +31,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginActivity extends Activity {
 
@@ -65,7 +70,41 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        DataManager.init();
+        User cur = new User();
+        cur.setUserId(1);
+        cur.setUsername("timelien62x");
+        cur.setEmail("hunnymustardapps@gmail.com");
+        cur.setLocation(new Location(1, 33.049126, -96.819387));
+        cur.setLastLoginTime(1426398620000L);
+        cur.setLastLocationTime(1426398620000L);
+        cur.setBlurb("I am the creator");
+
+        User buddy = new User();
+        buddy.setUserId(2);
+        buddy.setBlurb("woof woof");
+
+        Conversation c1 = new Conversation();
+        c1.setConversationId(1);
+
+        List<User> recips = new ArrayList<User>();
+        recips.add(buddy);
+        recips.add(cur);
+        c1.setRecipients(recips);
+
+        List<Conversation> temps = new ArrayList<Conversation>();
+        temps.add(c1);
+        cur.setConversations(temps);
+//        Message m1 = new Message();
+//        m1.setConversation(c1);
+//        m1.setBody("i am a dog");
+//        m1.setSentTime(1426398620000L);
+//        m1.setSender(buddy);
+//
+//        Message m2 = new Message();
+//        m2.setConversation(c1);
+//        m2.setBody("have dinner ");
+
+        DataManager.setCurUser(cur);
 
         startActivity(new Intent(this, MainActivity.class));
         finish();

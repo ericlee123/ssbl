@@ -15,7 +15,6 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EditProfileActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
-import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 
 public class ProfileFragment extends Fragment {
@@ -36,25 +35,25 @@ public class ProfileFragment extends Fragment {
         ((TextView) v.findViewById(R.id.eu_title)).setText(_user.getUsername());
         ((TextView) v.findViewById(R.id.eu_subtitle)).setText("You");
 
-        StringBuilder games = new StringBuilder();
-        games.append(getString(R.string.games) + "\n");
-        for (Game g : _user.getGames()) {
-            games.append("\t\t\t\t");
-            if (g == Game.SSB64)
-                games.append("Smash 64");
-            else if (g == Game.MELEE)
-                games.append("Melee");
-            else if (g == Game.BRAWL)
-                games.append("Brawl");
-            else if (g == Game.PM)
-                games.append("Project M.");
-            else if (g == Game.SMASH4)
-                games.append("Smash 4");
-            games.append("\n");
-        }
-        if (games.length() != 0)
-            games.delete(games.length() - 1, games.length());
-        ((TextView) v.findViewById(R.id.eu_games)).setText(games.toString());
+//        StringBuilder games = new StringBuilder();
+//        games.append(getString(R.string.games) + "\n");
+//        for (Game g : _user.getGames()) {
+//            games.append("\t\t\t\t");
+//            if (g == Game.SSB64)
+//                games.append("Smash 64");
+//            else if (g == Game.MELEE)
+//                games.append("Melee");
+//            else if (g == Game.BRAWL)
+//                games.append("Brawl");
+//            else if (g == Game.PM)
+//                games.append("Project M.");
+//            else if (g == Game.SMASH4)
+//                games.append("Smash 4");
+//            games.append("\n");
+//        }
+//        if (games.length() != 0)
+//            games.delete(games.length() - 1, games.length());
+//        ((TextView) v.findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.bio) + "\n\t\t\t\t");

@@ -53,6 +53,9 @@
     <string name="view_friends">View friends</string>
     <string name="error_loading_profile">Error displaying profile :(</string>
 
+    <!-- EditProfileActivity -->
+    <string name="bio_caps">BIO</string>
+
     <!-- EventListActivity -->
     <string name="hosting_events">Hosting events</string>
     <string name="attending_events">Attending events</string>

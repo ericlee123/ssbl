@@ -10,17 +10,17 @@ import android.widget.TextView;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
-import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
 
     private final Context _context;
-    private final Conversation[] _conversations;
+    private final List<Conversation> _conversations;
 
-    public InboxArrayAdapter(Context context, Conversation[] conversations) {
+    public InboxArrayAdapter(Context context, List<Conversation> conversations) {
         super(context, R.layout.list_inbox, conversations);
         _context = context;
         _conversations = conversations;
@@ -31,7 +31,7 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         LayoutInflater inflater = (LayoutInflater) _context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        Conversation c = _conversations[position];
+        Conversation c = _conversations.get(position);
         View singleConversation = inflater.inflate(R.layout.list_inbox, parent, false);
         TextView title = (TextView) singleConversation.findViewById(R.id.list_inbox_title);
         TextView preview = (TextView) singleConversation.findViewById(R.id.list_inbox_preview);
@@ -39,21 +39,21 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         StringBuilder titleText = new StringBuilder();
         Iterator<User> i = c.getRecipients().iterator();
         while (i.hasNext()) {
-            String temp = i.next().getUsername();
-            if (!temp.equals(DataManager.getCurUser().getUsername()))
-                titleText.append(temp + ", ");
+            User temp = i.next();
+            if (!temp.equals(DataManager.getCurUser()))
+                titleText.append(temp.getUsername() + ", ");
         }
         if (titleText.length() >= 2)
             titleText.delete(titleText.length() - 2, titleText.length());
 
         title.setText(titleText.toString());
 
-        StringBuilder previewText = new StringBuilder();
-        Message last = c.getMessages().get(c.getMessages().size() - 1);
-        if (last.getSender().getUsername().equals(DataManager.getCurUser().getUsername()))
-            previewText.append("You: ");
-        previewText.append(last.getBody());
-        preview.setText(previewText.toString());
+//        StringBuilder previewText = new StringBuilder();
+//        Message last = c.getMessages().get(c.getMessages().size() - 1);
+//        if (last.getSender().equals(DataManager.getCurUser()))
+//            previewText.append("You: ");
+//        previewText.append(last.getBody());
+//        preview.setText(previewText.toString());
 
         return singleConversation;
     }

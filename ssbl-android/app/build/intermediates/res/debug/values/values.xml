@@ -269,6 +269,7 @@
     <string name="attend_event">Attend event</string>
     <string name="attending_events">Attending events</string>
     <string name="bio">Bio</string>
+    <string name="bio_caps">BIO</string>
     <string name="brawl">Brawl</string>
     <string name="casual">Casual</string>
     <string name="chill_out">Just chill out for a bit</string>

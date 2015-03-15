@@ -26,14 +26,14 @@ import java.util.List;
 
 public class InboxFragment extends ListFragment {
 
+    private List<Conversation> _conversations;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        List<Conversation> conversations = DataManager.getAllConversations();
-        Conversation[] arr = new Conversation[conversations.size()];
-        arr = conversations.toArray(arr);
+        _conversations = DataManager.getCurUser().getConversations();
 
-        setListAdapter(new InboxArrayAdapter(getActivity(), arr));
+        setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
 
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
         ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
@@ -93,7 +93,7 @@ public class InboxFragment extends ListFragment {
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
         Intent i = new Intent(getActivity(), ConversationActivity.class);
-        i.putExtra("index", position);
+        i.putExtra("conversation_id", _conversations.get(position).getConversationId());
         startActivity(i);
     }
 }

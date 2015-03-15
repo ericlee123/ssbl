@@ -4,8 +4,6 @@ import android.os.AsyncTask;
 
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
-import com.eric.ssbl.android.pojos.Game;
-import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
@@ -18,7 +16,8 @@ import java.util.List;
 
 public class DataManager {
 
-    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/SSBLServer";
+//    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/SSBLServer";
+    private static String _serverURL = "http://192.168.1.9:7001/ssbl-server";
     private static User _curUser;
     private static HashMap<Integer, User> _users;
     private static HashMap<Integer, Event> _events;
@@ -26,55 +25,6 @@ public class DataManager {
     private static HashMap<Integer, Notification> _notifications;
 
     private DataManager() {}
-
-    public static void init() {
-        _users = new HashMap<>();
-        _events = new HashMap<>();
-
-        // fill with test data
-        User u1 = new User();
-        u1.setUserId(1);
-        u1.setUsername("test");
-        u1.setEmail("test@test.com");
-        u1.setBlurb("I am a test account square up");
-        Location l1 = new Location(11, 30.287714, -97.739243);
-        u1.setLocation(l1);
-        u1.setLastLocationTime(1426110640403L);
-        u1.setLastLoginTime(1426110640303L);
-        List<Game> g1 = new ArrayList<Game>();
-        g1.add(Game.MELEE);
-        u1.setGames(g1);
-
-        User u2 = new User();
-        u2.setUserId(2);
-        u2.setUsername("MioM | Mango");
-        u2.setBlurb("ayy lmao");
-        Location l3 = new Location(13, 30.286297, -97.736615);
-        u2.setLocation(l3);
-        u2.setLastLocationTime(1426100000000L);
-        u2.setLastLoginTime(1426110640303L);
-        u2.setGames(g1);
-
-        Event e1 = new Event();
-        e1.setEventId(21);
-        e1.setTitle("Smashfest 2015");
-        e1.setDescription("Smash. My place. Don't even knock. Just come right the fuck in. ;)");
-        Location l2 = new Location(12, 30.285482, -97.742108);
-        e1.setLocation(l2);
-        e1.setStartTime(1426121640403L);
-        e1.setEndTime(1426131640403L);
-        e1.setHost(u2);
-        e1.setPublic(true);
-        e1.setGames(g1);
-        List<User> fuck = new ArrayList<User>();
-        fuck.add(u1);
-        fuck.add(u2);
-
-        setCurUser(u1);
-        _users.put(u1.getUserId(), u1);
-        _users.put(u2.getUserId(), u2);
-        _events.put(e1.getEventId(), e1);
-    }
 
     public static User getCurUser() {
         return _curUser;

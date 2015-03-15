@@ -26,6 +26,10 @@ public class EditProfileActivity extends Activity {
 
     }
 
+    public void saveProfile(View view) {
+        // send the new user to the server
+    }
+
     public void goBack(View view) {
         finish();
     }

@@ -20,7 +20,6 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/edit_event_games_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
@@ -35,36 +34,62 @@
                     android:background="@color/dark_gray" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_games_ssb64"
+                    android:id="@+id/edit_profile_games_ssb64"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="@string/ssb64" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_games_melee"
+                    android:id="@+id/edit_profile_games_melee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/melee" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_games_brawl"
+                    android:id="@+id/edit_profile_games_brawl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/brawl" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_games_pm"
+                    android:id="@+id/edit_profile_games_pm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/pm" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_games_smash4"
+                    android:id="@+id/edit_profile_games_smash4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/smash4" />
+
+                <TextView
+                    android:id="@+id/edit_profile_bio_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="14sp"
+                    android:text="@string/bio_caps"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@color/dark_gray" />
+
+                <EditText
+                    android:id="@+id/edit_profile_bio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/bio" />
+
             </LinearLayout>
+
+
+
         </LinearLayout>
     </ScrollView>
 
@@ -75,7 +100,7 @@
         android:layout_alignParentBottom="true"
         android:text="@string/save"
         android:textColor="@color/white"
-        android:onClick="saveEvent"
+        android:onClick="saveProfile"
         android:background="@color/gc_purple" />
 
 </RelativeLayout>
