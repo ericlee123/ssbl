@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.ConversationActivity;
@@ -66,6 +67,7 @@ public class InboxFragment extends ListFragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         // create a new conversation and go to conversation activity
+                        Toast.makeText(getActivity(), "clicky", Toast.LENGTH_SHORT).show();
                     }
                 });
 

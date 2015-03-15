@@ -77,8 +77,16 @@
     <string name="edit_event">Edit Event</string>
     <string name="event_title">Event title</string>
     <string name="event_location">Event location</string>
+    <string name="event_location_caps">EVENT LOCATION</string>
+    <string name="set_on_map">Set on map</string>
     <string name="location">Location</string>
-    <string name="other">Other</string>
+    <string name="enter_as_address">Enter as address</string>
+    <string name="games_caps">GAMES</string>
+    <string name="time_caps">TIME</string>
+    <string name="set_date_time">Set date and time</string>
+    <string name="other_caps">OTHER</string>
+    <string name="event_description">Event description</string>
+    <string name="public_">Public</string>
     <string name="save">Save</string>
 
     <!-- MessageActivity -->

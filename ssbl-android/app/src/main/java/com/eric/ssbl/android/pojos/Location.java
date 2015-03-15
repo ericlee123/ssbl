@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.pojos;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -37,7 +38,7 @@ public class Location {
 	public void setLocationId(Integer id) {
 		_id = id;
 	}
-	
+
 	public Double getLatitude() {
 		return _lat;
 	}
@@ -45,7 +46,7 @@ public class Location {
 	public void setLatitude(Double lat) {
 		_lat = lat;
 	}
-	
+
 	public Double getLongitude() {
 		return _lon;
 	}
