@@ -50,6 +50,7 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 				.uniqueResult();
 		
 		if(user != null) {
+			user.setUserId(null);
 			Hibernate.initialize(user.getEmail());
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getGames());
