@@ -20,13 +20,15 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.User;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 
@@ -75,8 +77,9 @@ public class LoginActivity extends Activity {
 
         String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+
         byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
-        String hashedPassword = bytesToHex(hashed);
+        String hashedPassword = bytesToHex(hashed).toUpperCase();
         NameValuePair login = new BasicNameValuePair(username, hashedPassword);
 
 //        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
@@ -236,25 +239,23 @@ public class LoginActivity extends Activity {
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/auth/login");
 
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
-                request.addHeader("password", login.getValue());
-
-                // hash password and put back into the json?
+                request.addHeader("password", "*" + login.getValue());
+                System.out.println("pwd: " + login.getValue());
 
                 HttpResponse response = client.execute(request);
-                String jsonString = IOUtils.toString(
-                        response.getEntity().getContent(), "UTF-8");
+                String jsonString = EntityUtils.toString(response.getEntity());
                 System.out.println("jsonString: " + jsonString);
+
                 ObjectMapper om = new ObjectMapper();
-                curUser = om.readValue(response.getEntity().getContent(), User.class);
+                curUser = om.readValue(jsonString, User.class);
 
             } catch (Exception e) {
 //                toastError(getString(R.string.sww_error));
                 e.printStackTrace();
             }
         }
-
-
 
 
         @Override
@@ -279,19 +280,18 @@ public class LoginActivity extends Activity {
 
     }
 
-    private class HttpRegister extends AsyncTask<JSONObject, Void, Void> {
+    private class HttpRegister extends AsyncTask<User, Void, Void> {
 
-        private boolean _success;
-
-        private void httpRegister(JSONObject login) {
+        private void httpRegister(User newUser) {
             String url = DataManager.getServerUrl();
 
             try {
                 // Use HttpGet b/c HTTP specs
                 HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url);
+                HttpPost request = new HttpPost("http://192.168.1.9:8080/ssbl-server/smash/auth/register");
 
-                // hash password and put back into the json?
+
+
 
                 HttpResponse response = client.execute(request);
 
@@ -304,7 +304,7 @@ public class LoginActivity extends Activity {
         }
 
         @Override
-        protected Void doInBackground(JSONObject... params) {
+        protected Void doInBackground(User... params) {
             _loading = ProgressDialog.show(getActivity(), getString(R.string.registering), getString(R.string.chill_out), true);
             httpRegister(params[0]);
             return null;

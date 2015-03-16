@@ -57,6 +57,7 @@ public class User {
 		_isPrivate = isPrivate;
 	}
 
+    @Id
 	public Integer getUserId() {
 		return _id;
 	}
