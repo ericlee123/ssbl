@@ -8,8 +8,9 @@ import com.hunnymustard.ssbl.model.User;
 
 public interface MessagingService {
 
-	List<Message> getNewMessages(User user);
-	List<Message> getAdditionalMessages(Integer conversationId, Integer size, Integer additional);
+	List<Message> getByAll(User user);
+	List<Message> getByNew(User user);
+	List<Message> getByConversation(Integer conversationId, Integer size, Integer additional);
 	
-	Message sendMessage(Message message);
+	Message send(Message message);
 }

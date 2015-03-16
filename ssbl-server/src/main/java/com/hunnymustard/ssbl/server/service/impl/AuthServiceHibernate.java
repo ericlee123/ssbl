@@ -25,5 +25,15 @@ public class AuthServiceHibernate implements AuthService {
 	public User getByParameters(String username, Integer id) {
 		return _userRepository.findByParameters(username, id);
 	}
+
+	@Override
+	public User register(User user) {
+		return _userRepository.add(user);
+	}
+
+	@Override
+	public User update(User user) {
+		return _userRepository.update(user);
+	}
 	
 }

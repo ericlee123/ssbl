@@ -7,7 +7,7 @@ import com.hunnymustard.ssbl.model.Location;
 import com.hunnymustard.ssbl.model.User;
 
 public interface SearchService {
-
+	
 	List<User> getUsersByProximity(Location current, Double radius);
 	List<User> getUsersByExample(User example);
 
