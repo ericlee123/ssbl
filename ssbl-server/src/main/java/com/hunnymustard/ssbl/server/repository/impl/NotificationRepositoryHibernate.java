@@ -17,6 +17,11 @@ import com.hunnymustard.ssbl.server.repository.NotificationRepository;
 public class NotificationRepositoryHibernate extends HibernateRepository<Notification, Integer> implements NotificationRepository {
 
 	@Override
+	public Notification find(Integer key) {
+		return (Notification) getSession().get(Notification.class, key);
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Notification> findByNew(User user) {
 		List<Notification> notifs = (List<Notification>) getSession().createCriteria(Notification.class)

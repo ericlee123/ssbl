@@ -8,5 +8,4 @@ public interface AuthService {
 	User getByParameters(String username, Integer id);
 	
 	User register(User user);
-	User update(User user);
 }

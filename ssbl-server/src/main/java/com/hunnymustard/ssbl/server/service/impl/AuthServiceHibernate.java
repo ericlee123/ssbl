@@ -18,7 +18,13 @@ public class AuthServiceHibernate implements AuthService {
 
 	@Override
 	public User getByCredentials(String username, String password) {
-		return _userRepository.findByCredentials(username, password);
+		// Find the user by their credentials and update their login
+		// timestamp in the database.
+		User user = _userRepository.findByCredentials(username, password);
+		if(user == null) return null;
+		
+		user.setLastLoginTime(System.currentTimeMillis());
+		return _userRepository.update(user);
 	}
 
 	@Override
@@ -29,11 +35,6 @@ public class AuthServiceHibernate implements AuthService {
 	@Override
 	public User register(User user) {
 		return _userRepository.add(user);
-	}
-
-	@Override
-	public User update(User user) {
-		return _userRepository.update(user);
 	}
 	
 }

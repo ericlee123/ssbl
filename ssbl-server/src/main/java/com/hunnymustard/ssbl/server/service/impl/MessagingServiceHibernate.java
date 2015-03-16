@@ -11,6 +11,7 @@ import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.ConversationRepository;
 import com.hunnymustard.ssbl.server.repository.MessageRepository;
+import com.hunnymustard.ssbl.server.repository.UserRepository;
 import com.hunnymustard.ssbl.server.service.MessagingService;
 
 @Service("messagingService")
@@ -23,6 +24,9 @@ public class MessagingServiceHibernate implements MessagingService {
 	@Autowired
 	private MessageRepository _messageRepository;
 	
+	@Autowired
+	private UserRepository _userRepository;
+	
 	@Override
 	public Message send(Message message) {
 		// If the conversation doesn't already exist create it, otherwise update
@@ -32,7 +36,11 @@ public class MessagingServiceHibernate implements MessagingService {
 
 	@Override
 	public List<Message> getByNew(User user) {
-		return _messageRepository.findByNew(user);
+		// Find the new messages for the user and then update their last message timestamp
+		List<Message> messages = _messageRepository.findByNew(user);
+		user.setLastMessageTime(System.currentTimeMillis());
+		_userRepository.update(user);
+		return messages;
 	}
 
 	@Override
@@ -42,7 +50,10 @@ public class MessagingServiceHibernate implements MessagingService {
 
 	@Override
 	public List<Message> getByAll(User user) {
-		return _messageRepository.findByAll(user);
+		List<Message> messages = _messageRepository.findByAll(user);
+		user.setLastMessageTime(System.currentTimeMillis());
+		_userRepository.update(user);
+		return messages;
 	}
 
 }

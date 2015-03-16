@@ -13,5 +13,4 @@ public interface SearchService {
 
 	List<Event> getEventsByProximity(Location current, Double radius);
 	List<Event> getEventsByExample(Event example);
-	
 }
