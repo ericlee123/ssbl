@@ -18,11 +18,13 @@ import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import java.util.Iterator;
 import java.util.List;
@@ -109,16 +111,19 @@ public class ConversationActivity extends ListActivity {
             url.append(DataManager.getServerUrl() + "/messaging/");
             url.append(DataManager.getCurUser().getUsername() + "/" + DataManager.getCurUser().getUserId());
             url.append("?conversation=" + id);
-            url.append("?size=0&additional=2");
+            url.append("&size=0&additional=2");
 
             HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(url.toString());
+            HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/messaging/timeline62x/1");
             HttpResponse response = null;
             try {
-                System.out.println("hurr");
                 response = client.execute(request);
-                System.out.println("hellohello: " + response.toString());
+
+                String jsonString = IOUtils.toString(
+                        response.getEntity().getContent(), "UTF-8");
+                System.out.println("json: " + jsonString);
                 ObjectMapper om = new ObjectMapper();
+                lm = om.readValue(jsonString, new TypeReference<List<Message>>(){});
             } catch (Exception e) {
                 e.printStackTrace();
             }

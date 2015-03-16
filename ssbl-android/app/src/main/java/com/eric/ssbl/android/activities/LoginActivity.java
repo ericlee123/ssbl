@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,14 +17,17 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
-import com.eric.ssbl.android.pojos.Conversation;
-import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -31,14 +35,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LoginActivity extends Activity {
 
     private File _loginFile;
     private JSONObject _loginObj;
     private ProgressDialog _loading;
+    private final Context _context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,44 +73,53 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        User cur = new User();
-        cur.setUserId(1);
-        cur.setUsername("timelien62x");
-        cur.setEmail("hunnymustardapps@gmail.com");
-        cur.setLocation(new Location(1, 33.049126, -96.819387));
-        cur.setLastLoginTime(1426398620000L);
-        cur.setLastLocationTime(1426398620000L);
-        cur.setBlurb("I am the creator");
+        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
+        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
+        String hashedPassword = bytesToHex(hashed);
+        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
 
-        User buddy = new User();
-        buddy.setUserId(2);
-        buddy.setBlurb("woof woof");
+//        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
 
-        Conversation c1 = new Conversation();
-        c1.setConversationId(1);
-
-        List<User> recips = new ArrayList<User>();
-        recips.add(buddy);
-        recips.add(cur);
-        c1.setRecipients(recips);
-
-        List<Conversation> temps = new ArrayList<Conversation>();
-        temps.add(c1);
-        cur.setConversations(temps);
-//        Message m1 = new Message();
-//        m1.setConversation(c1);
-//        m1.setBody("i am a dog");
-//        m1.setSentTime(1426398620000L);
-//        m1.setSender(buddy);
+        new HttpLogin().execute(login);
+//        User cur = new User();
+//        cur.setUserId(1);
+//        cur.setUsername("timeline62x");
+//        cur.setEmail("hunnymustardapps@gmail.com");
+//        cur.setLocation(new Location(1, 33.049126, -96.819387));
+//        cur.setLastLoginTime(1426398620000L);
+//        cur.setLastLocationTime(1426398620000L);
+//        cur.setBlurb("I am the creator");
 //
-//        Message m2 = new Message();
-//        m2.setConversation(c1);
-//        m2.setBody("have dinner ");
-
-        DataManager.setCurUser(cur);
-
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+//        User buddy = new User();
+//        buddy.setUserId(2);
+//        buddy.setBlurb("woof woof");
+//
+//        Conversation c1 = new Conversation();
+//        c1.setConversationId(1);
+//
+//        List<User> recips = new ArrayList<User>();
+//        recips.add(buddy);
+//        recips.add(cur);
+//        c1.setRecipients(recips);
+//
+//        List<Conversation> temps = new ArrayList<Conversation>();
+//        temps.add(c1);
+//        cur.setConversations(temps);
+////        Message m1 = new Message();
+////        m1.setConversation(c1);
+////        m1.setBody("i am a dog");
+////        m1.setSentTime(1426398620000L);
+////        m1.setSender(buddy);
+////
+////        Message m2 = new Message();
+////        m2.setConversation(c1);
+////        m2.setBody("have dinner ");
+//
+//        DataManager.setCurUser(cur);
+//
+//        startActivity(new Intent(this, MainActivity.class));
+//        finish();
 
 //        _loginObj = new JSONObject();
 //
@@ -192,32 +204,52 @@ public class LoginActivity extends Activity {
         finish();
     }
 
+    private void toastError(String errorMessage) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        char[] hexArray = "0123456789ABCDEF".toCharArray();
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
     private Activity getActivity() {
         return this;
     }
 
-    private class HttpLogin extends AsyncTask<Void, Void, Void> {
+    private class HttpLogin extends AsyncTask<NameValuePair, Void, Void> {
 
-        private boolean _success;
+        private User curUser;
 
-        private void httpLogin() {
+        private void httpLogin(NameValuePair login) {
 
             String url = DataManager.getServerUrl();
 
             try {
                 // Use HttpGet b/c HTTP specs
                 HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url);
+                HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/auth/login");
+
+                request.addHeader("username", login.getName());
+                request.addHeader("password", login.getValue());
 
                 // hash password and put back into the json?
 
                 HttpResponse response = client.execute(request);
-
-                // get status codes
-                // if successful, retrieve the current user and set as curUser in manager class
+                String jsonString = IOUtils.toString(
+                        response.getEntity().getContent(), "UTF-8");
+                System.out.println("jsonString: " + jsonString);
+                ObjectMapper om = new ObjectMapper();
+                curUser = om.readValue(response.getEntity().getContent(), User.class);
 
             } catch (Exception e) {
-                Toast.makeText(getActivity(), getString(R.string.sww_error), Toast.LENGTH_SHORT).show();
+//                toastError(getString(R.string.sww_error));
                 e.printStackTrace();
             }
         }
@@ -226,32 +258,25 @@ public class LoginActivity extends Activity {
 
 
         @Override
-        protected Void doInBackground(Void... params) {
-            _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
-            httpLogin();
+        protected Void doInBackground(NameValuePair... params) {
+            httpLogin(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
-            _loading.dismiss();
-            if (_success)
+//            _loading.dismiss();
+            if (curUser != null) {
+                System.out.println("great success: " + curUser.getUsername());
+                DataManager.setCurUser(curUser);
                 goToMain();
+            }
             else {
-                // display error message
+//                toastError(getString(R.string.bad_login));
             }
         }
 
-        private String bytesToHex(byte[] bytes) {
-            char[] hexArray = "0123456789ABCDEF".toCharArray();
-            char[] hexChars = new char[bytes.length * 2];
-            for ( int j = 0; j < bytes.length; j++ ) {
-                int v = bytes[j] & 0xFF;
-                hexChars[j * 2] = hexArray[v >>> 4];
-                hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-            }
-            return new String(hexChars);
-        }
+
     }
 
     private class HttpRegister extends AsyncTask<JSONObject, Void, Void> {

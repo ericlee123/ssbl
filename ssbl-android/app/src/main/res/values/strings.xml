@@ -31,6 +31,7 @@
     <string name="remember_me">Remember Me</string>
     <string name="logging_in">Logging in...</string>
     <string name="chill_out">Just chill out for a bit</string>
+    <string name="bad_login">Incorrect login credentials</string>
     <string name="register">Register</string>
     <string name="enter_email">Enter email:</string>
     <string name="enter_username">Enter username:</string>
