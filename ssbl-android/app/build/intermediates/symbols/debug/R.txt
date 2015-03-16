@@ -534,7 +534,7 @@ int id bottom_sections 0x7f0b0092
 int id buyButton 0x7f0b0028
 int id buy_now 0x7f0b002c
 int id buy_with_google 0x7f0b002d
-int id chart_refresh 0x7f0b007d
+int id chart_center 0x7f0b007d
 int id checkbox 0x7f0b003d
 int id classic 0x7f0b002f
 int id collapseActionView 0x7f0b001c

@@ -2012,7 +2012,7 @@ containing a value of this type.
         public static final int buyButton=0x7f0b0028;
         public static final int buy_now=0x7f0b002c;
         public static final int buy_with_google=0x7f0b002d;
-        public static final int chart_refresh=0x7f0b007d;
+        public static final int chart_center=0x7f0b007d;
         public static final int checkbox=0x7f0b003d;
         public static final int classic=0x7f0b002f;
         public static final int collapseActionView=0x7f0b001c;

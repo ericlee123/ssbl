@@ -9,34 +9,6 @@
         <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-d9d3a2782af3020f44a10b35ca387957880dfde2.jar" />
     </item>
     <item
-        jar="/home/eric/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.4.1/55605135bd7b836612e0bba7037c9669f6ccf89f/jackson-annotations-2.4.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="55605135bd7b836612e0bba7037c9669f6ccf89f">
-        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.4.1-69d255b50dfab22a8d53fca297035ff07d436bef.jar" />
-    </item>
-    <item
-        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
-        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-daf6d683866d5039fee334272be9841e4f87e132.jar" />
-    </item>
-    <item
-        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.balysv/material-ripple/1.0.1/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="aba9317bc403d69d8a571c0a72acfe95698a5db0">
-        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-3a9db075f84259650d0908cabcca7f4566d3639d.jar" />
-    </item>
-    <item
-        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
-        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-1fd7a0ff361c4bfb4307cdfcfc583e7afe637882.jar" />
-    </item>
-    <item
         jar="/home/eric/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.1/905075e6c80f206bbe6cf1e809d2caa69f420c76/commons-lang3-3.1.jar"
         jumboMode="false"
         revision="21.1.2"
@@ -56,6 +28,48 @@
         revision="21.1.2"
         sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
         <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/support-annotations-21.0.3-d0fece83d9e4c1b418b6b35367e4b626f77d7c92.jar" />
+    </item>
+    <item
+        jar="/home/eric/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.4.1/55605135bd7b836612e0bba7037c9669f6ccf89f/jackson-annotations-2.4.1.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="55605135bd7b836612e0bba7037c9669f6ccf89f">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.4.1-69d255b50dfab22a8d53fca297035ff07d436bef.jar" />
+    </item>
+    <item
+        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-daf6d683866d5039fee334272be9841e4f87e132.jar" />
+    </item>
+    <item
+        jar="/home/eric/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-core-asl/1.9.13/3c304d70f42f832e0a86d45bd437f692129299a4/jackson-core-asl-1.9.13.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="3c304d70f42f832e0a86d45bd437f692129299a4">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/jackson-core-asl-1.9.13-3201a9bdf9757be75cf003ffdae576148dd0ee8c.jar" />
+    </item>
+    <item
+        jar="/home/eric/.gradle/caches/modules-2/files-2.1/org.codehaus.jackson/jackson-mapper-asl/1.9.13/1ee2f2bed0e5dd29d1cb155a166e6f8d50bbddb7/jackson-mapper-asl-1.9.13.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="1ee2f2bed0e5dd29d1cb155a166e6f8d50bbddb7">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/jackson-mapper-asl-1.9.13-44711f72e5996ae1cd6e6e436778a6b1997af54b.jar" />
+    </item>
+    <item
+        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.balysv/material-ripple/1.0.1/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="aba9317bc403d69d8a571c0a72acfe95698a5db0">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-3a9db075f84259650d0908cabcca7f4566d3639d.jar" />
+    </item>
+    <item
+        jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="81d42bf983a8741f4888a6e333e454e4a5e0eeb7">
+        <dex dex="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/pre-dexed/debug/classes-1fd7a0ff361c4bfb4307cdfcfc583e7afe637882.jar" />
     </item>
     <item
         jar="/home/eric/dev/projects/ssbl/ssbl-android/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/libs/internal_impl-21.0.3.jar"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.hunnymustard.ssbl.android.R.layout"/>
+<fullyQualifiedTypeName name="android.support.v4.app.FragmentManager"/>
+<fullyQualifiedTypeName name="android.app.FragmentManager"/>
+<fullyQualifiedTypeName name="android.app.Fragment"/>
+<fullyQualifiedTypeName name="com.hunnymustard.ssbl.android.R.id"/>
+<fullyQualifiedTypeName name="com.hunnymustard.ssbl.android.R.string"/>
+<fullyQualifiedTypeName name="android.support.v7.widget.Toolbar"/>
+<fullyQualifiedTypeName name="android.support.v4.app.Fragment"/>
+<fullyQualifiedTypeName name="com.hunnymustard.ssbl.android.R"/>
+<fullyQualifiedTypeName name="com.hunnymustard.ssbl.android.fragments.MapFragment"/>
+<fullyQualifiedTypeName name="com.eric.ssbl.R"/>
+</qualifiedTypeNameHistroy>

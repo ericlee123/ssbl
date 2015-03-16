@@ -1,0 +1,40 @@
+Endpoints
+	LoginActivity
+		- send credentials for logging in
+		- send credentials to register a user (where to validate email/username? client or server)
+			+ for both of these requests, return a user object with everything initialized
+	ChartFragment
+		- send a location and a radius (in miles) and receive a list of users and events
+			+ these users should have id, username, location, last location time
+			+ these events should have id, title, location, host
+	ProfileActivity/Fragment
+		- send friend request (or respond to friend request if already sent)
+		- retrieve a list of friends
+		- edit current profile
+	NotificationFragment
+		- types of notifications
+			+ friend request
+			+ event announcements (canceled/began/ended/invited to)
+			+ system announcements
+			+ something from other users
+		- respond to friend request
+		- retrieve the mentioned event details
+			+ event object should have all fields except a list of users
+		- retrieve the relevant user in a notification
+			+ user should have id, username, blurb, last login time, games, and events
+	InboxFragment
+		- create a new conversation (you said i would send you a message object and then the server would handle stuff?)
+		- (I'm thinking I don't need to retrieve all the conversations as I already got those from the first login. What do you think?)
+		- delete user from conversation (I guess if the user is messaged again, we could just readd that user to the table of conversation_users)
+		- send a message
+	EventListFragment
+		- retrieve a list of events the current user is hosting
+		- retrieve a list of events the current user is attending
+		- retrieve a list of events near the current user (based on radius)
+			+ should the server handle sorting these requests or should it be done client side?
+			+ these lists should not have any intersect
+		- create a new event
+	EventActivity
+		- retrieve an event object with everything
+	SettingsActivity
+		- set the user as private if requested
