@@ -48,12 +48,4 @@ public class MessagingServiceHibernate implements MessagingService {
 		return _messageRepository.findByConversation(conversationId, size, additional);
 	}
 
-	@Override
-	public List<Message> getByAll(User user) {
-		List<Message> messages = _messageRepository.findByAll(user);
-		user.setLastMessageTime(System.currentTimeMillis());
-		_userRepository.update(user);
-		return messages;
-	}
-
 }

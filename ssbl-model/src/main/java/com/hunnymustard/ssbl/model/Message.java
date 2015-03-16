@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -54,7 +55,7 @@ public class Message {
 		_id = id;
 	}
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	@JoinColumn(name="conversation_id")
 	public Conversation getConversation() {
 		return _conversation;
@@ -64,7 +65,7 @@ public class Message {
 		_conversation = conversation;
 	}
 	
-	@OneToOne(fetch=FetchType.EAGER)
+	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="sender_id")
 	public User getSender() {
 		return _sender;

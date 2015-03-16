@@ -2,9 +2,11 @@ package com.hunnymustard.ssbl.server.repository.impl;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,33 +28,35 @@ public class MessageRepositoryHibernate extends HibernateRepository<Message, Int
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Message> findByNew(User user) {
-		return (List<Message>) getSession().createCriteria(Message.class)
+		List<Message> messages = (List<Message>) getSession().createCriteria(Message.class)
 				.createAlias("sender", "sender")
 				.add(Restrictions.gt("sentTime", user.getLastMessageTime()))
 				.add(Restrictions.ne("sender.userId", user.getUserId()))
 				.addOrder(Order.desc("sentTime"))
 				.list();	
-	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Message> findByAll(User user) {
-		return (List<Message>) getSession().createCriteria(Message.class)
-				.createAlias("sender", "sender")
-				.add(Restrictions.ne("sender.userId", user.getUserId()))
-				 .setProjection(Projections.distinct(Projections.property("conversationId")))
-				 .list();
+		
+		for(Message message : messages) {
+			Hibernate.initialize(message.getConversation().getRecipients());
+			Hibernate.initialize(message.getSender());
+		}
+		
+		return messages;
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Message> findByConversation(Integer conversationId, Integer size, Integer additional) {
-		return (List<Message>) getSession().createCriteria(Message.class)
+		List<Message> messages = (List<Message>) getSession().createCriteria(Message.class)
 				.setFirstResult(size)
 				.setMaxResults(additional)
 				.createAlias("conversation", "conversation")
 				.add(Restrictions.eq("conversation.conversationId", conversationId))
 				.addOrder(Order.desc("sentTime"))
 				.list();
+		
+		for(Message message : messages)
+			Hibernate.initialize(message.getSender());
+		
+		return messages;
 	}
 }

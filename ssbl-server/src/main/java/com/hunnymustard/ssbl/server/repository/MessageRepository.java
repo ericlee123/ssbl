@@ -10,6 +10,5 @@ public interface MessageRepository extends GenericRepository<Message, Integer> {
 
 	List<Message> findByNew(User user);
 	List<Message> findByConversation(Integer conversationId, Integer size, Integer additional);
-	List<Message> findByAll(User user);
 	
 }

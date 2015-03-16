@@ -44,39 +44,42 @@ web-server: tomcat7
 		- Example: http://localhost:8080/ssbl-server/smash/auth/register
 
 /smash/messaging
-	/{username}/{id} [GET]
-		- Desc: Get latest message in each conversation
-		- Params: username, id (Path)
-		- Return: List<Message>
 	/{username}/{id} [POST]
 		- Desc: Send a message
 		- Params: username, id (Path), message (Body)
 		- Return: Message
+		- Example: UNTESTED (Probably works though)
 	/{username}/{id}/new [GET]
 		- Desc: Get new messages
 		- Params: username, id (Path)
 		- Return: List<Message>
+		- Example: http://localhost:8080/ssbl-server/smash/messaging/timeline62x/1/new
 	/{username}/{id}/{conversation} [GET]
 		- Desc: Get additional messages for a conversation
 		- Params: username, id, conversation (Path), size, additional (Query)
 		- Return: List<Message>
+		- Example: http://localhost:8080/ssbl-server/smash/messaging/timeline62x/1/1?size=0&additional=50
 
 /smash/notif
 	/{username}/{id} [GET]
 		- Desc: Get new notifications
 		- Params: username, id (Path)
 		- Return: List<Notification>
+		- Example: http://localhost:8080/ssbl-server/smash/notif/timeline62x/1
 	/{username}/{id} [POST]
 		- Desc: Send a notification
 		- Params: username, id (Path), notif (Body)
 		- Return: Notification
+		- Example: UNTESTED (Probably works though)
 
 /smash/edit
 	/user [POST]
 		- Desc: Update a user (add friend, etc.)
 		- Params: User (Body)
 		- Return: User
+		- Example: UNTESTED (Probably works though)
 	/event [POST]
 		- Desc: Update an event
 		- Params: Event (Body)
 		- Return: Event
+		- Example: UNTESTED (Probably works though)

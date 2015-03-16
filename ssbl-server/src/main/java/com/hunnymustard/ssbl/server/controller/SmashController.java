@@ -76,14 +76,6 @@ public class SmashController {
 		return _authService.register(user);
 	}
 	
-	/* Messaging Mappings */
-	@RequestMapping(method=RequestMethod.GET, value="/messaging/{username}/{id}")
-	public @ResponseBody List<Message> getAllConversations(@PathVariable String username, @PathVariable Integer id) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null) return null;
-		return _messagingService.getByAll(user);
-	}
-	
 	@RequestMapping(method=RequestMethod.GET, value="/messaging/{username}/{id}/new")
 	public @ResponseBody List<Message> getNewMessages(@PathVariable String username, @PathVariable Integer id) {
 		User user = _authService.getByParameters(username, id);
