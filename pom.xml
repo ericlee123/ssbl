@@ -22,6 +22,7 @@
 		<module>ssbl-model</module>
 		<module>ssbl-server</module>
 		<module>ssbl-android</module>
+		<module>ssbl-client</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -164,6 +165,13 @@
 			    <artifactId>spring-test</artifactId>
 			    <version>${spring.version}</version>
 			    <scope>test</scope>
+			</dependency>
+			
+			<!-- Apache HttpComponents Dependency -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.3.4</version>
 			</dependency>
 			
 	        <!-- Simple SLF4J binding to remove Spring Logging conflicts -->
