@@ -22,8 +22,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.map.ObjectMapper;
 
-import java.io.ObjectInputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -117,10 +117,8 @@ public class ConversationActivity extends ListActivity {
             try {
                 System.out.println("hurr");
                 response = client.execute(request);
-                System.out.println("fuckthisshit");
-                ObjectInputStream ois = new ObjectInputStream(response.getEntity().getContent());
-                System.out.println("made ois");
-                lm = (List<Message>) ois.readObject();
+                System.out.println("hellohello: " + response.toString());
+                ObjectMapper om = new ObjectMapper();
             } catch (Exception e) {
                 e.printStackTrace();
             }
