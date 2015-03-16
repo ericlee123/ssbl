@@ -39,11 +39,13 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         if (_view != null) {
             ViewGroup parent = (ViewGroup) _view.getParent();
             if (parent != null)
                 parent.removeView(_view);
         }
+
         try {
             _view = inflater.inflate(R.layout.fragment_chart, container, false);
             if (!_init)
@@ -52,13 +54,18 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             /* map is already there, just return view as it is */
         }
 
-        ImageButton refresh = (ImageButton) _view.findViewById(R.id.chart_refresh);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                centerMapOnSelf();
-            }
-        });
+        try {
+            ImageButton center = (ImageButton) _view.findViewById(R.id.chart_center);
+            center.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    centerMapOnSelf();
+                }
+            });
+        } catch (NullPointerException e) {
+            Toast.makeText(getActivity(), "Error loading button", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
 
         return _view;
     }

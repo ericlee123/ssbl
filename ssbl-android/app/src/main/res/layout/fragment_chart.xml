@@ -12,9 +12,9 @@
         android:layout_height="match_parent" />
 
     <ImageButton
+        android:id="@+id/chart_center"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/chart_refresh"
         android:src="@drawable/purple_gps"
         android:background="@null"
         android:adjustViewBounds="true"

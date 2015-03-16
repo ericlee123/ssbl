@@ -56,7 +56,6 @@ public class MainActivity extends MaterialNavigationDrawer {
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.action_log_out:
-                // first ask to verify?
                 ChartFragment.reset();
                 DataManager.clearData();
                 intent = new Intent(this, LoginActivity.class);
