@@ -29,16 +29,19 @@ web-server: tomcat7
 		- Desc: Find events that match a template
 		- Params: Event (Body)
 		- Return: List<Event>
+		- Example: http://localhost:8080/ssbl-server/smash/search/event
 
 /smash/auth
 	/login [GET]
 		- Desc: Login an existing user
 		- Params: username, password (Header)
 		- Return: User
+		- Example: http://localhost:8080/ssbl-server/smash/auth/login
 	/register [POST]
 		- Desc: Register a new user
 		- Params: User (Body)
 		- Return: User
+		- Example: http://localhost:8080/ssbl-server/smash/auth/register
 
 /smash/messaging
 	/{username}/{id} [GET]
