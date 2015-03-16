@@ -48,9 +48,6 @@
             android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
-            android:name=".android.activities.NewConversationActivity"
-            android:theme="@style/LowerLevelTheme" />
-        <activity
             android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />
     </application>
