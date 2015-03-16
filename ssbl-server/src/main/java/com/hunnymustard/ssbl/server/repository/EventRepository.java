@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.hunnymustard.ssbl.model.Event;
 import com.hunnymustard.ssbl.model.Location;
+import com.hunnymustard.ssbl.model.User;
 
 public interface EventRepository extends GenericRepository<Event, Integer> {
 

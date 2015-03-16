@@ -33,7 +33,7 @@ public class SearchServiceHibernate implements SearchService {
 	public List<User> getUsersByExample(User example) {
 		return _userRepository.findByExample(example);
 	}
-
+	
 	@Override
 	public List<Event> getEventsByProximity(Location current, Double radius) {
 		return _eventRepository.findByProximity(current, radius);
@@ -43,5 +43,4 @@ public class SearchServiceHibernate implements SearchService {
 	public List<Event> getEventsByExample(Event example) {
 		return _eventRepository.findByExample(example);
 	}
-
 }

@@ -23,19 +23,20 @@ public class MessagingServiceHibernate implements MessagingService {
 	
 	@Autowired
 	private MessageRepository _messageRepository;
-
+	
 	@Autowired
 	private UserRepository _userRepository;
 	
 	@Override
-	public Message sendMessage(Message message) {
+	public Message send(Message message) {
 		// If the conversation doesn't already exist create it, otherwise update
 		message.setConversation(_conversationRepository.add(message.getConversation()));
 		return _messageRepository.add(message);
 	}
 
 	@Override
-	public List<Message> getNewMessages(User user) {
+	public List<Message> getByNew(User user) {
+		// Find the new messages for the user and then update their last message timestamp
 		List<Message> messages = _messageRepository.findByNew(user);
 		user.setLastMessageTime(System.currentTimeMillis());
 		_userRepository.update(user);
@@ -43,8 +44,16 @@ public class MessagingServiceHibernate implements MessagingService {
 	}
 
 	@Override
-	public List<Message> getAdditionalMessages(Integer conversationId, Integer size, Integer additional) {
-		return _messageRepository.findAdditionalMessages(conversationId, size, additional);
+	public List<Message> getByConversation(Integer conversationId, Integer size, Integer additional) {
+		return _messageRepository.findByConversation(conversationId, size, additional);
+	}
+
+	@Override
+	public List<Message> getByAll(User user) {
+		List<Message> messages = _messageRepository.findByAll(user);
+		user.setLastMessageTime(System.currentTimeMillis());
+		_userRepository.update(user);
+		return messages;
 	}
 
 }

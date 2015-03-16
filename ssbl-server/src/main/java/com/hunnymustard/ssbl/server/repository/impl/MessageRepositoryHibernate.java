@@ -3,6 +3,7 @@ package com.hunnymustard.ssbl.server.repository.impl;
 import java.util.List;
 
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,7 +36,17 @@ public class MessageRepositoryHibernate extends HibernateRepository<Message, Int
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Message> findAdditionalMessages(Integer conversationId, Integer size, Integer additional) {
+	public List<Message> findByAll(User user) {
+		return (List<Message>) getSession().createCriteria(Message.class)
+				.createAlias("sender", "sender")
+				.add(Restrictions.ne("sender.userId", user.getUserId()))
+				 .setProjection(Projections.distinct(Projections.property("conversationId")))
+				 .list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Message> findByConversation(Integer conversationId, Integer size, Integer additional) {
 		return (List<Message>) getSession().createCriteria(Message.class)
 				.setFirstResult(size)
 				.setMaxResults(additional)

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hunnymustard.ssbl.model.Event;
 import com.hunnymustard.ssbl.model.Location;
+import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.EventRepository;
 
 @Repository("eventRepository")
