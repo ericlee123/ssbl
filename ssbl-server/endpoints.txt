@@ -1,23 +1,75 @@
-/ssbl-server/messaging/{username}/{id}
-	[GET]
-		- Query Params: ?conversation={id}&size={size}&additional={additional}
-		- Get additional messages for a particular conversation
-	/new [GET]
-		- Get new messages
-	/send [POST]
-		- Request Body: Message
-		- Send a message
+Base Mapping: http://{host}:{port}/ssbl-server/
+host: localhost
+port: 8080
+web-server: tomcat7
 
-/ssbl-server/search/{username}/{id}
+/status [GET]
+	- Desc: Test if server is running
+	- Params: n/a
+	- Return: “Hello, World!”
+
+/smash/search
 	/user [GET]
-		- Query Params: ?lat={latitude}&lon={longitude}&radius={radius}
-		- Get users within a proximity
+		- Desc: Find users in a radius around a location
+		- Params: lat, lon, radius (Query)
+		- Return: List<User>
 	/user [POST]
-		- Request Body: Example User
-		- Get user by example
+		- Desc: Find users that match a template
+		- Params: User (Body)
+		- Return: List<User>
 	/event [GET]
-		- Query Params: ?lat={latitude}&lon={longitude}&radius={radius}
-		- Get events within a proximity
+		- Desc: Find events in a radius around a location
+		- Params: lat, lon, radius (Query)
+		- Return: List<Event>
 	/event [POST]
-		- Request Body: Example Event
-		- Get event by example
+		- Desc: Find events that match a template
+		- Params: Event (Body)
+		- Return: List<Event>
+
+/smash/auth
+	/login [GET]
+		- Desc: Login an existing user
+		- Params: username, password (Header)
+		- Return: User
+	/register [POST]
+		- Desc: Register a new user
+		- Params: User (Body)
+		- Return: User
+
+/smash/messaging
+	/{username}/{id} [GET]
+		- Desc: Get latest message in each conversation
+		- Params: username, id (Path)
+		- Return: List<Message>
+	/{username}/{id} [POST]
+		- Desc: Send a message
+		- Params: username, id (Path), message (Body)
+		- Return: Message
+	/{username}/{id}/new [GET]
+		- Desc: Get new messages
+		- Params: username, id (Path)
+		- Return: List<Message>
+	/{username}/{id}/{conversation} [GET]
+		- Desc: Get additional messages for a conversation
+		- Params: username, id, conversation (Path), size, additional (Query)
+		- Return: List<Message>
+
+/smash/notif
+	/{username}/{id} [GET]
+		- Desc: Get new notifications
+		- Params: username, id (Path)
+		- Return: List<Notification>
+	/{username}/{id} [POST]
+		- Desc: Send a notification
+		- Params: username, id (Path), notif (Body)
+		- Return: Notification
+
+/smash/edit
+	/user [POST]
+		- Desc: Update a user (add friend, etc.)
+		- Params: User (Body)
+		- Return: User
+	/event [POST]
+		- Desc: Update an event
+		- Params: Event (Body)
+		- Return: Event

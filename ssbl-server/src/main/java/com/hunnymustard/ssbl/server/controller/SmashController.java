@@ -100,25 +100,26 @@ public class SmashController {
 		return _messagingService.getByConversation(conversation, size, additional);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/messaging/{username}/{id}/send")
+	@RequestMapping(method=RequestMethod.POST, value="/messaging/{username}/{id}")
 	public @ResponseBody Message sendMessage(@PathVariable String username, 
 			@PathVariable Integer id, @RequestBody Message message) {
-		
 		User user = _authService.getByParameters(username, id);
-		if(user == null) return null;
+		if(user == null || user.getUsername().equals(message.getSender().getUsername())) return null;
 		return _messagingService.send(message);
 	}
 
 	/* Notification Mappings */
 	@RequestMapping(method=RequestMethod.GET, value="/notif/{username}/{id}")
-	public @ResponseBody List<Notification> getAllNotifications(@PathVariable String username, @PathVariable Integer id) {
+	public @ResponseBody List<Notification> getNewNotifications(@PathVariable String username, @PathVariable Integer id) {
 		User user = _authService.getByParameters(username, id);
 		if(user == null) return null;
 		return _notificationService.getByNew(user);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/notif/")
-	public @ResponseBody Notification sendNotification(@RequestBody Notification notification) {
+	@RequestMapping(method=RequestMethod.POST, value="/notif/{username}/{id}")
+	public @ResponseBody Notification sendNotification(@PathVariable String username, @PathVariable Integer id, @RequestBody Notification notification) {
+		User user = _authService.getByParameters(username, id);
+		if(user == null || user.getUsername().equals(notification.getSender().getUsername())) return null;
 		return _notificationService.create(notification);
 	}
 
