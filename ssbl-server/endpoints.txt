@@ -7,20 +7,24 @@ web-server: tomcat7
 	- Desc: Test if server is running
 	- Params: n/a
 	- Return: “Hello, World!”
+	- Example: http://localhost:8080/ssbl-server/status
 
 /smash/search
 	/user [GET]
 		- Desc: Find users in a radius around a location
 		- Params: lat, lon, radius (Query)
 		- Return: List<User>
+		- Example: http://localhost:8080/ssbl-server/smash/search/user?lat=33.049126&lon=-96.819387&radius=5.0
 	/user [POST]
 		- Desc: Find users that match a template
 		- Params: User (Body)
 		- Return: List<User>
+		- Example: http://localhost:8080/ssbl-server/smash/search/user
 	/event [GET]
 		- Desc: Find events in a radius around a location
 		- Params: lat, lon, radius (Query)
 		- Return: List<Event>
+		- Example: http://localhost:8080/ssbl-server/smash/search/event?lat=33.049126&lon=-96.819387&radius=5.0
 	/event [POST]
 		- Desc: Find events that match a template
 		- Params: Event (Body)

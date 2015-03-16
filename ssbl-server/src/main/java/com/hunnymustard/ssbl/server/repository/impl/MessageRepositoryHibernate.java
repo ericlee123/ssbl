@@ -51,7 +51,7 @@ public class MessageRepositoryHibernate extends HibernateRepository<Message, Int
 				.setFirstResult(size)
 				.setMaxResults(additional)
 				.createAlias("conversation", "conversation")
-				.add(Restrictions.eq("conversation.conversationID", conversationId))
+				.add(Restrictions.eq("conversation.conversationId", conversationId))
 				.addOrder(Order.desc("sentTime"))
 				.list();
 	}

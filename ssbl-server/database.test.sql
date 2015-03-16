@@ -1,15 +1,13 @@
-INSERT INTO locations (latitude, longitude) VALUES (37.324004, -122.058499);
-INSERT INTO locations (latitude, longitude) VALUES (30.286144, -97.7368801);
+INSERT INTO locations (latitude, longitude) VALUES (33.049126, -96.819387);
+INSERT INTO locations (latitude, longitude) VALUES (33.052426, -96.815074);
 
-INSERT INTO users (username, password, email, location_id, refresh_time, blurb) VALUES ("ashwin", "p0", "ashwin@test.com", 1, 0000000002, "test account blurb #1");
-INSERT INTO user_games (user_id, game_id) VALUES (LAST_INSERT_ID(), 0);
-INSERT INTO user_games (user_id, game_id) VALUES (LAST_INSERT_ID(), 3);
+INSERT INTO users (username, password, email, location_id, last_login_time, last_location_time, blurb) VALUES ("timeline62x", PASSWORD('pwd'), "hunnymustardapps@gmail.com", 1, 1426398620000, 1426398620000, "I am the creator");
+INSERT INTO users (username, password, email, location_id, last_login_time, last_location_time, blurb) VALUES ("buddy", PASSWORD('pwd'), "woof@woof.com", 2, 1426398620000, 1426398620000, "woof woof");
 
-INSERT INTO users (username, password, email, location_id, refresh_time, blurb) VALUES ("eric", "p1", "eric@test.com", 2, 0000000001, "test account blurb #2");
-INSERT INTO user_games (user_id, game_id) VALUES (LAST_INSERT_ID(), 0);
-INSERT INTO user_games (user_id, game_id) VALUES (LAST_INSERT_ID(), 2);
+INSERT INTO conversations VALUES (1);
 
-INSERT INTO events (host_id, title, location_id, start_time, end_time, description, public) VALUES (1, "smash fest", 1, 0000000003, 0000000004, "smash long and hard", true);
-INSERT INTO event_games (event_id, game_id) VALUES (LAST_INSERT_ID(), 0);
-INSERT INTO event_games (event_id, game_id) VALUES (LAST_INSERT_ID(), 3);
+INSERT INTO messages (conversation_id, sender_id, sent_time, body) VALUES (1, 2, 1426398620000, "i am a dog");
+INSERT INTO messages (conversation_id, sender_id, sent_time, body) VALUES (1, 1, 1426398620010, "have dinner with me");
 
+INSERT INTO conversation_users VALUES (1, 1);
+INSERT INTO conversation_users VALUES (2, 1);

@@ -61,13 +61,6 @@ public class ServerConfig {
 	}
 	
 	@Bean
-	public ObjectMapper objectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new Hibernate4Module());
-		return mapper;
-	}
-	
-	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}

@@ -45,12 +45,11 @@ public class EventRepositoryHibernate extends HibernateRepository<Event, Integer
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Event> findByProximity(Location cur, Double radius) {
-		String hql = "from User user inner join fetch user.location as loc where loc.id != :id and acos("
+		String hql = "from Event event inner join fetch event.location as loc where acos("
 				+ "sin(:lat1/57.2958) * sin(loc.latitude/57.2958) + cos(:lat1/57.2958) "
 				+ "* cos(loc.latitude/57.2958) *  cos((loc.longitude - :lon1)/57.2958)) * 3956 <= :dist";
 		
 		Query query = getSession().createQuery(hql);
-		query.setInteger("id", cur.getLocationId());
 		query.setDouble("lat1", cur.getLatitude());
 		query.setDouble("lon1", cur.getLongitude());
 		query.setDouble("dist", radius);

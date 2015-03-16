@@ -25,6 +25,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
@@ -85,7 +87,7 @@ public class User {
 		return _id;
 	}
 	
-	public void setUserId(int id) {
+	public void setUserId(Integer id) {
 		_id = id;
 	}
 	
@@ -134,7 +136,7 @@ public class User {
 		return _lastLoginTime;
 	}
 	
-	public void setLastLoginTime(long lastLoginTime) {
+	public void setLastLoginTime(Long lastLoginTime) {
 		_lastLoginTime = lastLoginTime;
 	}
 	
@@ -144,7 +146,7 @@ public class User {
 		return _lastLocationTime;
 	}
 	
-	public void setLastLocationTime(long lastLocationTime) {
+	public void setLastLocationTime(Long lastLocationTime) {
 		_lastLocationTime = lastLocationTime;
 	}
 	
@@ -154,7 +156,7 @@ public class User {
 		return _lastMessageTime;
 	}
 	
-	public void setLastMessageTime(long lastMessageTime) {
+	public void setLastMessageTime(Long lastMessageTime) {
 		_lastMessageTime = lastMessageTime;
 	}
 	
@@ -208,7 +210,7 @@ public class User {
 		_events.add(event);
 	}
 	
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="receiver")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="receiver", fetch=FetchType.LAZY)
 	public List<Notification> getNotifications() {
 		return _notifs;
 	}
