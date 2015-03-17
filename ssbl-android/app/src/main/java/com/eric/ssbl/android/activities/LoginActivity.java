@@ -18,16 +18,13 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -75,16 +72,19 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
-        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
 
-        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
-        String hashedPassword = bytesToHex(hashed).toUpperCase();
-        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
-
-//        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
-
-        new HttpLogin().execute(login);
+//        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
+//        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+//
+//        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
+//        String hashedPassword = bytesToHex(hashed).toUpperCase();
+//        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
+//
+////        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
+//
+//        new HttpLogin().execute(login);
 //        User cur = new User();
 //        cur.setUserId(1);
 //        cur.setUsername("timeline62x");
@@ -235,22 +235,27 @@ public class LoginActivity extends Activity {
             String url = DataManager.getServerUrl();
 
             try {
-                // Use HttpGet b/c HTTP specs
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/auth/login");
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
                 request.addHeader("password", "*" + login.getValue());
-                System.out.println("pwd: " + login.getValue());
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
-                System.out.println("jsonString: " + jsonString);
 
-//                Class.forName("com.fasterxml.jackson.core.ObjectCodec").newInstance();
-                ObjectMapper om = new ObjectMapper();
-                curUser = om.readValue(jsonString, User.class);
+                System.out.println("jsonString: " + jsonString);
+                if (jsonString.length() == 0)
+                    return;
+
+                JSONObject user = new JSONObject(jsonString);
+                curUser = new User();
+                curUser.setUserId(user.getInt("@id"));
+                curUser.setUsername(user.getString("username"));
+                curUser.setPassword(user.getString("password"));
+
+
 
             } catch (Exception e) {
 //                toastError(getString(R.string.sww_error));

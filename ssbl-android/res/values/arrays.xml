@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string-array name="visibility_chocies">
-        <item>Show exact location</item>
-        <item>Don\'t show exact location</item>
-    </string-array>
-
-</resources>

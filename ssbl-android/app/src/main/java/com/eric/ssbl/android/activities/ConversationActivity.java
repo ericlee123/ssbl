@@ -29,6 +29,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.util.Iterator;
 import java.util.List;
 
+// REAL COPY
 public class ConversationActivity extends ListActivity {
 
     private final Context _context = this;

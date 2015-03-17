@@ -29,7 +29,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-//import javax.persistence.ElementCollection;
 
 /**
  * This entity represents a User. Users are account holders in the application.
