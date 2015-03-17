@@ -18,13 +18,13 @@ import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.util.Iterator;
 import java.util.List;
@@ -123,7 +123,7 @@ public class ConversationActivity extends ListActivity {
                         response.getEntity().getContent(), "UTF-8");
                 System.out.println("json: " + jsonString);
                 ObjectMapper om = new ObjectMapper();
-                lm = om.readValue(jsonString, new TypeReference<List<Message>>(){});
+//                lm = om.readValue(jsonString, new TypeReference<List<Message>>(){});
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -5,10 +5,26 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="conversations")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Conversation {
 
@@ -23,7 +39,11 @@ public class Conversation {
 		_recipients = recipients;
 		_messages = messages;
 	}
-
+	
+	@Id
+	@GenericGenerator(name="gen",strategy="increment")
+	@GeneratedValue(generator="gen")
+	@Column(name="conversation_id", unique=true, nullable=false)
 	public Integer getConversationId() {
 		return _id;
 	}
@@ -31,7 +51,8 @@ public class Conversation {
 	public void setConversationId(Integer id) {
 		_id = id;
 	}
-
+	
+    @ManyToMany(mappedBy="conversations", fetch=FetchType.EAGER)
 	public List<User> getRecipients() {
 		return _recipients;
 	}
@@ -44,7 +65,10 @@ public class Conversation {
 		if(_recipients == null) _recipients = new ArrayList<User>();
 		_recipients.add(recipient);
 	}
-
+	
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="conversation", fetch=FetchType.LAZY)
+	@LazyCollection(LazyCollectionOption.EXTRA)
+	@OrderBy("sent_time DESC")
 	public List<Message> getMessages() {
 		return _messages;
 	}

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
@@ -29,7 +30,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -248,6 +248,7 @@ public class LoginActivity extends Activity {
                 String jsonString = EntityUtils.toString(response.getEntity());
                 System.out.println("jsonString: " + jsonString);
 
+//                Class.forName("com.fasterxml.jackson.core.ObjectCodec").newInstance();
                 ObjectMapper om = new ObjectMapper();
                 curUser = om.readValue(jsonString, User.class);
 

@@ -1,0 +1,18 @@
+-keep class null {
+    <init>();
+    void attachBaseContext(android.content.Context);
+}
+-keep class com.eric.ssbl.android.activities.LoginActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.MainActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.ProfileActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.EditProfileActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.EventActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.EditEventActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.ConversationActivity { <init>(); }
+-keep class com.eric.ssbl.android.activities.SettingsActivity { <init>(); }
+-keep public class * extends android.app.backup.BackupAgent {
+    <init>();
+}
+-keep public class * extends java.lang.annotation.Annotation {
+    *;
+}
