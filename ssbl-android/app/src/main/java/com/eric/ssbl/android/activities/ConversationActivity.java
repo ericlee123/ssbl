@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -15,17 +14,9 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
-import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.util.Iterator;
-import java.util.List;
 
 // REAL COPY
 public class ConversationActivity extends ListActivity {
@@ -45,7 +36,14 @@ public class ConversationActivity extends ListActivity {
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
-        new HttpConversationGetter().execute(getIntent().getExtras().getInt("conversation_id"));
+        if (getIntent().hasExtra("conversation_index")) {
+            _conversation = DataManager.getCurUser().getConversations().get(getIntent().getExtras().getInt("conversation_index"));
+        }
+        else {
+            Toast.makeText(_context, "Error retrieving conversation", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
         setContentView(R.layout.activity_conversation);
     }
@@ -100,48 +98,45 @@ public class ConversationActivity extends ListActivity {
         finish();
     }
 
-    private class HttpConversationGetter extends AsyncTask<Integer, Void, Void> {
-
-        private List<Message> lm;
-
-        private void fetchConversation(int id) {
-
-            StringBuilder url = new StringBuilder();
-            url.append(DataManager.getServerUrl() + "/messaging/");
-            url.append(DataManager.getCurUser().getUsername() + "/" + DataManager.getCurUser().getUserId());
-            url.append("?conversation=" + id);
-            url.append("&size=0&additional=2");
-
-            HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/messaging/timeline62x/1");
-            HttpResponse response = null;
-            try {
-                response = client.execute(request);
-
-                String jsonString = IOUtils.toString(
-                        response.getEntity().getContent(), "UTF-8");
-                System.out.println("json: " + jsonString);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        protected Void doInBackground(Integer... params) {
-            fetchConversation(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (lm != null) {
-                _conversation = new Conversation();
-                _conversation.setMessages(lm);
-                populate();
-            }
-            else
-                Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private class HttpConversationGetter extends AsyncTask<Integer, Void, Void> {
+//
+//        private List<Message> lm;
+//
+//        private void fetchConversation(int id) {
+//
+//            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+//            url.append("/messaging"
+//
+//            HttpClient client = new DefaultHttpClient();
+//            HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/messaging/timeline62x/1");
+//            HttpResponse response = null;
+//            try {
+//                response = client.execute(request);
+//
+//                String jsonString = IOUtils.toString(
+//                        response.getEntity().getContent(), "UTF-8");
+//                System.out.println("json: " + jsonString);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Integer... params) {
+//            fetchConversation(params[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void what) {
+//            if (lm != null) {
+//                _conversation = new Conversation();
+//                _conversation.setMessages(lm);
+//                populate();
+//            }
+//            else
+//                Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }

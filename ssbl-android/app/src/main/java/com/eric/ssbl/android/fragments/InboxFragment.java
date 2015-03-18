@@ -94,7 +94,7 @@ public class InboxFragment extends ListFragment {
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
         Intent i = new Intent(getActivity(), ConversationActivity.class);
-        i.putExtra("conversation_id", _conversations.get(position).getConversationId());
+        i.putExtra("conversation_index", position);
         startActivity(i);
     }
 }
