@@ -51,6 +51,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         switch (id) {
             case R.id.action_refresh:
                 // refresh all fragments
+                ChartFragment.makeRefresh();
+                ProfileFragment.makeRefresh();
                 break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));

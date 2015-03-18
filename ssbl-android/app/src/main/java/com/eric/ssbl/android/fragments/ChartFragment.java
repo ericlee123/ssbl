@@ -46,26 +46,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChartFragment extends Fragment implements ConnectionCallbacks, OnConnectionFailedListener{
+public class ChartFragment extends Fragment implements ConnectionCallbacks, OnConnectionFailedListener {
 
     private View _view;
-    private GoogleMap _map;
+    private static GoogleMap _map;
     private GoogleApiClient _googleApiClient;
     private LatLng _curLoc;
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
-    private static HashMap<Marker, Integer> _id;
+    private static HashMap<Marker, Integer> _id = new HashMap<>();
     private static boolean _refreshed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (_view != null) {
-            ViewGroup parent = (ViewGroup) _view.getParent();
-            if (parent != null)
-                parent.removeView(_view);
-        }
+//        if (_view != null) {
+//            ViewGroup parent = (ViewGroup) _view.getParent();
+//            if (parent != null)
+//                parent.removeView(_view);
+//        }
 
         if (_googleApiClient == null)
             buildGoogleApiClient();
@@ -102,7 +102,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         if (_map != null)
             _map.clear();
 
-        _id = null;
+        _refreshed = false;
+
+        _id.clear();
+        _nearbyUsers.clear();
+        _nearbyEvents.clear();
     }
 
     private void refresh() {
@@ -175,8 +179,6 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             new HttpLocationUpdater().execute(_curLoc);
             new HttpEUGetter().execute(_curLoc);
         }
-        else
-            Toast.makeText(getActivity(), "Unable to retrieve current location", Toast.LENGTH_SHORT).show();
     }
 
     public void displayElements() {
@@ -187,7 +189,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         else
             Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
 
-        _id = new HashMap<Marker, Integer>();
+        _id.clear();
 
         long now = System.currentTimeMillis();
 
