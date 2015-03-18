@@ -30,7 +30,7 @@ public class ProfileFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
             return v;
         }
-        ((ImageView) v.findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) v.findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_gray);
         ((ImageView) v.findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) v.findViewById(R.id.eu_title)).setText(_user.getUsername());
         ((TextView) v.findViewById(R.id.eu_subtitle)).setText("You");

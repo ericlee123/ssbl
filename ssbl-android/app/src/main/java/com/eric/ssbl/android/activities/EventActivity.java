@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -15,6 +16,12 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,10 +50,19 @@ public class EventActivity extends Activity {
         try {
             id = getIntent().getExtras().getInt("event_id");
         } catch (NullPointerException e) {
-            Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error displaying event", Toast.LENGTH_SHORT).show();
             return;
         }
-        _event = DataManager.getEvent(id);
+        Event temp = new Event();
+        temp.setEventId(id);
+        new HttpEventGetter().execute(temp);
+    }
+
+    private void fillDetails() {
+        if (_event == null) {
+            Toast.makeText(this, "Error displaying event", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Fill in the deets
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
@@ -147,5 +163,47 @@ public class EventActivity extends Activity {
 
     public void goBack(View view) {
         finish();
+    }
+
+    private class HttpEventGetter extends AsyncTask<Event, Void, Void> {
+
+        private Event e;
+
+        private void getEvent(Event template) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/search/event");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                // encode the event template into the request
+
+                HttpResponse response = client.execute(request);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Event... params) {
+
+            getEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (e != null) {
+                _event = e;
+                fillDetails();
+            }
+            else
+                Toast.makeText(_context, "Error retrieving event", Toast.LENGTH_SHORT).show();
+        }
     }
 }

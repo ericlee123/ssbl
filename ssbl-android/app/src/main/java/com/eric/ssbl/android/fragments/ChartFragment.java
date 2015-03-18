@@ -42,6 +42,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,10 +52,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private GoogleMap _map;
     private GoogleApiClient _googleApiClient;
     private LatLng _curLoc;
-    private static HashMap<Marker, Integer> _id;
     private static int _defaultZoom = 13;
-    private static List<User> _users;
-    private static List<Event> _events;
+    private static List<User> _nearbyUsers = new ArrayList<>();
+    private static List<Event> _nearbyEvents = new ArrayList<>();
+    private static HashMap<Marker, Integer> _id;
     private static boolean _refreshed;
 
     @Override
@@ -102,8 +103,6 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _map.clear();
 
         _id = null;
-        _users = null;
-        _events = null;
     }
 
     private void refresh() {
@@ -192,7 +191,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         long now = System.currentTimeMillis();
 
-        for (User u: _users) {
+        for (User u: _nearbyUsers) {
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Updated ";
@@ -215,7 +214,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _id.put(marker, u.getUserId());
         }
 
-        for (Event e: _events) {
+        for (Event e: _nearbyEvents) {
 
             Marker marker = _map.addMarker(new MarkerOptions()
                             .title(e.getTitle())
@@ -234,6 +233,14 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
         else
             _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
+    }
+
+    public static List<User> getNearbyUsers() {
+        return _nearbyUsers;
+    }
+
+    public static List<Event> getNearbyEvents() {
+        return _nearbyEvents;
     }
 
     private class HttpLocationUpdater extends AsyncTask<LatLng, Void, Void> {
@@ -348,8 +355,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         @Override
         protected void onPostExecute(Void what) {
-            _users = uList;
-            _events = eList;
+            _nearbyUsers = uList;
+            _nearbyEvents = eList;
             displayElements();
         }
     }

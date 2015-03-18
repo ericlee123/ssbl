@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,6 +17,13 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 
 public class ProfileActivity extends Activity {
 
@@ -43,9 +51,16 @@ public class ProfileActivity extends Activity {
             Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
             return;
         }
-        _user = DataManager.getUser(id);
+        User temp = new User();
+        temp.setUserId(id);
+        new HttpUserGetter().execute(temp);
+    }
 
-        // Fill in the details
+    private void fillDetails() {
+
+        if (_user == null)
+            return;
+
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
@@ -164,10 +179,54 @@ public class ProfileActivity extends Activity {
             });
             ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
         }
+
     }
 
     public void goBack(View view) {
         finish();
     }
 
+    private class HttpUserGetter extends AsyncTask<User, Void, Void> {
+
+        private User u;
+
+        private void getUser(User template) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/search/user");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                // encode the user template into the request
+                ObjectMapper om = new ObjectMapper();
+
+
+                HttpResponse response = client.execute(request);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+
+            getUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (u != null) {
+                _user = u;
+                fillDetails();
+            }
+            else
+                Toast.makeText(_context, "Error retrieving profile", Toast.LENGTH_SHORT).show();
+        }
+    }
 }
