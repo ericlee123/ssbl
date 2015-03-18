@@ -1,24 +1,8 @@
 package com.eric.ssbl.android.pojos;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * This class represents a notification. Notifications are sent by a sender user to
@@ -29,9 +13,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * 
  * @see com.hunnymustard.ssbl.model.User
  */
-@Entity
-@Table(name="notifications")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Notification {
 	
 	private Integer _id;
@@ -54,11 +35,7 @@ public class Notification {
 		_sendTime = sendTime;
 		_type = type;
 	}
-	
-	@Id
-	@GenericGenerator(name="gen",strategy="increment")
-	@GeneratedValue(generator="gen")
-	@Column(name="notification_id", unique=true, nullable=false)
+
 	public Integer getNotificationId() {
 		return _id;
 	}
@@ -66,9 +43,7 @@ public class Notification {
 	public void setNotificationId(Integer id) {
 		_id = id;
 	}
-	
-	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="sender_id", nullable=false)
+
 	public User getSender() {
 		return _sender;
 	}
@@ -76,9 +51,7 @@ public class Notification {
 	public void setSender(User sender) {
 		_sender = sender;
 	}
-	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name="receiver_id", nullable=false)
+
 	public User getReceiver() {
 		return _receiver;
 	}
@@ -86,8 +59,7 @@ public class Notification {
 	public void setReceiver(User receiver) {
 		_receiver = receiver;
 	}
-	
-	@Column(name="message", nullable=false)
+
 	public String getMessage() {
 		return _message;
 	}
@@ -95,8 +67,7 @@ public class Notification {
 	public void setMessage(String message) {
 		_message = message;
 	}
-	
-	@Column(name="send_time", nullable=false)
+
 	public Long getSendTime() {
 		return _sendTime;
 	}
@@ -104,9 +75,7 @@ public class Notification {
 	public void setSendTime(Long sendTime) {
 		_sendTime = sendTime;
 	}
-	
-	@Column(name="type", nullable=false)
-	@Enumerated(EnumType.ORDINAL)
+
 	public Type getType() {
 		return _type;
 	}

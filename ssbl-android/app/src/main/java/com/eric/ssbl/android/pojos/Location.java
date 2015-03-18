@@ -1,17 +1,7 @@
 package com.eric.ssbl.android.pojos;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.hibernate.annotations.GenericGenerator;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * This entity represents a location. Locations contain a latitude and longitude
@@ -23,9 +13,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * @see com.hunnymustard.ssbm.model.User
  * @see com.hunnymustard.ssbm.model.Event
  */
-@Entity
-@Table(name="locations")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Location {
 
 	private Integer _id;
@@ -38,11 +25,7 @@ public class Location {
 		_lat = lat;
 		_lon = lon;
 	}
-	
-	@Id
-	@GenericGenerator(name="gen",strategy="increment")
-	@GeneratedValue(generator="gen")
-	@Column(name="location_id", unique=true, nullable=false)
+
 	public Integer getLocationId() {
 		return _id;
 	}
@@ -50,8 +33,7 @@ public class Location {
 	public void setLocationId(Integer id) {
 		_id = id;
 	}
-	
-	@Column(name="latitude", nullable=false)
+
 	public Double getLatitude() {
 		return _lat;
 	}
@@ -59,8 +41,7 @@ public class Location {
 	public void setLatitude(Double lat) {
 		_lat = lat;
 	}
-	
-	@Column(name="longitude", nullable=false)
+
 	public Double getLongitude() {
 		return _lon;
 	}

@@ -85,44 +85,7 @@ public class LoginActivity extends Activity {
 ////        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
 //
 //        new HttpLogin().execute(login);
-//        User cur = new User();
-//        cur.setUserId(1);
-//        cur.setUsername("timeline62x");
-//        cur.setEmail("hunnymustardapps@gmail.com");
-//        cur.setLocation(new Location(1, 33.049126, -96.819387));
-//        cur.setLastLoginTime(1426398620000L);
-//        cur.setLastLocationTime(1426398620000L);
-//        cur.setBlurb("I am the creator");
-//
-//        User buddy = new User();
-//        buddy.setUserId(2);
-//        buddy.setBlurb("woof woof");
-//
-//        Conversation c1 = new Conversation();
-//        c1.setConversationId(1);
-//
-//        List<User> recips = new ArrayList<User>();
-//        recips.add(buddy);
-//        recips.add(cur);
-//        c1.setRecipients(recips);
-//
-//        List<Conversation> temps = new ArrayList<Conversation>();
-//        temps.add(c1);
-//        cur.setConversations(temps);
-////        Message m1 = new Message();
-////        m1.setConversation(c1);
-////        m1.setBody("i am a dog");
-////        m1.setSentTime(1426398620000L);
-////        m1.setSender(buddy);
-////
-////        Message m2 = new Message();
-////        m2.setConversation(c1);
-////        m2.setBody("have dinner ");
-//
-//        DataManager.setCurUser(cur);
-//
-//        startActivity(new Intent(this, MainActivity.class));
-//        finish();
+
 
 //        _loginObj = new JSONObject();
 //
