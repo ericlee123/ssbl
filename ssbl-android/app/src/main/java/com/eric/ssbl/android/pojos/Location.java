@@ -1,7 +1,11 @@
 package com.eric.ssbl.android.pojos;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * This entity represents a location. Locations contain a latitude and longitude
@@ -13,6 +17,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @see com.hunnymustard.ssbm.model.User
  * @see com.hunnymustard.ssbm.model.Event
  */
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Location {
 
 	private Integer _id;

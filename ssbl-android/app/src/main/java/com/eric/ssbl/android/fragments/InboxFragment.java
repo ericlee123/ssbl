@@ -31,10 +31,6 @@ public class InboxFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        _conversations = DataManager.getCurUser().getConversations();
-
-        setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
-
         View v = inflater.inflate(R.layout.fragment_inbox, container, false);
         ImageButton createMessage = (ImageButton) v.findViewById(R.id.new_message);
 
@@ -86,6 +82,11 @@ public class InboxFragment extends ListFragment {
                 adb.create().show();
             }
         });
+
+        _conversations = DataManager.getCurUser().getConversations();
+        if (_conversations != null)
+            setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
+
         return v;
     }
 

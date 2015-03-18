@@ -17,7 +17,7 @@ import java.util.List;
 public class DataManager {
 
 //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/SSBLServer";
-    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/ssbl-server";
+    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static HashMap<Integer, User> _users;
     private static HashMap<Integer, Event> _events;

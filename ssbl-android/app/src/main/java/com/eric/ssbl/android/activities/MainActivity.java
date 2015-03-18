@@ -23,7 +23,7 @@ public class MainActivity extends MaterialNavigationDrawer {
     @Override
     public void init(Bundle bundle) {
         this.disableLearningPattern();
-        MaterialAccount account = new MaterialAccount(this.getResources(), "test", "testemail", R.drawable.smash_bros_icon, R.drawable.md_gray);
+        MaterialAccount account = new MaterialAccount(this.getResources(), DataManager.getCurUser().getUsername(), DataManager.getCurUser().getEmail(), R.drawable.smash_bros_icon, R.drawable.md_gray);
         this.addAccount(account);
 
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());
@@ -56,7 +56,6 @@ public class MainActivity extends MaterialNavigationDrawer {
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.action_log_out:
-                ChartFragment.reset();
                 DataManager.clearData();
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);

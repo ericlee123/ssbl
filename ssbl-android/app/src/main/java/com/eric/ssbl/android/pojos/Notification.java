@@ -1,8 +1,10 @@
 package com.eric.ssbl.android.pojos;
 
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * This class represents a notification. Notifications are sent by a sender user to
@@ -13,6 +15,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * 
  * @see com.hunnymustard.ssbl.model.User
  */
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Notification {
 	
 	private Integer _id;

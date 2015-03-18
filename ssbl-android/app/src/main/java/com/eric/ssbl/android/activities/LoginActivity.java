@@ -18,13 +18,16 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -72,19 +75,16 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
+        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
 
-//        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
-//        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
-//
-//        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
-//        String hashedPassword = bytesToHex(hashed).toUpperCase();
-//        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
-//
-////        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
-//
-//        new HttpLogin().execute(login);
+        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
+        String hashedPassword = bytesToHex(hashed).toUpperCase();
+        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
+
+        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
+
+        new HttpLogin().execute(login);
 
 
 //        _loginObj = new JSONObject();
@@ -145,7 +145,25 @@ public class LoginActivity extends Activity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getActivity(), "Registering...", Toast.LENGTH_SHORT).show();
+                                _loading = ProgressDialog.show(getActivity(), getString(R.string.registering), getString(R.string.chill_out), true);
+
+                                String email = ((EditText) findViewById(R.id.prompt_register_email)).getText().toString();
+                                String username = ((EditText) findViewById(R.id.prompt_register_username)).getText().toString();
+                                String password = ((EditText) findViewById(R.id.prompt_register_password)).getText().toString();
+                                String confirm = ((EditText) findViewById(R.id.prompt_register_confirm_password)).getText().toString();
+
+                                if (!password.equals(confirm)) {
+                                    _loading.dismiss();
+                                    Toast.makeText(_context, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                User u = new User();
+                                u.setEmail(email);
+                                u.setUsername(username);
+                                u.setPassword(password);
+
+                                new HttpRegister().execute(u);
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -159,7 +177,6 @@ public class LoginActivity extends Activity {
         adb.create().show();
     }
 
-
     private void goToMain() {
 
         // set the current user in the general manager
@@ -168,10 +185,6 @@ public class LoginActivity extends Activity {
 
         startActivity(new Intent(this, MainActivity.class));
         finish();
-    }
-
-    private void toastError(String errorMessage) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     private String bytesToHex(byte[] bytes) {
@@ -195,11 +208,12 @@ public class LoginActivity extends Activity {
 
         private void httpLogin(NameValuePair login) {
 
-            String url = DataManager.getServerUrl();
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/auth/login");
 
             try {
                 HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/auth/login");
+                HttpGet request = new HttpGet(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
@@ -212,16 +226,11 @@ public class LoginActivity extends Activity {
                 if (jsonString.length() == 0)
                     return;
 
-                JSONObject user = new JSONObject(jsonString);
-                curUser = new User();
-                curUser.setUserId(user.getInt("@id"));
-                curUser.setUsername(user.getString("username"));
-                curUser.setPassword(user.getString("password"));
-
-
+                ObjectMapper om = new ObjectMapper();
+                curUser = om.readValue(jsonString, User.class);
 
             } catch (Exception e) {
-//                toastError(getString(R.string.sww_error));
+                curUser = null;
                 e.printStackTrace();
             }
         }
@@ -235,32 +244,28 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-//            _loading.dismiss();
+            _loading.dismiss();
+
             if (curUser != null) {
-                System.out.println("great success: " + curUser.getUsername());
                 DataManager.setCurUser(curUser);
                 goToMain();
             }
             else {
-//                toastError(getString(R.string.bad_login));
+                Toast.makeText(_context, "Incorrect login info", Toast.LENGTH_SHORT).show();
             }
         }
-
-
     }
 
     private class HttpRegister extends AsyncTask<User, Void, Void> {
 
         private void httpRegister(User newUser) {
-            String url = DataManager.getServerUrl();
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/auth/register");
 
             try {
-                // Use HttpGet b/c HTTP specs
                 HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost("http://192.168.1.9:8080/ssbl-server/smash/auth/register");
-
-
-
+                HttpPost request = new HttpPost(url.toString());
 
                 HttpResponse response = client.execute(request);
 
@@ -274,7 +279,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected Void doInBackground(User... params) {
-            _loading = ProgressDialog.show(getActivity(), getString(R.string.registering), getString(R.string.chill_out), true);
+
             httpRegister(params[0]);
             return null;
         }

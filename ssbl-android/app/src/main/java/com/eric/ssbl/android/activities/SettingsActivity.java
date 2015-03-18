@@ -94,6 +94,10 @@ public class SettingsActivity extends Activity {
         }
     }
 
+    public static double getRadius() {
+        return 5.0;
+    }
+
     public void goBack(View view) {
         finish();
     }

@@ -10,6 +10,8 @@ android {
         targetSdkVersion 19
         versionCode 2
         versionName "2.0"
+
+//        multiDexEnabled = true
     }
 
     packagingOptions {
@@ -27,6 +29,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+//    dexOptions {
+//        incremental true
+//    }
 }
 
 dependencies {
@@ -41,4 +47,17 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
 
     compile 'it.neokree:MaterialNavigationDrawer:1.3.2'
+
+    compile 'com.fasterxml.jackson.core:jackson-core:2.2.4'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.5.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.5.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate4:2.5.1'
+
+//    compile('org.hibernate:hibernate-core:4.3.8.Final') {
+//        exclude group: 'org.jboss.spec.javax.transaction', module: 'jboss-transaction-api_1.2_spec'
+//        exclude group: 'dom4j', module: 'dom4j'
+//        exclude group: 'antlr', module: 'antlr'
+//        exclude group: 'org.jboss.logging', module: 'jboss-logging'
+//        exclude group: 'org.jboss.logging', module: 'jboss-logging-annotations'
+//    }
 }

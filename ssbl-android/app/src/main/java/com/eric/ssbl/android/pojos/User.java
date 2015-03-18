@@ -1,14 +1,13 @@
 package com.eric.ssbl.android.pojos;
 
-import android.app.Notification;
-import android.location.Location;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * This entity represents a User. Users are account holders in the application.
@@ -18,6 +17,7 @@ import java.util.List;
  * 
  * @author ashwin
  */
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class User {
 
 	private Integer _id;

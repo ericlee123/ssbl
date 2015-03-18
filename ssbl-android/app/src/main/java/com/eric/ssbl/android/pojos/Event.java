@@ -3,9 +3,11 @@ package com.eric.ssbl.android.pojos;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 /**
  * This entity represents a smash bros. event. Events are created by a host user at
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * 
  * @see com.hunnymustard.ssbm.model.User
  */
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Event {
 
 	private Integer _id;
