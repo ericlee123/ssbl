@@ -142,7 +142,7 @@ public class EditProfileActivity extends Activity {
                 DataManager.setCurUser(updated);
                 finish();
             } else {
-                Toast.makeText(_context, "Error updated profile :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Error updating profile :(", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -194,11 +194,18 @@ public class LoginActivity extends Activity {
         adb.create().show();
     }
 
-    private void goToMain() {
+    private void initiateApp() {
 
         // set the current user in the general manager
         if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
             rememberMe();
+
+        // retrieve nearby users and events in datamanager
+        new DataManager().initializeData(this);
+    }
+
+    public void goToMain() {
+        _loading.dismiss();
 
         startActivity(new Intent(this, MainActivity.class));
         finish();
@@ -259,14 +266,14 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            _loading.dismiss();
 
             if (curUser != null) {
                 DataManager.setCurUser(curUser);
-                goToMain();
+                initiateApp();
             }
             else {
                 Toast.makeText(_context, "Incorrect login info", Toast.LENGTH_SHORT).show();
+                _loading.dismiss();
             }
         }
     }
@@ -313,13 +320,13 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            _loading.dismiss();
 
             if (curUser != null) {
                 DataManager.setCurUser(curUser);
-                goToMain();
+                initiateApp();
             }
             else {
+                _loading.dismiss();
                 Toast.makeText(_context, "Error registering :(", Toast.LENGTH_SHORT).show();
             }
         }

@@ -28,10 +28,10 @@ public class EventListFragment extends ListFragment {
 
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-        _allEvents = new ArrayList<Event>();
+        _allEvents = new ArrayList<>();
         List<Event> hosting = DataManager.getHostingEvents();
         List<Event> attending = DataManager.getCurUser().getEvents();
-        List<Event> nearby = ChartFragment.getNearbyEvents();
+        List<Event> nearby = DataManager.getNearbyEvents();
 
         _allEvents.addAll(hosting);
         _allEvents.addAll(attending);

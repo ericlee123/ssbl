@@ -54,7 +54,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private LatLng _curLoc;
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
-    private static List<Event> _nearbyEvents = new ArrayList<>();
+    public static List<Event> _nearbyEvents = new ArrayList<>();
     private static HashMap<Marker, Integer> _id = new HashMap<>();
     private static boolean _refreshed;
 

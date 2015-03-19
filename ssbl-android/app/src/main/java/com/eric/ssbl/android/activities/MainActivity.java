@@ -41,7 +41,6 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addSection(events);
 
         this.addDivisor();
-
     }
 
     @Override

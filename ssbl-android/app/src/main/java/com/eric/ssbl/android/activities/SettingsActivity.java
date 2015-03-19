@@ -2,6 +2,8 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,7 +13,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
+import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Settings;
+import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +39,7 @@ import java.io.ObjectOutputStream;
  */
 public class SettingsActivity extends Activity {
 
+    private Context _context = this;
     private Settings _settings;
     private File _settingsFile;
 
@@ -92,6 +106,11 @@ public class SettingsActivity extends Activity {
             Toast.makeText(this, getString(R.string.error_saving_settings), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
+
+        User u = DataManager.getCurUser();
+        u.setPrivate(lp);
+        new HttpPrivacyUpdater().execute(u);
+
     }
 
     public static double getRadius() {
@@ -100,5 +119,53 @@ public class SettingsActivity extends Activity {
 
     public void goBack(View view) {
         finish();
+    }
+
+    private class HttpPrivacyUpdater extends AsyncTask<User, Void, Void> {
+
+        private User updated;
+
+        private void updatePrivacy(User edited) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/edit/user");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(edited));
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                updated = om.readValue(jsonString, User.class);
+
+            } catch (Exception e) {
+                updated = null;
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+
+            updatePrivacy(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+
+            if (updated != null)
+                DataManager.setCurUser(updated);
+        }
     }
 }
