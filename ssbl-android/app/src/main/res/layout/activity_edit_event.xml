@@ -196,10 +196,10 @@
                     android:hint="@string/event_description" />
 
                 <CheckBox
-                    android:id="@+id/edit_event_public"
+                    android:id="@+id/edit_event_private"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/public_" />
+                    android:text="@string/private_" />
 
                 </LinearLayout>
 

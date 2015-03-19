@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.LatLng;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -27,27 +29,32 @@ import java.util.List;
 
 public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-//    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/SSBLServer";
+//    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
     private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static List<User> _nearbyUsers = new ArrayList<>();
-    private static HashMap<Integer, User> _userIdMap = new HashMap<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
+    private static List<Event> _hostingEvents = new ArrayList<>();
+    private static HashMap<Integer, User> _userIdMap = new HashMap<>();
     private static HashMap<Integer, Event> _eventIdMap = new HashMap<>();
-
-    private static GoogleApiClient _googleApiClient;
 
     public static User getCurUser() {
         return _curUser;
     }
 
     public static void setCurUser(User curUser) {
+        if (curUser == null)
+            return;
+
         _curUser = curUser;
     }
 
-    public static void setNearbyUsers(List<User> nu) {
-        _nearbyUsers = nu;
-        for (User u: nu)
+    public static void setNearbyUsers(List<User> nearbyUsers) {
+        if (nearbyUsers == null)
+            return;
+
+        _nearbyUsers = nearbyUsers;
+        for (User u: nearbyUsers)
             _userIdMap.put(u.getUserId(), u);
     }
 
@@ -59,18 +66,34 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _userIdMap.get(id);
     }
 
-    public static void setNearbyEvents(List<Event> ne) {
-        _nearbyEvents = ne;
-        for (Event e: ne)
+    public static void setNearbyEvents(List<Event> nearbyEvents) {
+        if (nearbyEvents == null)
+            return;
+
+        _nearbyEvents = nearbyEvents;
+        for (Event e: nearbyEvents)
+            _eventIdMap.put(e.getEventId(), e);
+    }
+
+    public static void setHostingEvents(List<Event> hostingEvents) {
+        if (hostingEvents == null)
+            return;
+
+        _hostingEvents = hostingEvents;
+        for (Event e: hostingEvents)
             _eventIdMap.put(e.getEventId(), e);
     }
 
     public static List<Event> getHostingEvents() {
-        return new ArrayList<Event>();
+        return _hostingEvents;
     }
 
     public static List<Event> getNearbyEvents() {
         return _nearbyEvents;
+    }
+
+    public static void updateEvent(Event e) {
+        _eventIdMap.put(e.getEventId(), e);
     }
 
     public static Event getEventById(int id) {
@@ -94,11 +117,11 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // Stupid stuff
 
     private LoginActivity _la;
+    private static GoogleApiClient _googleApiClient;
 
     public DataManager() {}
 
-    public void initializeData(LoginActivity la) {
-
+    public void init(LoginActivity la) {
         _la = la;
         buildGoogleApiClient();
     }
@@ -131,7 +154,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
-            new HttpEUGetter().execute(loc);
+            new HttpSynchronizer().execute(loc);
         }
     }
 
@@ -139,12 +162,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _la.goToMain();
     }
 
-    private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
+    private class HttpSynchronizer extends AsyncTask<LatLng, Void, Void> {
 
-        private List<User> uList;
-        private List<Event> eList;
+        private List<User> nearbyUsers;
+        private List<Event> nearbyEvents;
 
-        private void search(LatLng loc) {
+        private List<Event> hostingEvents;
+
+        private void getNearbyEU(LatLng loc) {
 
             // get the users
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
@@ -165,9 +190,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                uList = om.readValue(jsonString, new TypeReference<List<User>>(){});
+                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>(){});
             } catch (Exception e) {
-                uList = null;
+                nearbyUsers = null;
                 e.printStackTrace();
             }
 
@@ -190,25 +215,60 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                eList = om.readValue(jsonString, new TypeReference<List<Event>>(){});
+                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>(){});
             } catch (Exception e) {
-                eList = null;
+                nearbyEvents = null;
                 e.printStackTrace();
             }
         }
 
+        private void getHostingEvents() {
+
+            Event e = new Event();
+            e.setHost(getCurUser());
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/search/event");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                // encode the user template into the request
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(e));
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {
+                });
+            } catch (Exception exc) {
+                hostingEvents = null;
+                exc.printStackTrace();
+            }
+        }
 
         @Override
         protected Void doInBackground(LatLng... params) {
-            search(params[0]);
+            getNearbyEU(params[0]);
+            getHostingEvents();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
-            setNearbyUsers(uList);
-            setNearbyEvents(eList);
+            setNearbyUsers(nearbyUsers);
+            setNearbyEvents(nearbyEvents);
+            setHostingEvents(hostingEvents);
             done();
         }
     }
+
 }

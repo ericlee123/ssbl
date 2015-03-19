@@ -201,7 +201,7 @@ public class LoginActivity extends Activity {
             rememberMe();
 
         // retrieve nearby users and events in datamanager
-        new DataManager().initializeData(this);
+        new DataManager().init(this);
     }
 
     public void goToMain() {

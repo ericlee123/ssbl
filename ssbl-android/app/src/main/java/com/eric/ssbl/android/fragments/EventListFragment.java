@@ -33,6 +33,12 @@ public class EventListFragment extends ListFragment {
         List<Event> attending = DataManager.getCurUser().getEvents();
         List<Event> nearby = DataManager.getNearbyEvents();
 
+        System.out.println("hosting size" + hosting.size());
+
+        attending.removeAll(hosting);
+        nearby.removeAll(hosting);
+        nearby.removeAll(attending);
+
         _allEvents.addAll(hosting);
         _allEvents.addAll(attending);
         _allEvents.addAll(nearby);
@@ -49,7 +55,7 @@ public class EventListFragment extends ListFragment {
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), EditEventActivity.class);
                 Bundle b = new Bundle();
-                b.putBoolean("new_event", true);
+                b.putInt("event_id", -1);
                 i.putExtras(b);
                 startActivity(i);
             }

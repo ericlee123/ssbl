@@ -91,6 +91,7 @@
     <string name="other_caps">OTHER</string>
     <string name="event_description">Event description</string>
     <string name="public_">Public</string>
+    <string name="private_">Private</string>
     <string name="save">Save</string>
 
     <!-- MessageActivity -->

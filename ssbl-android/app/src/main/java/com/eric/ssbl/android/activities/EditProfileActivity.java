@@ -48,8 +48,7 @@ public class EditProfileActivity extends Activity {
         setContentView(R.layout.activity_edit_profile);
 
         User u = DataManager.getCurUser();
-        List<Game> lg = u.getGames();
-        for (Game g: lg) {
+        for (Game g: u.getGames()) {
             if (g.equals(Game.SSB64))
                 ((CheckBox) findViewById(R.id.edit_profile_games_ssb64)).setChecked(true);
             else if (g.equals(Game.MELEE))
