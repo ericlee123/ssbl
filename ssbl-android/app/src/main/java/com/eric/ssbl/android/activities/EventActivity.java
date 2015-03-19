@@ -16,16 +16,21 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class EventActivity extends Activity {
 
@@ -157,7 +162,35 @@ public class EventActivity extends Activity {
             ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.show_on_map);
         }
         else {
+            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
+            lb.setImageResource(R.drawable.blue_pencil);
+            lb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_event));
 
+            ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
+            mb.setImageResource(R.drawable.red_x);
+            mb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // end the event?
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");
+
+            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+            rb.setImageResource(R.drawable.gray_fedora);
+            rb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open up map
+                }
+            });
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip));
         }
     }
 
@@ -180,12 +213,22 @@ public class EventActivity extends Activity {
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
 
-                // encode the event template into the request
+                // encode the user template into the request
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(template));
+                request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
 
-            } catch (Exception e) {
-                e.printStackTrace();
+                if (jsonString.length() == 0)
+                    return;
+
+                List<Event> le = om.readValue(jsonString, new TypeReference<List<Event>>(){});
+                e = le.get(0);
+            } catch (Exception exc) {
+                e = null;
+                exc.printStackTrace();
             }
         }
 

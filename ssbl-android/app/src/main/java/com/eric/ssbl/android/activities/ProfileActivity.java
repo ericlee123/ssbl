@@ -17,13 +17,18 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import java.util.List;
 
 public class ProfileActivity extends Activity {
 
@@ -203,11 +208,19 @@ public class ProfileActivity extends Activity {
 
                 // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
-
+                StringEntity body = new StringEntity(om.writeValueAsString(template));
+                request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
 
+                if (jsonString.length() == 0)
+                    return;
+
+                List<User> lu = om.readValue(jsonString, new TypeReference<List<User>>() {});
+                u = lu.get(0);
             } catch (Exception e) {
+                u = null;
                 e.printStackTrace();
             }
         }

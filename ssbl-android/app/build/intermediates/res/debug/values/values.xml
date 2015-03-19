@@ -404,6 +404,7 @@
     <string name="sww_error">Something went wrong :(</string>
     <string name="talk_trash">Talk trash</string>
     <string name="time_caps">TIME</string>
+    <string name="tip">tip</string>
     <string name="unattend_event">Unattend event</string>
     <string name="username_hint">Username</string>
     <string name="view_attendance">View attendance</string>
