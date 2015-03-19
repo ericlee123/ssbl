@@ -187,10 +187,10 @@ public class EventActivity extends Activity {
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Open up map
+                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip));
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
         }
     }
 

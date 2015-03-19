@@ -114,7 +114,8 @@
     <string name="smash4">Smash 4</string>
 
     <!-- Miscellaneous -->
-    <string name="tip">tip</string>
+    <string name="tip_fedora">Tip fedora</string>
+    <string name="mlady">M\'lady</string>
     <string name="sww_error">Something went wrong :(</string>
     <string name="remember_me_error">Error saving login info</string>
     <string name="refresh">Refresh</string>
