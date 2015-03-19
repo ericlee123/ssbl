@@ -2,8 +2,6 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -14,23 +12,13 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
-import com.eric.ssbl.android.pojos.Settings;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 /**
  * turn notifications on/off
@@ -39,9 +27,8 @@ import java.io.ObjectOutputStream;
  */
 public class SettingsActivity extends Activity {
 
-    private Context _context = this;
-    private Settings _settings;
     private File _settingsFile;
+    private JSONObject _settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,22 +50,37 @@ public class SettingsActivity extends Activity {
         mapRadius.setAdapter(adapter);
 
         // Load previously saved settings
-        _settingsFile = new File(getFilesDir(), "settings");
-        if (_settingsFile.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(_settingsFile);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                _settings = (Settings) ois.readObject();
-                ois.close();
-                fis.close();
-            } catch (Exception e) {
-                Toast.makeText(this, getString(R.string.error_loading_settings), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
+        if (_settingsFile == null || _settings == null) {
+            _settingsFile = new File(getFilesDir(), "settings");
+            if (_settingsFile.exists()) {
+                try {
+                    Scanner scan = new Scanner(_settingsFile);
+                    _settings = new JSONObject(scan.nextLine());
+                    scan.close();
+                } catch (Exception e) {
+                    _settingsFile.delete();
+                    Toast.makeText(this, getString(R.string.error_loading_settings), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
             }
+            else {
+                try {
+                    _settingsFile.createNewFile();
+                    _settings = new JSONObject();
 
-            ((CheckBox) findViewById(R.id.settings_notifications)).setChecked(_settings.getAlert());
-            ((CheckBox) findViewById(R.id.settings_location_private)).setChecked(_settings.getLocationPrivate());
-            mapRadius.setSelection(_settings.getMapRadiusIndex());
+                    _settings.put("location_private", false);
+                    _settings.put("map_radius_index", 2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        try {
+            ((CheckBox) findViewById(R.id.settings_location_private)).setChecked(_settings.getBoolean("location_private"));
+            mapRadius.setSelection(_settings.getInt("map_radius_index"));
+        } catch (Exception e) {
+            _settingsFile.delete();
+            Toast.makeText(this, "Error loading settings", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -87,21 +89,26 @@ public class SettingsActivity extends Activity {
         super.onStop();
 
         // save the login info and send it to the server
-        boolean alertMe = ((CheckBox) findViewById(R.id.settings_notifications)).isChecked();
         boolean lp = ((CheckBox) findViewById(R.id.settings_location_private)).isChecked();
-        int temp = ((Spinner) findViewById(R.id.settings_map_radius)).getSelectedItemPosition();
-        _settings = new Settings(alertMe, lp, temp);
+        int index = ((Spinner) findViewById(R.id.settings_map_radius)).getSelectedItemPosition();
+        try {
+            _settings = new JSONObject();
+            _settings.put("location_private", lp);
+            _settings.put("map_radius_index", index);
+        } catch (Exception e) {
+            Toast.makeText(this, "Error saving settings", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         try {
             _settingsFile.delete();
             _settingsFile.createNewFile();
 
-            FileOutputStream fos = new FileOutputStream(_settingsFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(_settings);
-            oos.close();
-            fos.close();
-            Toast.makeText(this, getString(R.string.saved_settings), Toast.LENGTH_SHORT).show();
+            PrintWriter pw = new PrintWriter(_settingsFile);
+            pw.print(_settings.toString());
+            pw.close();
+
+            Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.error_saving_settings), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
@@ -109,63 +116,63 @@ public class SettingsActivity extends Activity {
 
         User u = DataManager.getCurUser();
         u.setPrivate(lp);
-        new HttpPrivacyUpdater().execute(u);
+        DataManager.updateCurUser(u);
 
     }
 
-    public static double getRadius() {
-        return 5.0;
+    public double getRadius() {
+
+        if (_settingsFile == null || _settings == null) {
+            _settingsFile = new File(getFilesDir(), "settings");
+            if (_settingsFile.exists()) {
+                try {
+                    Scanner scan = new Scanner(_settingsFile);
+                    _settings = new JSONObject(scan.nextLine());
+                    scan.close();
+                } catch (Exception e) {
+                    _settingsFile.delete();
+                    Toast.makeText(this, getString(R.string.error_loading_settings), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
+            else {
+                try {
+                    _settingsFile.createNewFile();
+                    _settings = new JSONObject();
+
+                    _settings.put("location_private", false);
+                    _settings.put("map_radius_index", 2);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        int index = 0;
+        try {
+            index = _settings.getInt("map_radius_index");
+        } catch (Exception e) {
+            _settingsFile.delete();
+        }
+        if (index == 0)
+            return 1.0;
+        if (index == 1)
+            return 5.0;
+        if (index == 2)
+            return 10.0;
+        if (index == 3)
+            return 20.0;
+        if (index == 4)
+            return 50.0;
+        if (index == 5)
+            return 100.0;
+        if (index == 6)
+            return -1.0;
+
+        return 10.0;
     }
 
     public void goBack(View view) {
         finish();
-    }
-
-    private class HttpPrivacyUpdater extends AsyncTask<User, Void, Void> {
-
-        private User updated;
-
-        private void updatePrivacy(User edited) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/user");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(edited));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                updated = om.readValue(jsonString, User.class);
-
-            } catch (Exception e) {
-                updated = null;
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(User... params) {
-
-            updatePrivacy(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-
-            if (updated != null)
-                DataManager.setCurUser(updated);
-        }
     }
 }

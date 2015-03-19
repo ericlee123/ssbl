@@ -1,7 +1,6 @@
 package com.eric.ssbl.android.fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
@@ -18,7 +17,6 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -31,13 +29,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -170,7 +161,16 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
             _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
-            new HttpLocationUpdater().execute(_curLoc);
+
+            User curUser = DataManager.getCurUser();
+            Location loc = curUser.getLocation();
+            if (loc == null)
+                loc = new Location();
+            loc.setLatitude(_curLoc.latitude);
+            loc.setLongitude(_curLoc.longitude);
+            curUser.setLocation(loc);
+            DataManager.updateCurUser(curUser);
+
             displayElements();
         }
     }
@@ -192,6 +192,16 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         relevantUsers.removeAll(DataManager.getCurUser().getFriends());
         relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
+
+            // To enforce synchronization with the current user
+            if (u.equals(DataManager.getCurUser())) {
+                Location loc = u.getLocation();
+                if (loc == null)
+                    loc = new Location();
+                loc.setLatitude(_curLoc.latitude);
+                loc.setLongitude(_curLoc.longitude);
+                u.setLocation(loc);
+            }
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Updated ";
@@ -241,70 +251,4 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
     }
 
-    public static List<User> getNearbyUsers() {
-        return _nearbyUsers;
-    }
-
-    public static List<Event> getNearbyEvents() {
-        return _nearbyEvents;
-    }
-
-    private class HttpLocationUpdater extends AsyncTask<LatLng, Void, Void> {
-
-        private User u;
-
-        private void updateLocation(LatLng loc) {
-
-            u = DataManager.getCurUser();
-            Location newLoc;
-            if (u.getLocation() == null)
-                newLoc = new Location();
-            else
-                newLoc = u.getLocation();
-            newLoc.setLatitude(loc.latitude);
-            newLoc.setLongitude(loc.longitude);
-            u.setLocation(newLoc);
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/user");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(u));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                u = om.readValue(jsonString, User.class);
-            } catch (Exception e) {
-                u = null;
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        protected Void doInBackground(LatLng... params) {
-            updateLocation(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (u != null) {
-                DataManager.setCurUser(u);
-                centerMapOnSelf();
-            }
-            else
-                Toast.makeText(getActivity(), "Error updating current location", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 }

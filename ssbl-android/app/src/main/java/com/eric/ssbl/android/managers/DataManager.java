@@ -49,6 +49,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _curUser = curUser;
     }
 
+    public static void updateCurUser(User updated) {
+        new HttpUserUpdater().execute(updated);
+    }
+
     public static void setNearbyUsers(List<User> nearbyUsers) {
         if (nearbyUsers == null)
             return;
@@ -114,7 +118,52 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _serverURL;
     }
 
+    private static class HttpUserUpdater extends AsyncTask<User, Void, Void> {
 
+        private User updated;
+
+        private void updateUser(User u) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/edit/user");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(u));
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                updated = om.readValue(jsonString, User.class);
+            } catch (Exception e) {
+                updated = null;
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+            updateUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (updated != null)
+                DataManager.setCurUser(updated);
+        }
+
+    }
 
     // Stupid stuff
 
@@ -156,7 +205,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
-            new HttpSynchronizer().execute(loc);
+            new HttpEUGetter().execute(loc);
         }
     }
 
@@ -164,7 +213,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _la.goToMain();
     }
 
-    private class HttpSynchronizer extends AsyncTask<LatLng, Void, Void> {
+    private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
 
         private List<User> nearbyUsers;
         private List<Event> nearbyEvents;
@@ -176,7 +225,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             // get the users
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/search/user");
-            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
+            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + new SettingsActivity().getRadius());
 
             try {
                 HttpClient client = new DefaultHttpClient();
@@ -201,7 +250,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             // get the events
             StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
             url2.append("/search/event");
-            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
+            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + new SettingsActivity().getRadius());
 
             try {
                 HttpClient client = new DefaultHttpClient();
