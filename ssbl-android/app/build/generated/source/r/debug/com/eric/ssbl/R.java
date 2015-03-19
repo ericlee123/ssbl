@@ -2009,14 +2009,14 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f0b0033;
         public static final int action_bar_title=0x7f0b0032;
         public static final int action_context_bar=0x7f0b0046;
-        public static final int action_log_out=0x7f0b00b8;
+        public static final int action_log_out=0x7f0b00b7;
         public static final int action_menu_divider=0x7f0b0002;
         public static final int action_menu_presenter=0x7f0b0003;
         public static final int action_mode_bar=0x7f0b0042;
         public static final int action_mode_bar_stub=0x7f0b0041;
         public static final int action_mode_close_button=0x7f0b0034;
-        public static final int action_refresh=0x7f0b00b6;
-        public static final int action_settings=0x7f0b00b7;
+        public static final int action_refresh=0x7f0b00b5;
+        public static final int action_settings=0x7f0b00b6;
         public static final int activity_chooser_view_content=0x7f0b0035;
         public static final int adjust_height=0x7f0b0016;
         public static final int adjust_width=0x7f0b0017;
@@ -2133,7 +2133,6 @@ containing a value of this type.
         public static final int production=0x7f0b0025;
         public static final int progress_circular=0x7f0b0005;
         public static final int progress_horizontal=0x7f0b0006;
-        public static final int prompt_list_user=0x7f0b00b5;
         public static final int prompt_register_confirm_password=0x7f0b00b4;
         public static final int prompt_register_email=0x7f0b00b1;
         public static final int prompt_register_password=0x7f0b00b3;

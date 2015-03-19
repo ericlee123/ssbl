@@ -102,14 +102,14 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
+        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
+
         String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
 
         byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
         String hashedPassword = bytesToHex(hashed).toUpperCase();
         NameValuePair login = new BasicNameValuePair(username, "*" + hashedPassword);
-//        NameValuePair login = new BasicNameValuePair("buddy", "*975B2CD4FF9AE554FE8AD33168FBFC326D2021DD");
-        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
 
         new HttpLogin().execute(login);
 
@@ -220,6 +220,7 @@ public class LoginActivity extends Activity {
             _loginFile.delete();
 
         new DataManager().init(this);
+        DataManager.initSettings(getFilesDir());
     }
 
     public void goToMain() {

@@ -39,11 +39,9 @@ public class InboxFragment extends ListFragment {
             @Override
             public void onClick(View v) {
 
-                LayoutInflater li = LayoutInflater.from(getActivity());
-
                 final List<User> relevantUsers = new ArrayList<>();
                 List<User> nearbyTemp = DataManager.getNearbyUsers();
-                relevantUsers.addAll(DataManager.getCurUser().getFriends());
+//                relevantUsers.addAll(DataManager.getCurUser().getFriends());
                 nearbyTemp.removeAll(relevantUsers);
                 relevantUsers.addAll(nearbyTemp);
 

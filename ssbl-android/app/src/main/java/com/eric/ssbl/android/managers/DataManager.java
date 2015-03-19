@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.eric.ssbl.android.activities.LoginActivity;
-import com.eric.ssbl.android.activities.SettingsActivity;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -22,10 +21,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -165,10 +168,95 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     }
 
+    // Stupid stuff for settings
+
+    private static File _settingsFile;
+    private static JSONObject _settings;
+
+    public static void initSettings(File fileDir) {
+        _settingsFile = new File(fileDir, "settings");
+
+        try {
+            if (!_settingsFile.exists()) {
+                _settingsFile.createNewFile();
+                _settings = new JSONObject();
+
+                _settings.put("location_private", false);
+                _settings.put("map_radius_index", 2);
+
+                PrintWriter pw = new PrintWriter(_settingsFile);
+                pw.print(_settings.toString());
+                pw.close();
+            }
+            else {
+                Scanner scan = new Scanner(_settingsFile);
+                _settings = new JSONObject(scan.nextLine());
+            }
+        } catch (Exception e) {
+            _settingsFile.delete();
+            e.printStackTrace();
+        }
+    }
+
+    public static JSONObject getSettings() {
+        return _settings;
+    }
+
+    public static void saveSettings(JSONObject settings) {
+
+        _settings = settings;
+
+        try {
+            PrintWriter pw = new PrintWriter(_settingsFile);
+            pw.print(_settings.toString());
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            User u = getCurUser();
+            u.setPrivate(_settings.getBoolean("location_private"));
+            updateCurUser(u);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // this is so poorly written i am sorry
+    public static double getRadius() {
+
+        if (_settingsFile == null || _settings == null)
+            return 10.0;
+
+        int index = 0;
+        try {
+            index = _settings.getInt("map_radius_index");
+        } catch (Exception e) {
+            _settingsFile.delete();
+        }
+        if (index == 0)
+            return 1.0;
+        if (index == 1)
+            return 5.0;
+        if (index == 2)
+            return 10.0;
+        if (index == 3)
+            return 20.0;
+        if (index == 4)
+            return 50.0;
+        if (index == 5)
+            return 100.0;
+        if (index == 6)
+            return -1.0;
+
+        return 10.0;
+    }
+
     // Stupid stuff
 
     private LoginActivity _la;
-    private static GoogleApiClient _googleApiClient;
+    private GoogleApiClient _googleApiClient;
 
     public DataManager() {}
 
@@ -225,7 +313,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             // get the users
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/search/user");
-            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + new SettingsActivity().getRadius());
+            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
 
             try {
                 HttpClient client = new DefaultHttpClient();
@@ -250,7 +338,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             // get the events
             StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
             url2.append("/search/event");
-            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + new SettingsActivity().getRadius());
+            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
 
             try {
                 HttpClient client = new DefaultHttpClient();

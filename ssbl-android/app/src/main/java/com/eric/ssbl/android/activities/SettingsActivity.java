@@ -12,23 +12,20 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
-import com.eric.ssbl.android.pojos.User;
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
- * turn notifications on/off
  * set location public/private
  * radius 1 5 10 20 50 100 give me the whole damn map
  */
 public class SettingsActivity extends Activity {
 
-    private File _settingsFile;
-    private JSONObject _settings;
+    private static File _settingsFile;
+    private static JSONObject _settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,31 +47,8 @@ public class SettingsActivity extends Activity {
         mapRadius.setAdapter(adapter);
 
         // Load previously saved settings
-        if (_settingsFile == null || _settings == null) {
-            _settingsFile = new File(getFilesDir(), "settings");
-            if (_settingsFile.exists()) {
-                try {
-                    Scanner scan = new Scanner(_settingsFile);
-                    _settings = new JSONObject(scan.nextLine());
-                    scan.close();
-                } catch (Exception e) {
-                    _settingsFile.delete();
-                    Toast.makeText(this, getString(R.string.error_loading_settings), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-            else {
-                try {
-                    _settingsFile.createNewFile();
-                    _settings = new JSONObject();
-
-                    _settings.put("location_private", false);
-                    _settings.put("map_radius_index", 2);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        if (_settingsFile == null || _settings == null)
+            initFiles();
         try {
             ((CheckBox) findViewById(R.id.settings_location_private)).setChecked(_settings.getBoolean("location_private"));
             mapRadius.setSelection(_settings.getInt("map_radius_index"));
@@ -82,6 +56,32 @@ public class SettingsActivity extends Activity {
             _settingsFile.delete();
             Toast.makeText(this, "Error loading settings", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private static void initFiles() {
+        _settingsFile = new File("settings");
+        if (_settingsFile.exists()) {
+            try {
+                Scanner scan = new Scanner(_settingsFile);
+                _settings = new JSONObject(scan.nextLine());
+                scan.close();
+            } catch (Exception e) {
+                _settingsFile.delete();
+//                Toast.makeText(_context, "Error loading settings", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                _settingsFile.createNewFile();
+                _settings = new JSONObject();
+
+                _settings.put("location_private", false);
+                _settings.put("map_radius_index", 2);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
@@ -99,77 +99,7 @@ public class SettingsActivity extends Activity {
             Toast.makeText(this, "Error saving settings", Toast.LENGTH_LONG).show();
             return;
         }
-
-        try {
-            _settingsFile.delete();
-            _settingsFile.createNewFile();
-
-            PrintWriter pw = new PrintWriter(_settingsFile);
-            pw.print(_settings.toString());
-            pw.close();
-
-            Toast.makeText(this, "Settings saved", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, getString(R.string.error_saving_settings), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-
-        User u = DataManager.getCurUser();
-        u.setPrivate(lp);
-        DataManager.updateCurUser(u);
-
-    }
-
-    public double getRadius() {
-
-        if (_settingsFile == null || _settings == null) {
-            _settingsFile = new File(getFilesDir(), "settings");
-            if (_settingsFile.exists()) {
-                try {
-                    Scanner scan = new Scanner(_settingsFile);
-                    _settings = new JSONObject(scan.nextLine());
-                    scan.close();
-                } catch (Exception e) {
-                    _settingsFile.delete();
-                    Toast.makeText(this, getString(R.string.error_loading_settings), Toast.LENGTH_SHORT).show();
-                    e.printStackTrace();
-                }
-            }
-            else {
-                try {
-                    _settingsFile.createNewFile();
-                    _settings = new JSONObject();
-
-                    _settings.put("location_private", false);
-                    _settings.put("map_radius_index", 2);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        int index = 0;
-        try {
-            index = _settings.getInt("map_radius_index");
-        } catch (Exception e) {
-            _settingsFile.delete();
-        }
-        if (index == 0)
-            return 1.0;
-        if (index == 1)
-            return 5.0;
-        if (index == 2)
-            return 10.0;
-        if (index == 3)
-            return 20.0;
-        if (index == 4)
-            return 50.0;
-        if (index == 5)
-            return 100.0;
-        if (index == 6)
-            return -1.0;
-
-        return 10.0;
+        DataManager.saveSettings(_settings);
     }
 
     public void goBack(View view) {

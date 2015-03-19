@@ -189,8 +189,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         List<User> relevantUsers = new ArrayList<>();
         relevantUsers.addAll(DataManager.getNearbyUsers());
-        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
-        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+//        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
+//        relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
 
             // To enforce synchronization with the current user
