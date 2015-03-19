@@ -34,16 +34,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class LoginActivity extends Activity {
 
-    private final Context _context = this;
+    private Context _context = this;
     private File _loginFile;
-    private JSONObject _loginObj;
     private ProgressDialog _loading;
     private View _registerPrompt;
 
@@ -59,16 +56,43 @@ public class LoginActivity extends Activity {
 
         setContentView(R.layout.activity_login);
 
+        File opened = new File(getFilesDir(), "opened");
+        if (!opened.exists()) {
+            try {
+                opened.createNewFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+
+            adb
+                    .setTitle("Welcome!!!")
+                    .setMessage("We listened to your feedback and overhauled the poop out of everything! New features include user privacy, " +
+                            "messaging functions, and a better user interface. In case you made an account with the old application, you will have" +
+                            " to make a new account (compatibility issues). Sorry! Everything should be working a lot better, and if you stumble upon" +
+                            " any errors, shoot us an email at hunnymustardapps@gmail.com. Have fun smashing!")
+                    .setNeutralButton("Okay!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            adb.create().show();
+        }
+
         // check for stored login info
         if (_loginFile.exists()) {
             try {
-                FileInputStream fis = new FileInputStream(_loginFile);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                _loginObj = (JSONObject) ois.readObject();
-                ((EditText) findViewById(R.id.login_username)).setText(_loginObj.getString("username"));
-                ((EditText) findViewById(R.id.login_password)).setText(_loginObj.getString("password"));
+                Scanner scan = new Scanner(_loginFile);
+                JSONObject login = new JSONObject(scan.nextLine());
+                scan.close();
+                ((EditText) findViewById(R.id.login_username)).setText(login.getString("username"));
+                ((EditText) findViewById(R.id.login_password)).setText(login.getString("password"));
                 ((CheckBox) findViewById(R.id.login_remember_me)).setChecked(true);
-                new HttpLogin().execute();
+
+//                NameValuePair cred = new BasicNameValuePair(login.getString("username"), login.getString("password"));
+//                new HttpLogin().execute(cred);
+
             } catch (Exception e) {
                 _loginFile.delete(); // The file may have issues, do not cause infinite loop of failure for users
                 e.printStackTrace();
@@ -83,23 +107,12 @@ public class LoginActivity extends Activity {
 
         byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
         String hashedPassword = bytesToHex(hashed).toUpperCase();
-//        NameValuePair login = new BasicNameValuePair(username, hashedPassword);
-        NameValuePair login = new BasicNameValuePair("buddy", "*975B2CD4FF9AE554FE8AD33168FBFC326D2021DD");
-        _loading = ProgressDialog.show(getActivity(), getString(R.string.logging_in), getString(R.string.chill_out), true);
+        NameValuePair login = new BasicNameValuePair(username, "*" + hashedPassword);
+//        NameValuePair login = new BasicNameValuePair("buddy", "*975B2CD4FF9AE554FE8AD33168FBFC326D2021DD");
+        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
 
         new HttpLogin().execute(login);
 
-
-//        _loginObj = new JSONObject();
-//
-//        try {
-//            _loginObj.put("username", ((EditText) findViewById(R.id.login_username)).getText());
-//            _loginObj.put("password", ((EditText) findViewById(R.id.login_password)).getText());
-//            new HttpLogin().execute();
-//        } catch (Exception e) {
-//            Toast.makeText(this, getString(R.string.sww_error), Toast.LENGTH_SHORT).show();
-//            e.printStackTrace();
-//        }
 
 //        NotificationCompat.Builder builder =
 //                new NotificationCompat.Builder(this)
@@ -123,17 +136,21 @@ public class LoginActivity extends Activity {
         try {
             _loginFile.delete();
             _loginFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(_loginFile);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(_loginObj);
-            oos.close();
-            fos.close();
+
+            JSONObject login = new JSONObject();
+            login.put("username", ((EditText) findViewById(R.id.login_username)).getText().toString());
+            login.put("password", ((EditText) findViewById(R.id.login_password)).getText().toString());
+
+            PrintWriter pw = new PrintWriter(_loginFile);
+            pw.print(login.toString());
+            pw.close();
+
         } catch (Exception e) {
             Toast.makeText(this, getString(R.string.remember_me_error), Toast.LENGTH_SHORT).show();
+            _loginFile.delete();
             e.printStackTrace();
         }
     }
-
 
     public void promptRegister(View view) {
         LayoutInflater li = LayoutInflater.from(this);
@@ -147,7 +164,7 @@ public class LoginActivity extends Activity {
                 .setPositiveButton("Register", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        _loading = ProgressDialog.show(getActivity(), getString(R.string.registering), getString(R.string.chill_out), true);
+                        _loading = ProgressDialog.show(_context, getString(R.string.registering), getString(R.string.chill_out), true);
 
                         String email = ((EditText) _registerPrompt.findViewById(R.id.prompt_register_email)).getText().toString();
                         String username = ((EditText) _registerPrompt.findViewById(R.id.prompt_register_username)).getText().toString();
@@ -199,8 +216,9 @@ public class LoginActivity extends Activity {
         // set the current user in the general manager
         if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
             rememberMe();
+        else
+            _loginFile.delete();
 
-        // retrieve nearby users and events in datamanager
         new DataManager().init(this);
     }
 
@@ -220,10 +238,6 @@ public class LoginActivity extends Activity {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
-    }
-
-    private Activity getActivity() {
-        return this;
     }
 
     private class HttpLogin extends AsyncTask<NameValuePair, Void, Void> {
@@ -246,7 +260,7 @@ public class LoginActivity extends Activity {
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
-
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 

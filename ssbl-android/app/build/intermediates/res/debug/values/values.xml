@@ -376,6 +376,7 @@
     <string name="password_hint">Password</string>
     <string name="please_wait">Please wait...</string>
     <string name="pm">Project M.</string>
+    <string name="private_">Private</string>
     <string name="private_location">Keep location private</string>
     <string name="profile">Profile</string>
     <string name="public_">Public</string>

@@ -86,7 +86,7 @@ public class EditEventActivity extends Activity {
             // set time
 
             ((EditText) findViewById(R.id.edit_event_description)).setText(e.getDescription());
-            ((CheckBox) findViewById(R.id.edit_event_public)).setChecked(!e.isPublic());
+            ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!e.isPublic());
         }
         else {
 

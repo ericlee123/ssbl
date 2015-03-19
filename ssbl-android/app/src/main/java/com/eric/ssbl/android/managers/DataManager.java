@@ -101,6 +101,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public static void clearData() {
+        _curUser = null;
+
         _nearbyUsers.clear();
         _nearbyEvents.clear();
 

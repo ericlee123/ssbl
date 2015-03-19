@@ -18,6 +18,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -34,7 +35,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -243,7 +246,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         private void updateLocation(LatLng loc) {
 
             u = DataManager.getCurUser();
-            Location newLoc = u.getLocation();
+            Location newLoc;
+            if (u.getLocation() == null)
+                newLoc = new Location();
+            else
+                newLoc = u.getLocation();
             newLoc.setLatitude(loc.latitude);
             newLoc.setLongitude(loc.longitude);
             u.setLocation(newLoc);
@@ -255,9 +262,17 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 HttpClient client = new DefaultHttpClient();
                 HttpPost request = new HttpPost(url.toString());
 
-                // add user to body of post
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(u));
+                request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                u = om.readValue(jsonString, User.class);
             } catch (Exception e) {
                 u = null;
                 e.printStackTrace();
@@ -273,8 +288,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         @Override
         protected void onPostExecute(Void what) {
-            if (u != null)
+            if (u != null) {
+                DataManager.setCurUser(u);
                 centerMapOnSelf();
+            }
             else
                 Toast.makeText(getActivity(), "Error updating current location", Toast.LENGTH_SHORT).show();
         }
