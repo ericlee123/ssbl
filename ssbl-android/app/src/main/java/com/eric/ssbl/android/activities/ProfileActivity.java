@@ -66,7 +66,7 @@ public class ProfileActivity extends Activity {
         if (_user == null)
             return;
 
-        ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
+        ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_tangents);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
 
@@ -98,8 +98,9 @@ public class ProfileActivity extends Activity {
                 games.append("Smash 4");
             games.append("\n");
         }
-        if (games.length() != 0)
-            games.delete(games.length() - 1, games.length());
+        if (_user.getGames().size() == 0)
+            games.append("\t\t\t\t(none)\n");
+        games.delete(games.length() - 1, games.length());
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();

@@ -45,7 +45,7 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        ((ImageView) _view.findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_gray);
+        ((ImageView) _view.findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_black_yellow);
         ((ImageView) _view.findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) _view.findViewById(R.id.eu_title)).setText(_user.getUsername());
         ((TextView) _view.findViewById(R.id.eu_subtitle)).setText("You");
@@ -66,8 +66,9 @@ public class ProfileFragment extends Fragment {
                 games.append("Smash 4");
             games.append("\n");
         }
-        if (games.length() != 0)
-            games.delete(games.length() - 1, games.length());
+        if (_user.getGames().size() == 0)
+            games.append("\t\t\t\t(none)\n");
+        games.delete(games.length() - 1, games.length());
         ((TextView) _view.findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();

@@ -14,13 +14,10 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.activities.ProfileActivity;
-import com.eric.ssbl.android.activities.SettingsActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -36,11 +33,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,36 +55,33 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-//        if (_view != null) {
-//            ViewGroup parent = (ViewGroup) _view.getParent();
-//            if (parent != null)
-//                parent.removeView(_view);
-//        }
-
-        if (_googleApiClient == null)
-            buildGoogleApiClient();
+        if (_view != null) {
+            ViewGroup parent = (ViewGroup) _view.getParent();
+            if (parent != null)
+                parent.removeView(_view);
+        }
 
         try {
             _view = inflater.inflate(R.layout.fragment_chart, container, false);
-            if (!_refreshed)
-                refresh();
         } catch (InflateException e) {
             /* map is already there, just return view as it is */
             e.printStackTrace();
         }
 
-        try {
-            ImageButton center = (ImageButton) _view.findViewById(R.id.chart_center);
-            center.setOnClickListener(new View.OnClickListener() {
+        if (_googleApiClient == null)
+            buildGoogleApiClient();
+
+        if (!_refreshed)
+            refresh();
+
+        ImageButton center = (ImageButton) _view.findViewById(R.id.chart_center);
+        center.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     centerMapOnSelf();
                 }
             });
-        } catch (NullPointerException e) {
-            Toast.makeText(getActivity(), "Error loading button", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+
 
         return _view;
     }
@@ -177,7 +168,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         if (here != null) {
             _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
             new HttpLocationUpdater().execute(_curLoc);
-            new HttpEUGetter().execute(_curLoc);
+            displayElements();
         }
     }
 
@@ -193,7 +184,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         long now = System.currentTimeMillis();
 
-        for (User u: _nearbyUsers) {
+        for (User u: DataManager.getNearbyUsers()) {
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Updated ";
@@ -216,7 +207,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _id.put(marker, u.getUserId());
         }
 
-        for (Event e: _nearbyEvents) {
+        for (Event e: DataManager.getNearbyEvents()) {
 
             Marker marker = _map.addMarker(new MarkerOptions()
                             .title(e.getTitle())
@@ -290,76 +281,76 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     }
 
-    private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
-
-        private List<User> uList;
-        private List<Event> eList;
-
-        private void search(LatLng loc) {
-
-            // get the users
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/search/user");
-            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("jsonString: " + jsonString);
-                if (jsonString.length() == 0)
-                    return;
-
-                ObjectMapper om = new ObjectMapper();
-                uList = om.readValue(jsonString, new TypeReference<List<User>>(){});
-            } catch (Exception e) {
-                uList = null;
-                e.printStackTrace();
-            }
-
-            // get the events
-            StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
-            url2.append("/search/event");
-            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url2.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("jsonString: " + jsonString);
-                if (jsonString.length() == 0)
-                    return;
-
-                ObjectMapper om = new ObjectMapper();
-                eList = om.readValue(jsonString, new TypeReference<List<Event>>(){});
-            } catch (Exception e) {
-                eList = null;
-                e.printStackTrace();
-            }
-        }
-
-
-        @Override
-        protected Void doInBackground(LatLng... params) {
-            search(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            _nearbyUsers = uList;
-            _nearbyEvents = eList;
-            displayElements();
-        }
-    }
+//    private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
+//
+//        private List<User> uList;
+//        private List<Event> eList;
+//
+//        private void search(LatLng loc) {
+//
+//            // get the users
+//            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+//            url.append("/search/user");
+//            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
+//
+//            try {
+//                HttpClient client = new DefaultHttpClient();
+//                HttpGet request = new HttpGet(url.toString());
+//
+//                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+//
+//                HttpResponse response = client.execute(request);
+//                String jsonString = EntityUtils.toString(response.getEntity());
+//
+//                System.out.println("jsonString: " + jsonString);
+//                if (jsonString.length() == 0)
+//                    return;
+//
+//                ObjectMapper om = new ObjectMapper();
+//                uList = om.readValue(jsonString, new TypeReference<List<User>>(){});
+//            } catch (Exception e) {
+//                uList = null;
+//                e.printStackTrace();
+//            }
+//
+//            // get the events
+//            StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
+//            url2.append("/search/event");
+//            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + SettingsActivity.getRadius());
+//
+//            try {
+//                HttpClient client = new DefaultHttpClient();
+//                HttpGet request = new HttpGet(url2.toString());
+//
+//                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+//
+//                HttpResponse response = client.execute(request);
+//                String jsonString = EntityUtils.toString(response.getEntity());
+//
+//                System.out.println("jsonString: " + jsonString);
+//                if (jsonString.length() == 0)
+//                    return;
+//
+//                ObjectMapper om = new ObjectMapper();
+//                eList = om.readValue(jsonString, new TypeReference<List<Event>>(){});
+//            } catch (Exception e) {
+//                eList = null;
+//                e.printStackTrace();
+//            }
+//        }
+//
+//
+//        @Override
+//        protected Void doInBackground(LatLng... params) {
+//            search(params[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void what) {
+//            _nearbyUsers = uList;
+//            _nearbyEvents = eList;
+//            displayElements();
+//        }
+//    }
 }
