@@ -187,7 +187,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         long now = System.currentTimeMillis();
 
-        for (User u: DataManager.getNearbyUsers()) {
+        List<User> relevantUsers = new ArrayList<>();
+        relevantUsers.addAll(DataManager.getNearbyUsers());
+        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
+        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+        for (User u: relevantUsers) {
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Updated ";
@@ -210,7 +214,13 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _id.put(marker, u.getUserId());
         }
 
-        for (Event e: DataManager.getNearbyEvents()) {
+        List<Event> relevantEvents = new ArrayList<>();
+        relevantEvents.addAll(DataManager.getNearbyEvents());
+        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
+        relevantEvents.addAll(DataManager.getCurUser().getEvents());
+        relevantEvents.removeAll(DataManager.getHostingEvents());
+        relevantEvents.addAll(DataManager.getHostingEvents());
+        for (Event e: relevantEvents) {
 
             Marker marker = _map.addMarker(new MarkerOptions()
                             .title(e.getTitle())
