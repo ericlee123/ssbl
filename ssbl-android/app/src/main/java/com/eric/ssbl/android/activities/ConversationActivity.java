@@ -18,7 +18,6 @@ import com.eric.ssbl.android.pojos.User;
 
 import java.util.Iterator;
 
-// REAL COPY
 public class ConversationActivity extends ListActivity {
 
     private final Context _context = this;

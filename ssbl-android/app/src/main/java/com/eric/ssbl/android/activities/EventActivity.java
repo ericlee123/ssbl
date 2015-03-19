@@ -79,15 +79,15 @@ public class EventActivity extends Activity {
         games.append(getString(R.string.games) + "\n");
         for (Game g: _event.getGames()) {
             games.append("\t\t\t\t");
-            if (g == Game.SSB64)
+            if (g.equals(Game.SSB64))
                 games.append("Smash 64");
-            else if (g == Game.MELEE)
+            else if (g.equals(Game.MELEE))
                 games.append("Melee");
-            else if (g == Game.BRAWL)
+            else if (g.equals(Game.BRAWL))
                 games.append("Brawl");
-            else if (g == Game.PM)
+            else if (g.equals(Game.PM))
                 games.append("Project M.");
-            else if (g == Game.SMASH4)
+            else if (g.equals(Game.SMASH4))
                 games.append("Smash 4");
             games.append("\n");
         }

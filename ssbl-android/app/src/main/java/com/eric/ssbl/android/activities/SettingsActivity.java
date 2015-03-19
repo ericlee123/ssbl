@@ -15,16 +15,12 @@ import com.eric.ssbl.android.managers.DataManager;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.Scanner;
-
 /**
  * set location public/private
  * radius 1 5 10 20 50 100 give me the whole damn map
  */
 public class SettingsActivity extends Activity {
 
-    private static File _settingsFile;
     private static JSONObject _settings;
 
     @Override
@@ -46,42 +42,13 @@ public class SettingsActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mapRadius.setAdapter(adapter);
 
-        // Load previously saved settings
-        if (_settingsFile == null || _settings == null)
-            initFiles();
+        _settings = DataManager.getSettings();
         try {
             ((CheckBox) findViewById(R.id.settings_location_private)).setChecked(_settings.getBoolean("location_private"));
             mapRadius.setSelection(_settings.getInt("map_radius_index"));
         } catch (Exception e) {
-            _settingsFile.delete();
             Toast.makeText(this, "Error loading settings", Toast.LENGTH_LONG).show();
         }
-    }
-
-    private static void initFiles() {
-        _settingsFile = new File("settings");
-        if (_settingsFile.exists()) {
-            try {
-                Scanner scan = new Scanner(_settingsFile);
-                _settings = new JSONObject(scan.nextLine());
-                scan.close();
-            } catch (Exception e) {
-                _settingsFile.delete();
-//                Toast.makeText(_context, "Error loading settings", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                _settingsFile.createNewFile();
-                _settings = new JSONObject();
-
-                _settings.put("location_private", false);
-                _settings.put("map_radius_index", 2);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     @Override

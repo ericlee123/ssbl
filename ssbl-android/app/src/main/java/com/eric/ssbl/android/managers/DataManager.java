@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.managers;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -248,13 +249,16 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (index == 5)
             return 100.0;
         if (index == 6)
-            return -1.0;
+            return 500.0;
+        if (index == 7)
+            return 50000.0;
 
         return 10.0;
     }
 
     // Stupid stuff
 
+    private static Context _appContext;
     private LoginActivity _la;
     private GoogleApiClient _googleApiClient;
 
@@ -262,6 +266,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     public void init(LoginActivity la) {
         _la = la;
+        _appContext = _la.getApplicationContext();
         buildGoogleApiClient();
     }
 
