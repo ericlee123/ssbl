@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.eric.ssbl.android.activities.LoginActivity;
 import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,7 +41,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
     private static List<Event> _hostingEvents = new ArrayList<>();
-    private static HashMap<Integer, User> _userIdMap = new HashMap<>();
     private static HashMap<Integer, Event> _eventIdMap = new HashMap<>();
 
     public static User getCurUser() {
@@ -62,16 +62,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (nearbyUsers == null)
             return;
         _nearbyUsers = nearbyUsers;
-        for (User u : nearbyUsers)
-            _userIdMap.put(u.getUserId(), u);
     }
 
     public static List<User> getNearbyUsers() {
         return _nearbyUsers;
-    }
-
-    public static User getUserById(int id) {
-        return _userIdMap.get(id);
     }
 
     public static void setNearbyEvents(List<Event> nearbyEvents) {
@@ -116,15 +110,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         new HttpEventUpdater().execute(updated);
     }
 
-    public static Event getEventById(int id) {
-        return _eventIdMap.get(id);
-    }
-
     public static void clearData() {
         _curUser = null;
 
         _nearbyUsers.clear();
-        _userIdMap.clear();
 
         _eventIdMap.clear();
         _nearbyEvents.clear();
@@ -227,8 +216,72 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         }
     }
 
-    // Stupid stuff for settings
 
+
+    // Managing conversations
+    private static List<String> _conversationPreviews;
+
+    public static void initConversationPreviews() {
+        _conversationPreviews = new ArrayList<>();
+        new HttpConversationPreviewer().execute();
+    }
+
+    public static List<String> getConversationPreviews() {
+        return _conversationPreviews;
+    }
+
+    private static class HttpConversationPreviewer extends AsyncTask<Void, Void, Void> {
+
+        private List<String> cp = new ArrayList<>();
+
+        private void fetchPreviews() {
+
+            for (int i = 0; i < getCurUser().getConversations().size(); i++) {
+                // get the users
+                StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+                url.append("/messaging");
+                url.append("/" + getCurUser().getUsername());
+                url.append("/" + getCurUser().getUserId());
+                url.append("/" + i);
+                url.append("?size=0");
+                url.append("&additional=1");
+
+                try {
+                    HttpClient client = new DefaultHttpClient();
+                    HttpGet request = new HttpGet(url.toString());
+
+                    request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                    HttpResponse response = client.execute(request);
+                    String jsonString = EntityUtils.toString(response.getEntity());
+
+                    if (jsonString.length() == 0)
+                        return;
+
+                    ObjectMapper om = new ObjectMapper();
+                    List<Message> lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+                    cp.add(i, lm.get(0).getBody());
+                } catch (Exception e) {
+                    cp = null;
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            fetchPreviews();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (cp != null)
+                _conversationPreviews = cp;
+        }
+    }
+
+    // Stupid stuff for settings
     private static File _settingsFile;
     private static JSONObject _settings;
 
@@ -322,7 +375,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public DataManager() {
     }
 
-    public void init(LoginActivity la) {
+    public void initNearby(LoginActivity la) {
         _la = la;
         _appContext = _la.getApplicationContext();
         buildGoogleApiClient();

@@ -222,15 +222,15 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 //                    .snippet(updated)
 //                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
 //                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
-////
-////            if (u.equals(DataManager.getCurUser()))
-////                marker.showInfoWindow();
-////
-////            try {
-////                _eu.put(marker, om.writeValueAsString(u));
-////            } catch (Exception e) {
-////                e.printStackTrace();
-////            }
+//
+//            if (u.equals(DataManager.getCurUser()))
+//                marker.showInfoWindow();
+//
+//            try {
+//                _eu.put(marker, om.writeValueAsString(u));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 //        }
 //
 //        List<Event> relevantEvents = new ArrayList<>();
