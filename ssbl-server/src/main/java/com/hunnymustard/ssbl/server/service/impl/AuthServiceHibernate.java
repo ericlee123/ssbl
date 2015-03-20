@@ -1,5 +1,6 @@
 package com.hunnymustard.ssbl.server.service.impl;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +25,13 @@ public class AuthServiceHibernate implements AuthService {
 		if(user == null) return null;
 		
 		user.setLastLoginTime(System.currentTimeMillis());
+		Hibernate.initialize(user.getEmail());
+		Hibernate.initialize(user.getLocation());
+		Hibernate.initialize(user.getGames());
+		Hibernate.initialize(user.getNotifications());
+		Hibernate.initialize(user.getEvents());
+		Hibernate.initialize(user.getConversations());
+		Hibernate.initialize(user.getFriends());
 		return _userRepository.update(user);
 	}
 

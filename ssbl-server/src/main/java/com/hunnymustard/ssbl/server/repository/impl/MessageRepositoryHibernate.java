@@ -28,35 +28,23 @@ public class MessageRepositoryHibernate extends HibernateRepository<Message, Int
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Message> findByNew(User user) {
-		List<Message> messages = (List<Message>) getSession().createCriteria(Message.class)
+		return (List<Message>) getSession().createCriteria(Message.class)
 				.createAlias("sender", "sender")
 				.add(Restrictions.gt("sentTime", user.getLastMessageTime()))
 				.add(Restrictions.ne("sender.userId", user.getUserId()))
 				.addOrder(Order.desc("sentTime"))
-				.list();	
-		
-		for(Message message : messages) {
-			Hibernate.initialize(message.getConversation().getRecipients());
-			Hibernate.initialize(message.getSender());
-		}
-		
-		return messages;
+				.list();
 	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Message> findByConversation(Integer conversationId, Integer size, Integer additional) {
-		List<Message> messages = (List<Message>) getSession().createCriteria(Message.class)
+		return (List<Message>) getSession().createCriteria(Message.class)
 				.setFirstResult(size)
 				.setMaxResults(additional)
 				.createAlias("conversation", "conversation")
 				.add(Restrictions.eq("conversation.conversationId", conversationId))
 				.addOrder(Order.desc("sentTime"))
 				.list();
-		
-		for(Message message : messages)
-			Hibernate.initialize(message.getSender());
-		
-		return messages;
 	}
 }

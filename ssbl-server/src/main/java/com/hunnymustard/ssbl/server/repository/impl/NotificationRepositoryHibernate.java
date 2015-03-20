@@ -24,15 +24,10 @@ public class NotificationRepositoryHibernate extends HibernateRepository<Notific
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Notification> findByNew(User user) {
-		List<Notification> notifs = (List<Notification>) getSession().createCriteria(Notification.class)
+		return (List<Notification>) getSession().createCriteria(Notification.class)
 				.add(Restrictions.ne("sender", user))
 				.add(Restrictions.gt("sendTime", user.getLastLoginTime()))
 				.list();
-		
-		for(Notification notif : notifs)
-			Hibernate.initialize(notif.getSender());
-		
-		return notifs;
 	}
 
 }

@@ -26,6 +26,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.hunnymustard.ssbl.util.Locatable;
 
 /**
  * This entity represents a smash bros. event. Events are created by a host user at

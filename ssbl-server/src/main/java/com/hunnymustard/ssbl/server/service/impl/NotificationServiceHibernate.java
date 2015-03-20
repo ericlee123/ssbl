@@ -2,6 +2,7 @@ package com.hunnymustard.ssbl.server.service.impl;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,7 +22,10 @@ public class NotificationServiceHibernate implements NotificationService {
 	
 	@Override
 	public List<Notification> getByNew(User user) {
-		return _notificationRepository.findByNew(user);
+		List<Notification> notifs = _notificationRepository.findByNew(user);
+		for(Notification notif : notifs)
+			Hibernate.initialize(notif.getSender());
+		return notifs;
 	}
 
 	@Override

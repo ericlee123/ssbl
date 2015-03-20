@@ -2,6 +2,7 @@ package com.hunnymustard.ssbl.server.service.impl;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,12 +41,21 @@ public class MessagingServiceHibernate implements MessagingService {
 		List<Message> messages = _messageRepository.findByNew(user);
 		user.setLastMessageTime(System.currentTimeMillis());
 		_userRepository.update(user);
+
+		for(Message message : messages) {
+			Hibernate.initialize(message.getConversation().getRecipients());
+			Hibernate.initialize(message.getSender());
+		}
+		
 		return messages;
 	}
 
 	@Override
 	public List<Message> getByConversation(Integer conversationId, Integer size, Integer additional) {
-		return _messageRepository.findByConversation(conversationId, size, additional);
+		List<Message> messages = _messageRepository.findByConversation(conversationId, size, additional);
+		 for(Message message : messages)
+			Hibernate.initialize(message.getSender());
+		return messages;
 	}
 
 }

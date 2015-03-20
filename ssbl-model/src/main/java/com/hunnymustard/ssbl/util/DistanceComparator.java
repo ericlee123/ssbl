@@ -1,6 +1,8 @@
-package com.hunnymustard.ssbl.model;
+package com.hunnymustard.ssbl.util;
 
 import java.util.Comparator;
+
+import com.hunnymustard.ssbl.model.Location;
 
 public class DistanceComparator implements Comparator<Locatable> {
 

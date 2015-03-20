@@ -23,10 +23,12 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
+			
+			
 		</plugins>
 	</build>
 	
-	<dependencies>
+	<dependencies>   
 		<dependency>
 		    <groupId>com.hunnymustard.ssbl</groupId>
 		    <artifactId>ssbl-model</artifactId>

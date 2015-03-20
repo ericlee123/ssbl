@@ -2,6 +2,7 @@ package com.hunnymustard.ssbl.server.service.impl;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,21 +27,47 @@ public class SearchServiceHibernate implements SearchService {
 	
 	@Override
 	public List<User> getUsersByProximity(Location current, Double radius) {
-		return _userRepository.findByProximity(current, radius);
+		List<User> users = _userRepository.findByProximity(current, radius);
+		for(User user : users) {
+			Hibernate.initialize(user.getLocation());
+			Hibernate.initialize(user.getGames());
+			Hibernate.initialize(user.getEvents());
+		}
+		return users;
 	}
 
 	@Override
 	public List<User> getUsersByExample(User example) {
-		return _userRepository.findByExample(example);
+		List<User> users = _userRepository.findByExample(example);
+		for(User user : users) {
+			Hibernate.initialize(user.getLocation());
+			Hibernate.initialize(user.getGames());
+			Hibernate.initialize(user.getEvents());
+		}
+		return users;
 	}
 	
 	@Override
 	public List<Event> getEventsByProximity(Location current, Double radius) {
-		return _eventRepository.findByProximity(current, radius);
+		List<Event> events = _eventRepository.findByProximity(current, radius);
+		for(Event event : events) {
+			Hibernate.initialize(event.getGames());
+			Hibernate.initialize(event.getUsers());
+			Hibernate.initialize(event.getHost());
+			Hibernate.initialize(event.getLocation());
+		}
+		return events;
 	}
 
 	@Override
 	public List<Event> getEventsByExample(Event example) {
-		return _eventRepository.findByExample(example);
+		List<Event> events = _eventRepository.findByExample(example);
+		for(Event event : events) {
+			Hibernate.initialize(event.getGames());
+			Hibernate.initialize(event.getUsers());
+			Hibernate.initialize(event.getHost());
+			Hibernate.initialize(event.getLocation());
+		}
+		return events;
 	}
 }

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hunnymustard.ssbl.model.DistanceComparator;
 import com.hunnymustard.ssbl.model.Location;
 import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.UserRepository;
+import com.hunnymustard.ssbl.util.DistanceComparator;
 
 @Repository("userRepository")
 @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
@@ -28,39 +28,18 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 
 	@Override
 	public User findByCredentials(String username, String password) {
-		User user = (User) getSession().createCriteria(User.class)
+		return (User) getSession().createCriteria(User.class)
 				.add(Restrictions.eq("username", username))
 				.add(Restrictions.eq("password", password))
 				.uniqueResult();
-		
-		if(user != null) {
-			Hibernate.initialize(user.getEmail());
-			Hibernate.initialize(user.getLocation());
-			Hibernate.initialize(user.getGames());
-			Hibernate.initialize(user.getNotifications());
-			Hibernate.initialize(user.getEvents());
-			Hibernate.initialize(user.getConversations());
-			Hibernate.initialize(user.getFriends());
-		}
-		
-		return user;
 	}
 	
 	@Override
 	public User findByParameters(String username, Integer id) {
-		User user = (User) getSession().createCriteria(User.class)
+		return (User) getSession().createCriteria(User.class)
 				.add(Restrictions.eq("username", username))
 				.add(Restrictions.idEq(id))
 				.uniqueResult();
-		
-		if(user != null) {
-			Hibernate.initialize(user.getEmail());
-			Hibernate.initialize(user.getLocation());
-			Hibernate.initialize(user.getGames());
-			Hibernate.initialize(user.getEvents());
-		}
-		
-		return user;
 	}
 
 	@Override
@@ -78,29 +57,15 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 		query.setDouble("dist", radius);
 		
 		List<User> users = (List<User>) query.list();
-		Collections.sort(users, new DistanceComparator(cur));
-		for(User user : users) {
-			Hibernate.initialize(user.getLocation());
-			Hibernate.initialize(user.getGames());
-			Hibernate.initialize(user.getEvents());
-		}
-		
+		Collections.sort(users, new DistanceComparator(cur));	
 		return users;
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<User> findByExample(User example) {
-		List<User> users = (List<User>) getSession()
+		return (List<User>) getSession()
 				.createCriteria(User.class)
 				.add(Example.create(example).enableLike(MatchMode.ANYWHERE))
 				.list();
-		
-		for(User user : users) {
-			Hibernate.initialize(user.getLocation());
-			Hibernate.initialize(user.getGames());
-			Hibernate.initialize(user.getEvents());
-		}
-		
-		return users;
 	}
 }

@@ -8,7 +8,6 @@ import com.hunnymustard.ssbl.model.User;
 
 public interface EventRepository extends GenericRepository<Event, Integer> {
 
-	List<Event> findByTitle(String title);
 	List<Event> findByProximity(Location cur, Double radius);
 	List<Event> findByExample(Event example);
 	
