@@ -29,6 +29,7 @@ public class SearchServiceHibernate implements SearchService {
 	public List<User> getUsersByProximity(Location current, Double radius) {
 		List<User> users = _userRepository.findByProximity(current, radius);
 		for(User user : users) {
+			Hibernate.initialize(user.getLastLocationTime());
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getGames());
 			Hibernate.initialize(user.getEvents());
