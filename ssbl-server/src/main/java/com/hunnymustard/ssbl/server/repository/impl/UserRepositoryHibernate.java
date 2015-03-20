@@ -1,5 +1,6 @@
 package com.hunnymustard.ssbl.server.repository.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hunnymustard.ssbl.model.DistanceComparator;
 import com.hunnymustard.ssbl.model.Location;
 import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.UserRepository;
@@ -37,6 +39,8 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 			Hibernate.initialize(user.getGames());
 			Hibernate.initialize(user.getNotifications());
 			Hibernate.initialize(user.getEvents());
+			Hibernate.initialize(user.getConversations());
+			Hibernate.initialize(user.getFriends());
 		}
 		
 		return user;
@@ -53,7 +57,6 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 			Hibernate.initialize(user.getEmail());
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getGames());
-			Hibernate.initialize(user.getNotifications());
 			Hibernate.initialize(user.getEvents());
 		}
 		
@@ -65,7 +68,7 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 	public List<User> findByProximity(Location cur, Double radius) {
 		// https://docs.jboss.org/hibernate/search/4.2/reference/en-US/html/spatial.html way to improve
 		// using spatial hibernate queries.
-		String hql = "from User user inner join fetch user.location as loc where acos("
+		String hql = "from User user inner join fetch user.location as loc where user.private = false and acos("
 				+ "sin(:lat1/57.2958) * sin(loc.latitude/57.2958) + cos(:lat1/57.2958) "
 				+ "* cos(loc.latitude/57.2958) *  cos((loc.longitude - :lon1)/57.2958)) * 3956 <= :dist";
 		
@@ -75,6 +78,7 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 		query.setDouble("dist", radius);
 		
 		List<User> users = (List<User>) query.list();
+		Collections.sort(users, new DistanceComparator(cur));
 		for(User user : users) {
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getGames());

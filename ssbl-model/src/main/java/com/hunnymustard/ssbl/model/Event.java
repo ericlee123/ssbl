@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @Table(name="events")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public class Event {
+public class Event implements Locatable {
 
 	private Integer _id;
 	private String _title, _description;

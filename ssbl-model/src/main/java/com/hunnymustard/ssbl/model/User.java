@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Entity
 @Table(name="users")
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public class User {
+public class User implements Locatable {
 
 	private Integer _id;
 	private String _username, _password, _email, _blurb;

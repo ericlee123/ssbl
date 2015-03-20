@@ -1,5 +1,6 @@
 package com.hunnymustard.ssbl.server.repository.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -11,9 +12,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hunnymustard.ssbl.model.DistanceComparator;
 import com.hunnymustard.ssbl.model.Event;
 import com.hunnymustard.ssbl.model.Location;
-import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.repository.EventRepository;
 
 @Repository("eventRepository")
@@ -45,7 +46,7 @@ public class EventRepositoryHibernate extends HibernateRepository<Event, Integer
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Event> findByProximity(Location cur, Double radius) {
-		String hql = "from Event event inner join fetch event.location as loc where acos("
+		String hql = "from Event event inner join fetch event.location as loc where event.public = true and acos("
 				+ "sin(:lat1/57.2958) * sin(loc.latitude/57.2958) + cos(:lat1/57.2958) "
 				+ "* cos(loc.latitude/57.2958) *  cos((loc.longitude - :lon1)/57.2958)) * 3956 <= :dist";
 		
@@ -55,6 +56,7 @@ public class EventRepositoryHibernate extends HibernateRepository<Event, Integer
 		query.setDouble("dist", radius);
 		
 		List<Event> events = (List<Event>) query.list();
+		Collections.sort(events, new DistanceComparator(cur));
 		for(Event event : events) {
 			Hibernate.initialize(event.getGames());
 			Hibernate.initialize(event.getUsers());
