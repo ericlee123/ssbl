@@ -42,9 +42,7 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-	    <outputDirectory>${basedir}/${project.artifactId}</outputDirectory>
-	    
+	<build>	    
 		<plugins>
 		    <plugin>
 		        <groupId>org.apache.maven.plugins</groupId>

@@ -21,6 +21,7 @@
 				<version>2.4</version>
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<outputDirectory>${project.basedir}</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
