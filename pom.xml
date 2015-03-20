@@ -24,7 +24,6 @@
 	<modules>
 		<module>ssbl-model</module>
 		<module>ssbl-server</module>
-		<module>ssbl-android</module>
 		<module>ssbl-client</module>
 	</modules>
 	
@@ -185,6 +184,17 @@
 	</dependencyManagement>
 	
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<useProjectReferences>false</useProjectReferences>
+				</configuration>
+			</plugin>
+		</plugins>
+        
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 

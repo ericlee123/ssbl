@@ -23,8 +23,6 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			
-			
 		</plugins>
 	</build>
 	
@@ -32,6 +30,7 @@
 		<dependency>
 		    <groupId>com.hunnymustard.ssbl</groupId>
 		    <artifactId>ssbl-model</artifactId>
+		    <scope>compile</scope>
 		</dependency>
 		
 		<dependency>
