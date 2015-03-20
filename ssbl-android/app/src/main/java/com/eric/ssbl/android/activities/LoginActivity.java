@@ -248,7 +248,6 @@ public class LoginActivity extends Activity {
 
     public void goToMain() {
         _loading.dismiss();
-
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

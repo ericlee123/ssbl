@@ -47,7 +47,8 @@
     <string name="bio">Bio</string>
     <string name="edit_profile">Edit profile</string>
     <string name="set_mood">Set mood</string>
-    <string name="add_friend">Add friend</string>
+    <string name="add_to_circle">Add to circle</string>
+    <string name="remove_from_circle">Remove from circle</string>
     <string name="friends">Friends</string>
     <string name="nearby_users">Nearby users</string>
     <string name="message">Message</string>

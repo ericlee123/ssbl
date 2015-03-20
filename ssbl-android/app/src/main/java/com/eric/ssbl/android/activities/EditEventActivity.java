@@ -22,6 +22,7 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,8 +32,8 @@ public class EditEventActivity extends Activity {
 
     private Context _context = this;
     private TextView _locationStatus;
-    private int _eventId;
     private ProgressDialog _loading;
+    private Event _event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +45,25 @@ public class EditEventActivity extends Activity {
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
-        Bundle extras = getIntent().getExtras();
-        _eventId = extras.getInt("event_id");
-        ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(_eventId == -1 ? R.string.create_event : R.string.edit_event));
+        if (getIntent().hasExtra("event_json")) {
+            try {
+                _event = new ObjectMapper().readValue(getIntent().getStringExtra("event_json"), Event.class);
+            } catch (Exception e) {
+                Toast.makeText(_context, "Error loading old event details", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
+        }
+
+        ((TextView) abv.findViewById(R.id.action_bar_title)).setText(_event == null ? R.string.create_event : R.string.edit_event);
         setContentView(R.layout.activity_edit_event);
 
-        if (_eventId != -1) {
-            Event e = DataManager.getEventById(_eventId);
-            if (e == null) {
-                Toast.makeText(_context, "Error loading event details", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        if (_event != null) {
 
-            ((EditText) findViewById(R.id.edit_event_event_title)).setText(e.getTitle());
+            ((EditText) findViewById(R.id.edit_event_event_title)).setText(_event.getTitle());
 
             // set location
 
-            for (Game g: e.getGames()) {
+            for (Game g: _event.getGames()) {
                 if (g.equals(Game.SSB64))
                     ((CheckBox) findViewById(R.id.edit_event_games_ssb64)).setChecked(true);
                 else if (g.equals(Game.MELEE))
@@ -75,11 +78,10 @@ public class EditEventActivity extends Activity {
 
             // set time
 
-            ((EditText) findViewById(R.id.edit_event_description)).setText(e.getDescription());
-            ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!e.isPublic());
+            ((EditText) findViewById(R.id.edit_event_description)).setText(_event.getDescription());
+            ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!_event.isPublic());
         }
         else {
-
             _locationStatus = (TextView) findViewById(R.id.edit_event_location_status);
             _locationStatus.setText(getString(R.string.location) + ": (not set)");
         }
@@ -98,11 +100,9 @@ public class EditEventActivity extends Activity {
     }
 
     public void saveEvent(View view) {
-        // save the event details
-        Event e = new Event();
 
-        if (_eventId != -1)
-            e.setEventId(_eventId);
+        if (_event == null)
+            _event = new Event();
 
         // set locaiton
 
@@ -117,15 +117,15 @@ public class EditEventActivity extends Activity {
             games.add(Game.PM);
         if (((CheckBox) findViewById(R.id.edit_event_games_smash4)).isChecked())
             games.add(Game.SMASH4);
-        e.setGames(games);
+        _event.setGames(games);
 
         // set time
 
-        e.setDescription(((EditText) findViewById(R.id.edit_event_description)).getText().toString());
-        e.setPublic(!((CheckBox) findViewById(R.id.edit_event_private)).isChecked());
+        _event.setDescription(((EditText) findViewById(R.id.edit_event_description)).getText().toString());
+        _event.setPublic(!((CheckBox) findViewById(R.id.edit_event_private)).isChecked());
 
         _loading = ProgressDialog.show(this, "Updating event...", getString(R.string.chill_out), true);
-        DataManager.updateHostingEvent(e);
+        DataManager.updateEvent(_event);
     }
 
     public void goBack(View view) {

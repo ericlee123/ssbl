@@ -18,6 +18,8 @@ import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 public class ProfileActivity extends Activity {
 
     private final Context _context = this;
@@ -114,15 +116,32 @@ public class ProfileActivity extends Activity {
         // Check to see if it's the current user's profile
         if (!_user.equals(DataManager.getCurUser())) {
 
-            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
-            lb.setImageResource(R.drawable.green_plus);
+            final boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
+
+            final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
+            leftCaption.setText(getString(inCircle ? R.string.remove_from_circle : R.string.add_to_circle));
+            final ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
+            lb.setImageResource(inCircle ? R.drawable.red_x : R.drawable.green_plus);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
+                    User cur = DataManager.getCurUser();
+                    List<User> circle = cur.getFriends();
+
+                    if (inCircle) {
+                        circle.remove(_user);
+                        lb.setImageResource(R.drawable.green_plus);
+                        leftCaption.setText(getString(R.string.add_to_circle));
+                    } else {
+                        circle.add(_user);
+                        lb.setImageResource(R.drawable.red_x);
+                        leftCaption.setText(getString(R.string.remove_from_circle));
+                    }
+
+                    cur.setFriends(circle);
+                    DataManager.updateCurUser(cur);
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.add_friend));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
             mb.setImageResource(R.drawable.blue_chat);
@@ -158,14 +177,14 @@ public class ProfileActivity extends Activity {
             ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_profile));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
-            mb.setImageResource(R.drawable.green_face);
+            mb.setImageResource(R.drawable.gray_fedora);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Create new message
+                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.set_mood));
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
 
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
             rb.setImageResource(R.drawable.orange_search);

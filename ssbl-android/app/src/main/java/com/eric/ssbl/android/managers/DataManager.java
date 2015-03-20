@@ -98,7 +98,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
-    public static void updateHostingEvent(Event updated) {
+    public static void updateEvent(Event updated) {
 
         Event old = _eventIdMap.get(updated.getEventId());
         List<Event> oldList = _curUser.getEvents();
