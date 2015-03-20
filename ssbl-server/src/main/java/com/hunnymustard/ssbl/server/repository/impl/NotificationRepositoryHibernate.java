@@ -2,7 +2,7 @@ package com.hunnymustard.ssbl.server.repository.impl;
 
 import java.util.List;
 
-import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,6 +27,7 @@ public class NotificationRepositoryHibernate extends HibernateRepository<Notific
 		return (List<Notification>) getSession().createCriteria(Notification.class)
 				.add(Restrictions.ne("sender", user))
 				.add(Restrictions.gt("sendTime", user.getLastLoginTime()))
+				.addOrder(Order.desc("sendTime"))
 				.list();
 	}
 

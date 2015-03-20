@@ -2,11 +2,8 @@ package com.hunnymustard.ssbl.server.repository.impl;
 
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
