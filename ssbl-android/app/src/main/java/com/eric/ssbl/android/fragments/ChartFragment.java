@@ -112,6 +112,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 else {
                     i = new Intent(getActivity(), ProfileActivity.class);
                     b.putInt("user_id", _id.get(marker));
+                    System.out.println(_id.get(marker));
                 }
                 i.putExtras(b);
                 startActivity(i);
@@ -169,6 +170,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             loc.setLatitude(_curLoc.latitude);
             loc.setLongitude(_curLoc.longitude);
             curUser.setLocation(loc);
+            curUser.setLastLocationTime(System.currentTimeMillis());
             DataManager.updateCurUser(curUser);
 
             displayElements();
@@ -189,8 +191,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         List<User> relevantUsers = new ArrayList<>();
         relevantUsers.addAll(DataManager.getNearbyUsers());
-//        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
-//        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
+        relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
 
             // To enforce synchronization with the current user

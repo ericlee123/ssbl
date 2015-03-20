@@ -41,7 +41,7 @@ public class InboxFragment extends ListFragment {
 
                 final List<User> relevantUsers = new ArrayList<>();
                 List<User> nearbyTemp = DataManager.getNearbyUsers();
-//                relevantUsers.addAll(DataManager.getCurUser().getFriends());
+                relevantUsers.addAll(DataManager.getCurUser().getFriends());
                 nearbyTemp.removeAll(relevantUsers);
                 relevantUsers.addAll(nearbyTemp);
 
@@ -50,14 +50,15 @@ public class InboxFragment extends ListFragment {
                 while (iter.hasNext())
                     usernames.add(iter.next().getUsername());
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(_context, android.R.layout.select_dialog_singlechoice);
+                System.out.println(_context == null);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
                 adapter.addAll(usernames);
 
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 adb
                         .setTitle("Choose a user")
                         .setCancelable(true)
-                        .setAdapter(new ArrayAdapter<String>(_context, android.R.layout.select_dialog_singlechoice),
+                        .setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_singlechoice),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {

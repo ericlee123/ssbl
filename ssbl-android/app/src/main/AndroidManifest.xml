@@ -38,13 +38,15 @@
             android:theme="@style/LowerLevelTheme" />
         <activity
             android:name=".android.activities.EditProfileActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
             android:name=".android.activities.EditEventActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme" />

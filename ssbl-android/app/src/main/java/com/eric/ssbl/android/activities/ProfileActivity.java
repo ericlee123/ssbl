@@ -66,6 +66,8 @@ public class ProfileActivity extends Activity {
         if (_user == null)
             return;
 
+        System.out.println("user id: " + _user.getUserId());
+
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_tangents);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
         ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
@@ -206,6 +208,8 @@ public class ProfileActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                System.out.println("template: " + template.getUserId());
 
                 // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
