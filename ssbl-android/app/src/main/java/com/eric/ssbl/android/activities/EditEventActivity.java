@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -23,15 +22,6 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -135,7 +125,7 @@ public class EditEventActivity extends Activity {
         e.setPublic(!((CheckBox) findViewById(R.id.edit_event_private)).isChecked());
 
         _loading = ProgressDialog.show(this, "Updating event...", getString(R.string.chill_out), true);
-        new HttpEventUpdater().execute(e);
+        DataManager.updateHostingEvent(e);
     }
 
     public void goBack(View view) {
@@ -180,60 +170,6 @@ public class EditEventActivity extends Activity {
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
-        }
-    }
-
-    private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
-
-        private Event updated;
-
-        private void updateEvent(Event edited) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/event");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(edited));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                updated = om.readValue(jsonString, Event.class);
-
-            } catch (Exception e) {
-                updated = null;
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Event... params) {
-
-            updateEvent(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            _loading.dismiss();
-
-            if (updated != null) {
-                Toast.makeText(_context, "Event saved!", Toast.LENGTH_SHORT).show();
-                DataManager.updateEvent(updated);
-                finish();
-            } else {
-                Toast.makeText(_context, "Error updating event :(", Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

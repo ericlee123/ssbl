@@ -169,6 +169,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             loc.setLatitude(_curLoc.latitude);
             loc.setLongitude(_curLoc.longitude);
             curUser.setLocation(loc);
+            curUser.setLastLocationTime(System.currentTimeMillis());
             DataManager.updateCurUser(curUser);
 
             displayElements();

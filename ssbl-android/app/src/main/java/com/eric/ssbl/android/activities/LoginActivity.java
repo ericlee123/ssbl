@@ -17,6 +17,10 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,6 +39,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LoginActivity extends Activity {
@@ -198,6 +204,23 @@ public class LoginActivity extends Activity {
                         u.setEmail(email);
                         u.setUsername(username);
                         u.setPassword("*" + hashedPassword);
+                        u.setBlurb("I like to smash, bro");
+                        u.setLastLoginTime(System.currentTimeMillis());
+                        u.setLastLocationTime(System.currentTimeMillis());
+                        u.setGames(new ArrayList<Game>());
+                        u.setEvents(new ArrayList<Event>());
+
+                        List<Notification> temp = new ArrayList<>();
+                        Notification welcome = new Notification();
+                        welcome.setMessage("Welcome to Super Smash Bros. Locator!");
+                        welcome.setSendTime(System.currentTimeMillis());
+                        welcome.setType(Notification.Type.SYSTEM);
+                        temp.add(welcome);
+                        u.setNotifications(temp);
+
+                        u.setFriends(new ArrayList<User>());
+                        u.setConversations(new ArrayList<Conversation>());
+                        u.setPrivate(false);
 
                         new HttpRegister().execute(u);
                     }
