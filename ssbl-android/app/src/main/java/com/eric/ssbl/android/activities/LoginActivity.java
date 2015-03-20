@@ -306,7 +306,8 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
 
             if (curUser != null) {
-                DataManager.setCurUser(curUser);
+                curUser.setLastLoginTime(System.currentTimeMillis());
+                DataManager.updateCurUser(curUser);
                 initiateApp();
             }
             else {

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EditProfileActivity;
@@ -98,14 +99,14 @@ public class ProfileFragment extends Fragment {
         ((TextView) _view.findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_profile));
 
         ImageButton mb = (ImageButton) _view.findViewById(R.id.eu_button_middle);
-        mb.setImageResource(R.drawable.green_face);
+        mb.setImageResource(R.drawable.gray_fedora);
         mb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create new message
+                Toast.makeText(getActivity(), getString(R.string.mlady), Toast.LENGTH_SHORT).show();
             }
         });
-        ((TextView) _view.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.set_mood));
+        ((TextView) _view.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
 
         ImageButton rb = (ImageButton) _view.findViewById(R.id.eu_button_right);
         rb.setImageResource(R.drawable.orange_search);

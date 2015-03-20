@@ -3,7 +3,6 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,21 +15,11 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 public class EventActivity extends Activity {
 
@@ -51,16 +40,18 @@ public class EventActivity extends Activity {
 
         setContentView(R.layout.fragment_eu);
 
-        Integer id;
-        try {
-            id = getIntent().getExtras().getInt("event_id");
-        } catch (NullPointerException e) {
-            Toast.makeText(this, "Error displaying event", Toast.LENGTH_SHORT).show();
+        if (!getIntent().hasExtra("event_json")) {
+            Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
             return;
         }
-        Event temp = new Event();
-        temp.setEventId(id);
-        new HttpEventGetter().execute(temp);
+
+        try {
+            String eventJson = getIntent().getStringExtra("event_json");
+            _event = new ObjectMapper().readValue(eventJson, Event.class);
+            fillDetails();
+        } catch (Exception e) {
+            Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void fillDetails() {
@@ -198,55 +189,54 @@ public class EventActivity extends Activity {
         finish();
     }
 
-    private class HttpEventGetter extends AsyncTask<Event, Void, Void> {
-
-        private Event e;
-
-        private void getEvent(Event template) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/search/event");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                // encode the user template into the request
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(template));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                List<Event> le = om.readValue(jsonString, new TypeReference<List<Event>>(){});
-                e = le.get(0);
-            } catch (Exception exc) {
-                e = null;
-                exc.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Event... params) {
-
-            getEvent(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (e != null) {
-                _event = e;
-                fillDetails();
-            }
-            else
-                Toast.makeText(_context, "Error retrieving event", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private class HttpEventGetter extends AsyncTask<Event, Void, Void> {
+//
+//        private Event e;
+//
+//        private void getEvent(Event template) {
+//
+//            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+//            url.append("/search/event");
+//
+//            try {
+//                HttpClient client = new DefaultHttpClient();
+//                HttpPost request = new HttpPost(url.toString());
+//
+//                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+//
+//                // encode the user template into the request
+//                ObjectMapper om = new ObjectMapper();
+//                StringEntity body = new StringEntity(om.writeValueAsString(template));
+//                request.setEntity(body);
+//
+//                HttpResponse response = client.execute(request);
+//                String jsonString = EntityUtils.toString(response.getEntity());
+//
+//                if (jsonString.length() == 0)
+//                    return;
+//
+//                List<Event> le = om.readValue(jsonString, new TypeReference<List<Event>>(){});
+//                e = le.get(0);
+//            } catch (Exception exc) {
+//                e = null;
+//                exc.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Event... params) {
+//            getEvent(params[0]);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void what) {
+//            if (e != null) {
+//                _event = e;
+//                fillDetails();
+//            }
+//            else
+//                Toast.makeText(_context, "Error retrieving event", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }

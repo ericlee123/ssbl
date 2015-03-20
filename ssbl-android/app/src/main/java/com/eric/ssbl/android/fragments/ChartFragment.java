@@ -17,6 +17,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -43,7 +44,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     public static List<Event> _nearbyEvents = new ArrayList<>();
-    private static HashMap<Marker, Integer> _id = new HashMap<>();
+    private static HashMap<Marker, String> _eu = new HashMap<>();
     private static boolean _refreshed;
 
     @Override
@@ -89,7 +90,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         _refreshed = false;
 
-        _id.clear();
+        _eu.clear();
         _nearbyUsers.clear();
         _nearbyEvents.clear();
     }
@@ -107,12 +108,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 Bundle b = new Bundle();
                 if (marker.getAlpha() == 0.99F) {
                     i = new Intent(getActivity(), EventActivity.class);
-                    b.putInt("event_id", _id.get(marker));
+                    b.putString("event_json", _eu.get(marker));
                 }
                 else {
                     i = new Intent(getActivity(), ProfileActivity.class);
-                    b.putInt("user_id", _id.get(marker));
-                    System.out.println(_id.get(marker));
+                    b.putString("user_json", _eu.get(marker));
                 }
                 i.putExtras(b);
                 startActivity(i);
@@ -185,8 +185,9 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         else
             Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
 
-        _id.clear();
+        _eu.clear();
 
+        ObjectMapper om = new ObjectMapper();
         long now = System.currentTimeMillis();
 
         List<User> relevantUsers = new ArrayList<>();
@@ -223,7 +224,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             if (u.equals(DataManager.getCurUser()))
                 marker.showInfoWindow();
 
-            _id.put(marker, u.getUserId());
+            try {
+                _eu.put(marker, om.writeValueAsString(u));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         List<Event> relevantEvents = new ArrayList<>();
@@ -241,7 +246,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                             .alpha(0.99F)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
 
-            _id.put(marker, e.getEventId());
+            try {
+                _eu.put(marker, om.writeValueAsString(e));
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
         }
 
     }
