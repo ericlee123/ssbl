@@ -49,7 +49,8 @@
             android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".android.activities.ConversationActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />

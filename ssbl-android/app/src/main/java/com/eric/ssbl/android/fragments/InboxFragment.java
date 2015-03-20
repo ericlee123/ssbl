@@ -50,7 +50,6 @@ public class InboxFragment extends ListFragment {
                 while (iter.hasNext())
                     usernames.add(iter.next().getUsername());
 
-                System.out.println(_context == null);
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.select_dialog_singlechoice);
                 adapter.addAll(usernames);
 
@@ -90,7 +89,8 @@ public class InboxFragment extends ListFragment {
     public void onListItemClick(ListView lv, View v, int position, long id) {
 
         Intent i = new Intent(getActivity(), ConversationActivity.class);
-        i.putExtra("conversation_index", position);
+        i.putExtra("conversation_id", _conversations.get(position).getConversationId());
+        i.putExtra("conversation_title", "wow");
         startActivity(i);
     }
 }

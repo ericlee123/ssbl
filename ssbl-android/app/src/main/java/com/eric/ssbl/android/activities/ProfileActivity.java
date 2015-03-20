@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,7 +17,16 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 
 import java.util.List;
 
@@ -45,9 +55,9 @@ public class ProfileActivity extends Activity {
         }
 
         try {
-            String eventJson = getIntent().getStringExtra("user_json");
-            _user = new ObjectMapper().readValue(eventJson, User.class);
-            fillDetails();
+            String userJson = getIntent().getStringExtra("user_json");
+            User u = new ObjectMapper().readValue(userJson, User.class);
+            new HttpUserGetter().execute(u);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading user :(", Toast.LENGTH_LONG).show();
         }
@@ -203,55 +213,55 @@ public class ProfileActivity extends Activity {
         finish();
     }
 
-//    private class HttpUserGetter extends AsyncTask<User, Void, Void> {
-//
-//        private User u;
-//
-//        private void getUser(User template) {
-//
-//            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-//            url.append("/search/user");
-//
-//            try {
-//                HttpClient client = new DefaultHttpClient();
-//                HttpPost request = new HttpPost(url.toString());
-//
-//                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-//
-//                // encode the user template into the request
-//                ObjectMapper om = new ObjectMapper();
-//                StringEntity body = new StringEntity(om.writeValueAsString(template));
-//                request.setEntity(body);
-//
-//                HttpResponse response = client.execute(request);
-//                String jsonString = EntityUtils.toString(response.getEntity());
-//
-//                if (jsonString.length() == 0)
-//                    return;
-//
-//                List<User> lu = om.readValue(jsonString, new TypeReference<List<User>>(){});
-//                u = lu.get(0);
-//            } catch (Exception e) {
-//                u = null;
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        @Override
-//        protected Void doInBackground(User... params) {
-//
-//            getUser(params[0]);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void what) {
-//            if (u != null) {
-//                _user = u;
-//                fillDetails();
-//            }
-//            else
-//                Toast.makeText(_context, "Error retrieving profile", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private class HttpUserGetter extends AsyncTask<User, Void, Void> {
+
+        private User u;
+
+        private void getUser(User template) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/search/user");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                // encode the user template into the request
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(template));
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                List<User> lu = om.readValue(jsonString, new TypeReference<List<User>>(){});
+                u = lu.get(0);
+            } catch (Exception e) {
+                u = null;
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(User... params) {
+
+            getUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (u != null) {
+                _user = u;
+                fillDetails();
+            }
+            else
+                Toast.makeText(_context, "Error retrieving profile", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

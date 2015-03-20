@@ -179,7 +179,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             if (updated != null)
                 DataManager.updateCurUser(updated);
         }
-
     }
 
     private static class HttpEventUpdater extends AsyncTask<Event, Void, Void> {

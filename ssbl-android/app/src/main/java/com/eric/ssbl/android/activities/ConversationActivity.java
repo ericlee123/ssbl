@@ -5,24 +5,39 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
 import com.eric.ssbl.android.managers.DataManager;
-import com.eric.ssbl.android.pojos.Conversation;
-import com.eric.ssbl.android.pojos.User;
+import com.eric.ssbl.android.pojos.Message;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Iterator;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConversationActivity extends ListActivity {
 
     private final Context _context = this;
-    private Conversation _conversation;
+    private List<Message> _conversation;
     private View _abv;
+    private int _loadedMessages;
+    private int _additionalMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,37 +50,42 @@ public class ConversationActivity extends ListActivity {
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
-        if (getIntent().hasExtra("conversation_index")) {
-            _conversation = DataManager.getCurUser().getConversations().get(getIntent().getExtras().getInt("conversation_index"));
-        }
-        else {
-            Toast.makeText(_context, "Error retrieving conversation", Toast.LENGTH_SHORT).show();
+        if (getIntent().hasExtra("conversation_title"))
+            ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(getIntent().getStringExtra("conversation_title"));
+
+        if (!getIntent().hasExtra("conversation_id")) {
+            Toast.makeText(_context, "Error loading conversation", Toast.LENGTH_LONG).show();
             return;
         }
 
-
         setContentView(R.layout.activity_conversation);
+
+        _loadedMessages = 0;
+        _additionalMessages = 100;
+        new HttpConversationGetter().execute(getIntent().getExtras().getInt("conversation_id"));
     }
 
     private void populate() {
 
-        StringBuilder title = new StringBuilder();
-        Iterator<User> iu = _conversation.getRecipients().iterator();
-        while (iu.hasNext()) {
-            String recip = iu.next().getUsername();
-            if (!recip.equals(DataManager.getCurUser().getUsername()))
-                title.append(recip + ", ");
-        }
-        title.delete(title.length() - 2, title.length());
-        ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(title.toString());
+        List<Message> reversed = new ArrayList<Message>();
+        for (int i = 0; i < _conversation.size(); i++)
+            reversed.add(_conversation.get(_conversation.size() - 1 - i));
 
-        setListAdapter(new ConversationArrayAdapter(this, _conversation.getMessages()));
+        setListAdapter(new ConversationArrayAdapter(this, reversed));
         getListView().setSelection(getListAdapter().getCount() - 1);
     }
 
     public void sendMessage(View view) {
         // send message in the edit text
-        Toast.makeText(this, "Sending message...", Toast.LENGTH_SHORT).show();
+        Message sending = new Message();
+        sending.setSender(DataManager.getCurUser());
+        sending.setSentTime(System.currentTimeMillis());
+
+        EditText et = (EditText) findViewById(R.id.send_message);
+        sending.setBody(et.getText().toString());
+        et.setText("");
+
+        new HttpMessageSender().execute(sending);
     }
 
     public void deleteButton(View view) {
@@ -97,45 +117,104 @@ public class ConversationActivity extends ListActivity {
         finish();
     }
 
-//    private class HttpConversationGetter extends AsyncTask<Integer, Void, Void> {
-//
-//        private List<Message> lm;
-//
-//        private void fetchConversation(int id) {
-//
-//            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-//            url.append("/messaging"
-//
-//            HttpClient client = new DefaultHttpClient();
-//            HttpGet request = new HttpGet("http://192.168.1.9:8080/ssbl-server/smash/messaging/timeline62x/1");
-//            HttpResponse response = null;
-//            try {
-//                response = client.execute(request);
-//
-//                String jsonString = IOUtils.toString(
-//                        response.getEntity().getContent(), "UTF-8");
-//                System.out.println("json: " + jsonString);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Integer... params) {
-//            fetchConversation(params[0]);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void what) {
-//            if (lm != null) {
-//                _conversation = new Conversation();
-//                _conversation.setMessages(lm);
-//                populate();
-//            }
-//            else
-//                Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private class HttpConversationGetter extends AsyncTask<Integer, Void, Void> {
+
+        private List<Message> lm;
+
+        private void fetchConversation(int id) {
+
+            // get the users
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/messaging");
+            url.append("/" + DataManager.getCurUser().getUsername());
+            url.append("/" + DataManager.getCurUser().getUserId());
+            url.append("/" + id);
+            url.append("?size=" + _loadedMessages);
+            url.append("&additional=" + _additionalMessages);
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                ObjectMapper om = new ObjectMapper();
+                lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+            } catch (Exception e) {
+                lm = null;
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            fetchConversation(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (lm != null) {
+                _conversation = lm;
+                populate();
+            }
+            else
+                Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class HttpMessageSender extends AsyncTask<Message, Void, Void> {
+
+        private Message message;
+
+        private void message(Message m) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/messaging");
+            url.append("/" + DataManager.getCurUser().getUsername());
+            url.append("/" + DataManager.getCurUser().getUserId());
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                ObjectMapper om = new ObjectMapper();
+                StringEntity body = new StringEntity(om.writeValueAsString(m));
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                message = om.readValue(jsonString, Message.class);
+            } catch (Exception e) {
+                message = null;
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Message... params) {
+            message(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (message == null) {
+                Toast.makeText(_context, "Message not sent", Toast.LENGTH_LONG).show();
+
+            }
+        }
+    }
 }
