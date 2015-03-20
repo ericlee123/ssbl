@@ -59,6 +59,11 @@ web-server: tomcat7
 		- Params: username, id, conversation (Path), size, additional (Query)
 		- Return: List<Message>
 		- Example: http://localhost:8080/ssbl-server/smash/messaging/timeline62x/1/1?size=0&additional=50
+	/delete [POST]
+		- Desc: Delete a message
+		- Params: Message (Body)
+		- Return: Void
+		- Example: UNTESTED (Probably works though)
 
 /smash/notif
 	/{username}/{id} [GET]
@@ -73,13 +78,23 @@ web-server: tomcat7
 		- Example: UNTESTED (Probably works though)
 
 /smash/edit
-	/user [POST]
+	/user/update [POST]
 		- Desc: Update a user (add friend, etc.)
 		- Params: User (Body)
 		- Return: User
 		- Example: UNTESTED (Probably works though)
-	/event [POST]
+	/user/delete [POST]
+		- Desc: Delete a user
+		- Params: User (Body)
+		- Return: Void
+		- Example: UNTESTED (Probably works though)
+	/event/update [POST]
 		- Desc: Update an event
 		- Params: Event (Body)
 		- Return: Event
+		- Example: UNTESTED (Probably works though)
+	/event/delete [POST]
+		- Desc: Delete an event
+		- Params: Event (Body)
+		- Return: Void
 		- Example: UNTESTED (Probably works though)

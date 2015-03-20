@@ -96,6 +96,11 @@ public class SmashController {
 		if(!_authService.getByParameters(username, id).equals(message.getSender())) throw new AuthException();
 		return _messagingService.send(message);
 	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/messaging/delete")
+	public void delete(@RequestBody Message message) {
+		_messagingService.delete(message);
+	}
 
 	/* Notification Mappings */
 	@RequestMapping(method=RequestMethod.GET, value="/notif/{username}/{id}")
@@ -110,13 +115,23 @@ public class SmashController {
 	}
 
 	/* Edit Mappings */
-	@RequestMapping(method=RequestMethod.POST, value="/edit/user")
+	@RequestMapping(method=RequestMethod.POST, value="/edit/user/update")
 	public @ResponseBody User updateUser(@RequestBody User user) {
 		return _editService.update(user);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/edit/event")
+	@RequestMapping(method=RequestMethod.POST, value="/edit/user/delete")
+	public void deleteUser(@RequestBody User user) {
+		_editService.delete(user);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/edit/event/update")
 	public @ResponseBody Event updateEvent(@RequestBody Event event) {
 		return _editService.update(event);
+	}
+	
+	@RequestMapping(method=RequestMethod.POST, value="/edit/event/delete")
+	public void deleteEvent(@RequestBody Event event) {
+		_editService.delete(event);
 	}
 }

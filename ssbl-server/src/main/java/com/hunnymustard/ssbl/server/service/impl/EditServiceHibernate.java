@@ -25,10 +25,20 @@ public class EditServiceHibernate implements EditService {
 	public User update(User user) {
 		return _userRepository.update(user);
 	}
+	
+	@Override
+	public void delete(User user) {
+		_userRepository.remove(user);
+	}
 
 	@Override
 	public Event update(Event event) {
 		return _eventRepository.update(event);
 	}
 
+	@Override
+	public void delete(Event event) {
+		_eventRepository.remove(event);
+	}
+	
 }

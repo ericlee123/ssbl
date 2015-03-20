@@ -58,4 +58,8 @@ public class MessagingServiceHibernate implements MessagingService {
 		return messages;
 	}
 
+	@Override
+	public void delete(Message message) {
+		_messageRepository.remove(message);
+	}
 }

@@ -12,4 +12,5 @@ public interface MessagingService {
 	List<Message> getByConversation(Integer conversationId, Integer size, Integer additional);
 	
 	Message send(Message message);
+	void delete(Message message);
 }

@@ -6,6 +6,8 @@ import com.hunnymustard.ssbl.model.User;
 public interface EditService {
 
 	User update(User user);
+	void delete(User user);
 	Event update(Event event);
+	void delete(Event event);
 	
 }
