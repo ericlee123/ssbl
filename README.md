@@ -1,22 +1,15 @@
 # Smash Locator (SSBL)
 Super Smash Bros. Locator is an application designed to help people coordinate smash sessions. It's authors Eric Lee and Ashwin Madavan enjoy to smash other people in their free time. While they usually smash large groups of friends, they are not opposed to smashing strangers. In 2015, Ashwin Madavan won the Best Smasher of the Year when he rekt Eric's backend!
 
-## To Do Server
-Users Hibernate Initialization
-1) You
-	- Everything
-2) Friend
-	- Same as stranger for name?	
-3) Stranger (public)
-	- Friends
-	- Games
-	- Events
-	- Username
-	- Blurb
-	- Last Login Time
-	- Last Location Time
-
 ## Server Changelog
+### 0.1.0 (3-20-2014) [ashwin]
+- Implemented lazy loading of properties
+	- Required bytecode manipulation and extensive debugging
+- Moved Hibernate initialization code to service layer
+- Refactored pom files
+- Added plugins to automatically build output files
+- Added pretty printing to JSON output
+
 ### 0.0.3 (3-14-2015) [ashwin]
 - Added messaging, auth, and search services
 - Updated POJOs
