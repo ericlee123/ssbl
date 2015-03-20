@@ -33,7 +33,6 @@
         android:layout_marginLeft="16dp"
         android:layout_marginStart="16dp"
         android:textColor="@color/dark_gray"
-        android:text="hell e eaew;ofuhtfg"
         android:textSize="14sp" />
 
 </RelativeLayout>

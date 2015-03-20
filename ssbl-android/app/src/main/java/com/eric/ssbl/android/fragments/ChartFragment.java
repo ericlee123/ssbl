@@ -25,10 +25,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +41,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     public static List<Event> _nearbyEvents = new ArrayList<>();
-    private static HashMap<Marker, Integer> _id = new HashMap<>();
+    private static HashMap<Marker, String> _eu = new HashMap<>();
     private static boolean _refreshed;
 
     @Override
@@ -89,7 +87,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
         _refreshed = false;
 
-        _id.clear();
+        _eu.clear();
         _nearbyUsers.clear();
         _nearbyEvents.clear();
     }
@@ -107,11 +105,11 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 Bundle b = new Bundle();
                 if (marker.getAlpha() == 0.99F) {
                     i = new Intent(getActivity(), EventActivity.class);
-                    b.putInt("event_id", _id.get(marker));
+                    b.putString("event_json", _eu.get(marker));
                 }
                 else {
                     i = new Intent(getActivity(), ProfileActivity.class);
-                    b.putInt("user_id", _id.get(marker));
+                    b.putString("user_json", _eu.get(marker));
                 }
                 i.putExtras(b);
                 startActivity(i);
@@ -169,80 +167,95 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             loc.setLatitude(_curLoc.latitude);
             loc.setLongitude(_curLoc.longitude);
             curUser.setLocation(loc);
+            curUser.setLastLocationTime(System.currentTimeMillis());
             DataManager.updateCurUser(curUser);
 
-            displayElements();
+//            displayElements();
         }
     }
 
-    public void displayElements() {
-        _map.clear();
-
-        if (_curLoc != null)
-            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
-        else
-            Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
-
-        _id.clear();
-
-        long now = System.currentTimeMillis();
-
-        List<User> relevantUsers = new ArrayList<>();
-        relevantUsers.addAll(DataManager.getNearbyUsers());
+//    public void displayElements() {
+//        _map.clear();
+//
+//        if (_curLoc != null)
+//            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
+//        else
+//            Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
+//
+//        _eu.clear();
+//
+//        ObjectMapper om = new ObjectMapper();
+//        long now = System.currentTimeMillis();
+//
+//        List<User> relevantUsers = new ArrayList<>();
+//        relevantUsers.addAll(DataManager.getNearbyUsers());
 //        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
 //        relevantUsers.addAll(DataManager.getCurUser().getFriends());
-        for (User u: relevantUsers) {
-
-            // To enforce synchronization with the current user
-            if (u.equals(DataManager.getCurUser())) {
-                Location loc = u.getLocation();
-                if (loc == null)
-                    loc = new Location();
-                loc.setLatitude(_curLoc.latitude);
-                loc.setLongitude(_curLoc.longitude);
-                u.setLocation(loc);
-            }
-
-            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
-            String updated = "Updated ";
-            if (elapsed < 60)
-                updated += elapsed + " minutes ago";
-            else if (elapsed < 1440)
-                updated += (elapsed / 60) + " hours ago";
-            else
-                updated += (elapsed / 1440) + " days ago";
-
-            Marker marker = _map.addMarker(new MarkerOptions()
-                    .title(u.getUsername())
-                    .snippet(updated)
-                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
-
-            if (u.equals(DataManager.getCurUser()))
-                marker.showInfoWindow();
-
-            _id.put(marker, u.getUserId());
-        }
-
-        List<Event> relevantEvents = new ArrayList<>();
-        relevantEvents.addAll(DataManager.getNearbyEvents());
-        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
-        relevantEvents.addAll(DataManager.getCurUser().getEvents());
-        relevantEvents.removeAll(DataManager.getHostingEvents());
-        relevantEvents.addAll(DataManager.getHostingEvents());
-        for (Event e: relevantEvents) {
-
-            Marker marker = _map.addMarker(new MarkerOptions()
-                            .title(e.getTitle())
-                            .snippet("Hosted by " + e.getHost().getUsername())
-                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
-                            .alpha(0.99F)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
-
-            _id.put(marker, e.getEventId());
-        }
-
-    }
+//        for (User u: relevantUsers) {
+//
+//            // To enforce synchronization with the current user
+//            if (u.equals(DataManager.getCurUser())) {
+//                Location loc = u.getLocation();
+//                if (loc == null)
+//                    loc = new Location();
+//                loc.setLatitude(_curLoc.latitude);
+//                loc.setLongitude(_curLoc.longitude);
+//                u.setLocation(loc);
+//            }
+//
+//            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
+//            String updated = "Updated ";
+//            if (elapsed < 60)
+//                updated += elapsed + " minutes ago";
+//            else if (elapsed < 1440)
+//                updated += (elapsed / 60) + " hours ago";
+//            else
+//                updated += (elapsed / 1440) + " days ago";
+//
+//            System.out.println(u.getUsername() == null);
+//            System.out.println(updated == null);
+//            System.out.println(u.getLocation() == null);
+//            System.out.println(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller) == null);
+//            System.out.println("new");
+//            Marker marker = _map.addMarker(new MarkerOptions()
+//                    .title(u.getUsername())
+//                    .snippet(updated)
+//                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
+//
+//            if (u.equals(DataManager.getCurUser()))
+//                marker.showInfoWindow();
+//
+//            try {
+//                _eu.put(marker, om.writeValueAsString(u));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        List<Event> relevantEvents = new ArrayList<>();
+//        relevantEvents.addAll(DataManager.getNearbyEvents());
+//        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
+//        relevantEvents.addAll(DataManager.getCurUser().getEvents());
+//        relevantEvents.removeAll(DataManager.getHostingEvents());
+//        relevantEvents.addAll(DataManager.getHostingEvents());
+//        for (Event e: relevantEvents) {
+//
+//            Marker marker = _map.addMarker(new MarkerOptions()
+//                            .title(e.getTitle())
+//                            .snippet("Hosted by " + e.getHost().getUsername())
+//                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
+//                            .alpha(0.99F)
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
+//
+//            try {
+//                _eu.put(marker, om.writeValueAsString(e));
+//            } catch (Exception exc) {
+//                exc.printStackTrace();
+//            }
+//        }
+//
+//    }
 
     public void centerMapOnSelf() {
         if (_curLoc == null || _map == null)

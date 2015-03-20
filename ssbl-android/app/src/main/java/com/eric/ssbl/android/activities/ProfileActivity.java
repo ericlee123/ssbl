@@ -49,22 +49,26 @@ public class ProfileActivity extends Activity {
 
         setContentView(R.layout.fragment_eu);
 
-        Integer id;
-        try {
-            id = getIntent().getExtras().getInt("user_id");
-        } catch (NullPointerException e) {
-            Toast.makeText(this, getString(R.string.error_loading_profile), Toast.LENGTH_SHORT).show();
+        if (!getIntent().hasExtra("user_json")) {
+            Toast.makeText(_context, "Error loading user :(", Toast.LENGTH_LONG).show();
             return;
         }
-        User temp = new User();
-        temp.setUserId(id);
-        new HttpUserGetter().execute(temp);
+
+        try {
+            String userJson = getIntent().getStringExtra("user_json");
+            User u = new ObjectMapper().readValue(userJson, User.class);
+            new HttpUserGetter().execute(u);
+        } catch (Exception e) {
+            Toast.makeText(_context, "Error loading user :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void fillDetails() {
 
         if (_user == null)
             return;
+
+        System.out.println("user id: " + _user.getUserId());
 
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_tangents);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
@@ -122,15 +126,32 @@ public class ProfileActivity extends Activity {
         // Check to see if it's the current user's profile
         if (!_user.equals(DataManager.getCurUser())) {
 
-            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
-            lb.setImageResource(R.drawable.green_plus);
+            final boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
+
+            final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
+            leftCaption.setText(getString(inCircle ? R.string.remove_from_circle : R.string.add_to_circle));
+            final ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
+            lb.setImageResource(inCircle ? R.drawable.red_x : R.drawable.green_plus);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
+                    User cur = DataManager.getCurUser();
+                    List<User> circle = cur.getFriends();
+
+                    if (inCircle) {
+                        circle.remove(_user);
+                        lb.setImageResource(R.drawable.green_plus);
+                        leftCaption.setText(getString(R.string.add_to_circle));
+                    } else {
+                        circle.add(_user);
+                        lb.setImageResource(R.drawable.red_x);
+                        leftCaption.setText(getString(R.string.remove_from_circle));
+                    }
+
+                    cur.setFriends(circle);
+                    DataManager.updateCurUser(cur);
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.add_friend));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
             mb.setImageResource(R.drawable.blue_chat);
@@ -166,14 +187,14 @@ public class ProfileActivity extends Activity {
             ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_profile));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
-            mb.setImageResource(R.drawable.green_face);
+            mb.setImageResource(R.drawable.gray_fedora);
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Create new message
+                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.set_mood));
+            ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
 
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
             rb.setImageResource(R.drawable.orange_search);
@@ -218,7 +239,7 @@ public class ProfileActivity extends Activity {
                 if (jsonString.length() == 0)
                     return;
 
-                List<User> lu = om.readValue(jsonString, new TypeReference<List<User>>() {});
+                List<User> lu = om.readValue(jsonString, new TypeReference<List<User>>(){});
                 u = lu.get(0);
             } catch (Exception e) {
                 u = null;

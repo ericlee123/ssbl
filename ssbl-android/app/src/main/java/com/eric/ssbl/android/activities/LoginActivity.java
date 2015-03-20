@@ -17,7 +17,12 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
+import com.eric.ssbl.android.services.MessagingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -35,6 +40,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LoginActivity extends Activity {
@@ -48,6 +55,9 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        System.out.println("start service");
+        startService(new Intent(getBaseContext(), MessagingService.class));
 
         _loginFile = new File(getFilesDir(), "yummy.hunnymustard");
 
@@ -112,23 +122,6 @@ public class LoginActivity extends Activity {
         NameValuePair login = new BasicNameValuePair(username, "*" + hashedPassword);
 
         new HttpLogin().execute(login);
-
-
-//        NotificationCompat.Builder builder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        .setContentTitle("My notification")
-//                        .setContentText("Hello World!");
-//
-//        Intent i = new Intent(this, ProfileActivity.class);
-//        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//        builder.setContentIntent(pi);
-//
-//        NotificationManager notifMngr =
-//                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        // Builds the notification and issues it.
-//        notifMngr.notify(1, builder.build());
     }
 
     private void rememberMe() {
@@ -198,6 +191,23 @@ public class LoginActivity extends Activity {
                         u.setEmail(email);
                         u.setUsername(username);
                         u.setPassword("*" + hashedPassword);
+                        u.setBlurb("I like to smash, bro");
+                        u.setLastLoginTime(System.currentTimeMillis());
+                        u.setLastLocationTime(System.currentTimeMillis());
+                        u.setGames(new ArrayList<Game>());
+                        u.setEvents(new ArrayList<Event>());
+
+                        List<Notification> temp = new ArrayList<>();
+                        Notification welcome = new Notification();
+                        welcome.setMessage("Welcome to Super Smash Bros. Locator!");
+                        welcome.setSendTime(System.currentTimeMillis());
+                        welcome.setType(Notification.Type.SYSTEM);
+                        temp.add(welcome);
+                        u.setNotifications(temp);
+
+                        u.setFriends(new ArrayList<User>());
+                        u.setConversations(new ArrayList<Conversation>());
+                        u.setPrivate(false);
 
                         new HttpRegister().execute(u);
                     }
@@ -219,13 +229,12 @@ public class LoginActivity extends Activity {
         else
             _loginFile.delete();
 
-        new DataManager().init(this);
+        new DataManager().initNearby(this);
         DataManager.initSettings(getFilesDir());
     }
 
     public void goToMain() {
         _loading.dismiss();
-
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
@@ -283,7 +292,8 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
 
             if (curUser != null) {
-                DataManager.setCurUser(curUser);
+                curUser.setLastLoginTime(System.currentTimeMillis());
+                DataManager.updateCurUser(curUser);
                 initiateApp();
             }
             else {

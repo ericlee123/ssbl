@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -51,16 +52,18 @@ public class EventActivity extends Activity {
 
         setContentView(R.layout.fragment_eu);
 
-        Integer id;
-        try {
-            id = getIntent().getExtras().getInt("event_id");
-        } catch (NullPointerException e) {
-            Toast.makeText(this, "Error displaying event", Toast.LENGTH_SHORT).show();
+        if (!getIntent().hasExtra("event_json")) {
+            Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
             return;
         }
-        Event temp = new Event();
-        temp.setEventId(id);
-        new HttpEventGetter().execute(temp);
+
+        try {
+            String eventJson = getIntent().getStringExtra("event_json");
+            Event e = new ObjectMapper().readValue(eventJson, Event.class);
+            new HttpEventGetter().execute(e);
+        } catch (Exception e) {
+            Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void fillDetails() {
@@ -131,15 +134,32 @@ public class EventActivity extends Activity {
         // Manage buttons
         if (!_event.getHost().equals(DataManager.getCurUser())) {
 
-            ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
-            lb.setImageResource(R.drawable.green_up_arrow);
+            final boolean isAttending = _event.getUsers().contains(DataManager.getCurUser());
+
+            final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
+            leftCaption.setText(getString(isAttending ? R.string.unattend_event : R.string.attend_event));
+            final ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
+            lb.setImageResource(isAttending ? R.drawable.red_down_arrow : R.drawable.green_up_arrow);
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
+                    List<User> attending = _event.getUsers();
+
+                    if (isAttending) {
+                        attending.remove(DataManager.getCurUser());
+                        lb.setImageResource(R.drawable.green_up_arrow);
+                        leftCaption.setText(getString(R.string.attend_event));
+                    }
+                    else {
+                        attending.add(DataManager.getCurUser());
+                        lb.setImageResource(R.drawable.red_down_arrow);
+                        leftCaption.setText(getString(R.string.unattend_event));
+                    }
+
+                    _event.setUsers(attending);
+                    DataManager.updateEvent(_event);
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.attend_event));
 
             ImageButton mb = (ImageButton) findViewById(R.id.eu_button_middle);
             mb.setImageResource(R.drawable.blue_chat);
@@ -151,15 +171,16 @@ public class EventActivity extends Activity {
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
 
+            // should be show on map
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_gps);
+            rb.setImageResource(R.drawable.gray_fedora);
             rb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Open up map
+                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
                 }
             });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.show_on_map);
+            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.tip_fedora);
         }
         else {
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
@@ -167,8 +188,17 @@ public class EventActivity extends Activity {
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(_context, "leftButton", Toast.LENGTH_SHORT).show();
-                }
+                    try {
+                        String eventJson = new ObjectMapper().writeValueAsString(_event);
+                        Intent i = new Intent(_context, EditEventActivity.class);
+                        Bundle b = new Bundle();
+                        b.putString("event_json", eventJson);
+                        i.putExtras(b);
+                        startActivity(i);
+                    } catch (Exception e) {
+                        Toast.makeText(_context, "Error going to edit event", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }                }
             });
             ((TextView) findViewById(R.id.eu_button_left_caption)).setText(getString(R.string.edit_event));
 
@@ -182,6 +212,7 @@ public class EventActivity extends Activity {
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");
 
+            // should be show on map
             ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
             rb.setImageResource(R.drawable.gray_fedora);
             rb.setOnClickListener(new View.OnClickListener() {
@@ -234,7 +265,6 @@ public class EventActivity extends Activity {
 
         @Override
         protected Void doInBackground(Event... params) {
-
             getEvent(params[0]);
             return null;
         }

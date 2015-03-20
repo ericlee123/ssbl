@@ -22,6 +22,8 @@
             android:value="AIzaSyBg-9IAl0myr7r3kUfZltRHZGkqSohzP8I" /> <!-- debug -->
         <!-- 			android:value="AIzaSyDvDhEOHF_rRxwkMT1reYfGQiXPYU9-5jY" /> pub -->
 
+        <service android:name=".android.services.MessagingService" />
+
         <activity
             android:name=".android.activities.LoginActivity">
             <intent-filter>
@@ -38,16 +40,19 @@
             android:theme="@style/LowerLevelTheme" />
         <activity
             android:name=".android.activities.EditProfileActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme" />
         <activity
             android:name=".android.activities.EditEventActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".android.activities.ConversationActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />
