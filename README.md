@@ -2,7 +2,13 @@
 Super Smash Bros. Locator is an application designed to help people coordinate smash sessions. It's authors Eric Lee and Ashwin Madavan enjoy to smash other people in their free time. While they usually smash large groups of friends, they are not opposed to smashing strangers. In 2015, Ashwin Madavan won the Best Smasher of the Year when he rekt Eric's backend!
 
 ## Server Changelog
-### 0.1.0 (3-20-2014) [ashwin]
+### 0.1.1 (3-20-2015) [ashwin]
+- Implemented basic exception handling
+	- 401 = Unauthorized
+	- 500 = Database error
+	- 509 = Data conflict
+
+### 0.1.0 (3-20-2015) [ashwin]
 - Implemented lazy loading of properties
 	- Required bytecode manipulation and extensive debugging
 - Moved Hibernate initialization code to service layer

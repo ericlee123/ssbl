@@ -17,6 +17,7 @@ import com.hunnymustard.ssbl.model.Location;
 import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.Notification;
 import com.hunnymustard.ssbl.model.User;
+import com.hunnymustard.ssbl.server.exceptions.AuthException;
 import com.hunnymustard.ssbl.server.service.AuthService;
 import com.hunnymustard.ssbl.server.service.EditService;
 import com.hunnymustard.ssbl.server.service.MessagingService;
@@ -78,40 +79,33 @@ public class SmashController {
 	
 	@RequestMapping(method=RequestMethod.GET, value="/messaging/{username}/{id}/new")
 	public @ResponseBody List<Message> getNewMessages(@PathVariable String username, @PathVariable Integer id) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null) return null;
-		return _messagingService.getByNew(user);
+		return _messagingService.getByNew(_authService.getByParameters(username, id));
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value="/messaging/{username}/{id}/{conversation}")
 	public @ResponseBody List<Message> getAdditionalMessages(@PathVariable String username, @PathVariable Integer id,
 			@PathVariable Integer conversation, @RequestParam("size") Integer size, 
 			@RequestParam("additional") Integer additional) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null) return null;
+		_authService.getByParameters(username, id);
 		return _messagingService.getByConversation(conversation, size, additional);
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/messaging/{username}/{id}")
 	public @ResponseBody Message sendMessage(@PathVariable String username, 
 			@PathVariable Integer id, @RequestBody Message message) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null || user.getUsername().equals(message.getSender().getUsername())) return null;
+		if(!_authService.getByParameters(username, id).equals(message.getSender())) throw new AuthException();
 		return _messagingService.send(message);
 	}
 
 	/* Notification Mappings */
 	@RequestMapping(method=RequestMethod.GET, value="/notif/{username}/{id}")
 	public @ResponseBody List<Notification> getNewNotifications(@PathVariable String username, @PathVariable Integer id) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null) return null;
-		return _notificationService.getByNew(user);
+		return _notificationService.getByNew(_authService.getByParameters(username, id));
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/notif/{username}/{id}")
 	public @ResponseBody Notification sendNotification(@PathVariable String username, @PathVariable Integer id, @RequestBody Notification notification) {
-		User user = _authService.getByParameters(username, id);
-		if(user == null || user.getUsername().equals(notification.getSender().getUsername())) return null;
+		if(!_authService.getByParameters(username, id).equals(notification.getSender())) throw new AuthException();
 		return _notificationService.create(notification);
 	}
 

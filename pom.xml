@@ -11,7 +11,7 @@
 	<url>http://maven.apache.org</url>
 	
 	<properties>
-		<ssbl.version>0.1.0</ssbl.version>    
+		<ssbl.version>0.1.1</ssbl.version>    
 		
 		<!-- Dependency Versioning -->
 		<jackson.version>2.4.1</jackson.version>
