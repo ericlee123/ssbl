@@ -52,12 +52,20 @@ public class MainActivity extends MaterialNavigationDrawer {
                 // refresh all fragments
                 ChartFragment.makeRefresh();
                 ProfileFragment.makeRefresh();
+                NotificationsFragment.makeRefresh();
+                InboxFragment.makeRefresh();
+                EventListFragment.makeRefresh();
                 break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case R.id.action_log_out:
                 DataManager.clearData();
+                ChartFragment.clearData();
+                EventListFragment.clearData();
+                InboxFragment.clearData();
+                NotificationsFragment.clearData();
+                ProfileFragment.clearData();
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();

@@ -28,20 +28,24 @@ import java.util.List;
 
 public class InboxFragment extends ListFragment {
 
-    private List<Conversation> _conversations;
+    private static List<Conversation> _conversations;
     private AlertDialog.Builder _selectUser;
     private AlertDialog.Builder _firstMessage;
     private int _which;
+    private static boolean _refreshed;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        System.out.println("onCreate inbox");
 
         final List<User> relevantUsers = new ArrayList<>();
         List<User> nearbyTemp = DataManager.getNearbyUsers();
         relevantUsers.addAll(DataManager.getCurUser().getFriends());
         nearbyTemp.removeAll(relevantUsers);
         relevantUsers.addAll(nearbyTemp);
+        relevantUsers.remove(DataManager.getCurUser());
 
         List<String> usernames = new ArrayList<>();
         Iterator<User> iter = relevantUsers.iterator();
@@ -110,11 +114,13 @@ public class InboxFragment extends ListFragment {
             }
         });
 
-        _conversations = DataManager.getCurUser().getConversations();
-        if (_conversations != null)
-            setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
-        else
-            Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
+        if (!_refreshed) {
+            _conversations = DataManager.getCurUser().getConversations();
+            if (_conversations != null)
+                setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
+            else
+                Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
+        }
 
         return _view;
     }
@@ -126,5 +132,15 @@ public class InboxFragment extends ListFragment {
         i.putExtra("conversation_id", _conversations.get(position).getConversationId());
         i.putExtra("conversation_title", "wow");
         startActivity(i);
+    }
+
+    public static void makeRefresh() {
+        _refreshed = false;
+    }
+
+    public static void clearData() {
+        makeRefresh();
+        if (_conversations != null)
+            _conversations.clear();
     }
 }

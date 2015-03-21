@@ -22,7 +22,7 @@ public class ProfileFragment extends Fragment {
 
     private View _view;
     private static boolean _refreshed = false;
-    private User _user;
+    private static User _user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -121,5 +121,10 @@ public class ProfileFragment extends Fragment {
 
     public static void makeRefresh() {
         _refreshed = false;
+    }
+
+    public static void clearData() {
+        makeRefresh();
+        _user = null;
     }
 }

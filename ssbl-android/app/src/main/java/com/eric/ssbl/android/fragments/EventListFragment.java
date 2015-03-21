@@ -21,33 +21,38 @@ import java.util.List;
 
 public class EventListFragment extends ListFragment {
 
-    private List<Event> _allEvents;
+    private static List<Event> _allEvents;
+    private static boolean _refreshed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-        _allEvents = new ArrayList<>();
-        List<Event> hosting = DataManager.getHostingEvents();
-        List<Event> attending = DataManager.getCurUser().getEvents();
-        List<Event> nearby = DataManager.getNearbyEvents();
+        if (!_refreshed || _allEvents == null) {
+            _refreshed = true;
 
-        System.out.println("hosting size" + hosting.size());
+            _allEvents = new ArrayList<>();
+            List<Event> hosting = DataManager.getHostingEvents();
+            List<Event> attending = DataManager.getCurUser().getEvents();
+            List<Event> nearby = DataManager.getNearbyEvents();
 
-        attending.removeAll(hosting);
-        nearby.removeAll(hosting);
-        nearby.removeAll(attending);
+            System.out.println("hosting size" + hosting.size());
 
-        _allEvents.addAll(hosting);
-        _allEvents.addAll(attending);
-        _allEvents.addAll(nearby);
+            attending.removeAll(hosting);
+            nearby.removeAll(hosting);
+            nearby.removeAll(attending);
 
-        int num1 = (hosting.size() == 0) ? -1 : 0;
-        int num2 = (attending.size() == 0) ? -1 : hosting.size();
-        int num3 = (nearby.size() == 0) ? -1 : hosting.size() + attending.size();
+            _allEvents.addAll(hosting);
+            _allEvents.addAll(attending);
+            _allEvents.addAll(nearby);
 
-        setListAdapter(new EventListAdapter(getActivity(), _allEvents, num1, num2, num3));
+            int num1 = (hosting.size() == 0) ? -1 : 0;
+            int num2 = (attending.size() == 0) ? -1 : hosting.size();
+            int num3 = (nearby.size() == 0) ? -1 : hosting.size() + attending.size();
+
+            setListAdapter(new EventListAdapter(getActivity(), _allEvents, num1, num2, num3));
+        }
 
         ImageButton createEvent = (ImageButton) v.findViewById(R.id.create_event);
         createEvent.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +78,12 @@ public class EventListFragment extends ListFragment {
         startActivity(i);
     }
 
-    public void reset() {
+    public static void makeRefresh() {
+        _refreshed = false;
+    }
+
+    public static void clearData() {
+        makeRefresh();
         if (_allEvents != null)
             _allEvents.clear();
     }
