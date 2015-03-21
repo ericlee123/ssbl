@@ -131,7 +131,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         private void updateUser(User u) {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/user");
+            url.append("/edit/user/update");
 
             try {
                 HttpClient client = new DefaultHttpClient();
@@ -179,7 +179,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         private void updateEvent(Event e) {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/event");
+            url.append("/edit/event/update");
 
             try {
                 HttpClient client = new DefaultHttpClient();
@@ -433,8 +433,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         private void getNearbyEU(LatLng loc) {
 
-            System.out.println("getnearbyeu");
-
             // get the users
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/search/user");
@@ -486,8 +484,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 nearbyEvents = null;
                 e.printStackTrace();
             }
-
-            System.out.println("end nearbyeu");
         }
 
         private void getHostingEvents() {
