@@ -22,7 +22,6 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
-import com.eric.ssbl.android.services.MessagingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,6 +30,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -56,8 +56,8 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("start service");
-        startService(new Intent(getBaseContext(), MessagingService.class));
+//        System.out.println("start service");
+//        startService(new Intent(getBaseContext(), MessagingService.class));
 
         _loginFile = new File(getFilesDir(), "yummy.hunnymustard");
 
@@ -117,10 +117,7 @@ public class LoginActivity extends Activity {
         String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
         String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
 
-        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
-        String hashedPassword = bytesToHex(hashed).toUpperCase();
-        NameValuePair login = new BasicNameValuePair(username, "*" + hashedPassword);
-
+        NameValuePair login = new BasicNameValuePair(username, hashPassword(password));
         new HttpLogin().execute(login);
     }
 
@@ -171,7 +168,7 @@ public class LoginActivity extends Activity {
                             return;
                         }
 
-                        String usernameRegex = "^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
+                        String usernameRegex = "^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$";
                         if (!username.matches(usernameRegex)) {
                             _loading.dismiss();
                             Toast.makeText(_context, "Please enter a valid username", Toast.LENGTH_SHORT).show();
@@ -184,16 +181,14 @@ public class LoginActivity extends Activity {
                             return;
                         }
 
-                        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(password.getBytes()));
-                        String hashedPassword = bytesToHex(hashed).toUpperCase();
-
                         User u = new User();
                         u.setEmail(email);
                         u.setUsername(username);
-                        u.setPassword("*" + hashedPassword);
+                        u.setPassword(hashPassword(password));
                         u.setBlurb("I like to smash, bro");
                         u.setLastLoginTime(System.currentTimeMillis());
                         u.setLastLocationTime(System.currentTimeMillis());
+                        u.setLastMessageTime(System.currentTimeMillis());
                         u.setGames(new ArrayList<Game>());
                         u.setEvents(new ArrayList<Event>());
 
@@ -239,6 +234,12 @@ public class LoginActivity extends Activity {
         finish();
     }
 
+    // Follows the MySQL password function
+    private String hashPassword(String plainText) {
+        byte[] hashed = DigestUtils.sha1(DigestUtils.sha1(plainText.getBytes()));
+        return "*" + bytesToHex(hashed).toUpperCase();
+    }
+
     private String bytesToHex(byte[] bytes) {
         char[] hexArray = "0123456789ABCDEF".toCharArray();
         char[] hexChars = new char[bytes.length * 2];
@@ -253,6 +254,7 @@ public class LoginActivity extends Activity {
     private class HttpLogin extends AsyncTask<NameValuePair, Void, Void> {
 
         private User curUser;
+        private String errorMessage;
 
         private void httpLogin(NameValuePair login) {
 
@@ -262,7 +264,6 @@ public class LoginActivity extends Activity {
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet(url.toString());
-                System.out.println("url: " + url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
@@ -270,13 +271,23 @@ public class LoginActivity extends Activity {
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
-                System.out.println(jsonString);
-                if (jsonString.length() == 0)
-                    return;
+                System.out.println("curUser: " + jsonString);
 
-                ObjectMapper om = new ObjectMapper();
-                curUser = om.readValue(jsonString, User.class);
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 401)
+                    errorMessage = "Incorrect login";
+                else if (statusCode == 500)
+                    errorMessage = "Database error. Sorry please try again :(";
+                else {
+                    if (jsonString.length() == 0)
+                        return;
+
+                    ObjectMapper om = new ObjectMapper();
+                    curUser = om.readValue(jsonString, User.class);
+                }
             } catch (Exception e) {
+                if (e instanceof HttpHostConnectException)
+                    errorMessage = "Error connecting to server";
                 curUser = null;
                 e.printStackTrace();
             }
@@ -290,14 +301,16 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
                 DataManager.updateCurUser(curUser);
                 initiateApp();
             }
             else {
-                Toast.makeText(_context, "Incorrect login info", Toast.LENGTH_SHORT).show();
+                if (errorMessage == null)
+                    errorMessage = "Something unexpected happened...";
+
+                Toast.makeText(_context, errorMessage, Toast.LENGTH_LONG).show();
                 _loading.dismiss();
             }
         }
@@ -306,12 +319,14 @@ public class LoginActivity extends Activity {
     private class HttpRegister extends AsyncTask<User, Void, Void> {
 
         private User curUser;
+        private String errorMessage;
 
         private void httpRegister(User newUser) {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/auth/register");
 
+            System.out.println("register url: " + url.toString());
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost request = new HttpPost(url.toString());
@@ -322,15 +337,24 @@ public class LoginActivity extends Activity {
                 StringEntity body = new StringEntity(om.writeValueAsString(newUser));
                 request.setEntity(body);
 
+                System.out.println(om.writeValueAsString(newUser));
+
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                if (jsonString.length() == 0)
-                    return;
-
-                curUser = om.readValue(jsonString, User.class);
-
+                int statusCode = response.getStatusLine().getStatusCode();
+                if (statusCode == 500)
+                    errorMessage = "Database error. Sorry please try again :(";
+                else if (statusCode == 509)
+                    errorMessage = "A user with your email/username already exists.";
+                else {
+                    if (jsonString.length() == 0)
+                        return;
+                    curUser = om.readValue(jsonString, User.class);
+                }
             } catch (Exception e) {
+                if (e instanceof HttpHostConnectException)
+                    errorMessage = "Error connecting to server";
                 curUser = null;
                 e.printStackTrace();
             }
@@ -338,21 +362,22 @@ public class LoginActivity extends Activity {
 
         @Override
         protected Void doInBackground(User... params) {
-
             httpRegister(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
-
             if (curUser != null) {
                 DataManager.setCurUser(curUser);
                 initiateApp();
             }
             else {
+                if (errorMessage == null)
+                    errorMessage = "Something unexpected occurred";
+
                 _loading.dismiss();
-                Toast.makeText(_context, "Error registering :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, errorMessage, Toast.LENGTH_SHORT).show();
             }
         }
     }

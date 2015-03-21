@@ -53,7 +53,7 @@ public class MessagingService extends Service {
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarm.set(
                 alarm.RTC_WAKEUP,
-                System.currentTimeMillis() + (1000 * 5),
+                System.currentTimeMillis() + (1000 * 1000),
                 PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
         );
     }

@@ -17,6 +17,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -25,8 +26,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +50,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        System.out.println("ChartFragment onCreateView called");
+
         if (_view != null) {
             ViewGroup parent = (ViewGroup) _view.getParent();
             if (parent != null)
@@ -63,8 +68,26 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         if (_googleApiClient == null)
             buildGoogleApiClient();
 
-        if (!_refreshed)
-            refresh();
+        if (_map == null) {
+            _map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_chart)).getMap();
+            _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+
+                    Intent i;
+                    Bundle b = new Bundle();
+                    if (marker.getAlpha() == 0.99F) {
+                        i = new Intent(getActivity(), EventActivity.class);
+                        b.putString("event_json", _eu.get(marker));
+                    } else {
+                        i = new Intent(getActivity(), ProfileActivity.class);
+                        b.putString("user_json", _eu.get(marker));
+                    }
+                    i.putExtras(b);
+                    startActivity(i);
+                }
+            });
+        }
 
         ImageButton center = (ImageButton) _view.findViewById(R.id.chart_center);
         center.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +97,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 }
             });
 
+        if (!_refreshed)
+            refresh();
 
         return _view;
     }
@@ -94,27 +119,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     private void refresh() {
         _refreshed = true;
-        _map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_chart)).getMap();
-        buildGoogleApiClient();
-
-        _map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-
-                Intent i;
-                Bundle b = new Bundle();
-                if (marker.getAlpha() == 0.99F) {
-                    i = new Intent(getActivity(), EventActivity.class);
-                    b.putString("event_json", _eu.get(marker));
-                }
-                else {
-                    i = new Intent(getActivity(), ProfileActivity.class);
-                    b.putString("user_json", _eu.get(marker));
-                }
-                i.putExtras(b);
-                startActivity(i);
-            }
-        });
+        if (_googleApiClient == null)
+            buildGoogleApiClient();
+        else
+            refreshCurLoc();
     }
 
     public static void makeRefresh() {
@@ -141,7 +149,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     @Override
     public void onConnected(Bundle arg0) {
-        updateCurLoc();
+        refreshCurLoc();
     }
 
     @Override
@@ -154,7 +162,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         System.out.println("onConnectionSuspended");
     }
 
-    private void updateCurLoc() {
+    private void refreshCurLoc() {
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
@@ -174,88 +182,83 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         }
     }
 
-//    public void displayElements() {
-//        _map.clear();
-//
-//        if (_curLoc != null)
-//            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
-//        else
-//            Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
-//
-//        _eu.clear();
-//
-//        ObjectMapper om = new ObjectMapper();
-//        long now = System.currentTimeMillis();
-//
-//        List<User> relevantUsers = new ArrayList<>();
-//        relevantUsers.addAll(DataManager.getNearbyUsers());
-//        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
-//        relevantUsers.addAll(DataManager.getCurUser().getFriends());
-//        for (User u: relevantUsers) {
-//
-//            // To enforce synchronization with the current user
-//            if (u.equals(DataManager.getCurUser())) {
-//                Location loc = u.getLocation();
-//                if (loc == null)
-//                    loc = new Location();
-//                loc.setLatitude(_curLoc.latitude);
-//                loc.setLongitude(_curLoc.longitude);
-//                u.setLocation(loc);
-//            }
-//
-//            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
-//            String updated = "Updated ";
-//            if (elapsed < 60)
-//                updated += elapsed + " minutes ago";
-//            else if (elapsed < 1440)
-//                updated += (elapsed / 60) + " hours ago";
-//            else
-//                updated += (elapsed / 1440) + " days ago";
-//
-//            System.out.println(u.getUsername() == null);
-//            System.out.println(updated == null);
-//            System.out.println(u.getLocation() == null);
-//            System.out.println(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller) == null);
-//            System.out.println("new");
-//            Marker marker = _map.addMarker(new MarkerOptions()
-//                    .title(u.getUsername())
-//                    .snippet(updated)
-//                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
-//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
-//
-//            if (u.equals(DataManager.getCurUser()))
-//                marker.showInfoWindow();
-//
-//            try {
-//                _eu.put(marker, om.writeValueAsString(u));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        List<Event> relevantEvents = new ArrayList<>();
-//        relevantEvents.addAll(DataManager.getNearbyEvents());
-//        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
-//        relevantEvents.addAll(DataManager.getCurUser().getEvents());
-//        relevantEvents.removeAll(DataManager.getHostingEvents());
-//        relevantEvents.addAll(DataManager.getHostingEvents());
-//        for (Event e: relevantEvents) {
-//
-//            Marker marker = _map.addMarker(new MarkerOptions()
-//                            .title(e.getTitle())
-//                            .snippet("Hosted by " + e.getHost().getUsername())
-//                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
-//                            .alpha(0.99F)
-//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
-//
-//            try {
-//                _eu.put(marker, om.writeValueAsString(e));
-//            } catch (Exception exc) {
-//                exc.printStackTrace();
-//            }
-//        }
-//
-//    }
+    public void displayElements() {
+        _map.clear();
+
+        if (_curLoc != null)
+            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
+        else
+            Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
+
+        _eu.clear();
+
+        ObjectMapper om = new ObjectMapper();
+        long now = System.currentTimeMillis();
+
+        List<User> relevantUsers = new ArrayList<>();
+        relevantUsers.addAll(DataManager.getNearbyUsers());
+        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
+        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+        for (User u: relevantUsers) {
+
+            // To enforce synchronization with the current user
+            if (u.equals(DataManager.getCurUser())) {
+                Location loc = u.getLocation();
+                if (loc == null)
+                    loc = new Location();
+                loc.setLatitude(_curLoc.latitude);
+                loc.setLongitude(_curLoc.longitude);
+                u.setLocation(loc);
+            }
+
+            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
+            String updated = "Here ";
+            if (elapsed < 60)
+                updated += elapsed + " minutes ago";
+            else if (elapsed < 1440)
+                updated += (elapsed / 60) + " hours ago";
+            else
+                updated += (elapsed / 1440) + " days ago";
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                    .title(u.getUsername())
+                    .snippet(updated)
+                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
+
+            if (u.equals(DataManager.getCurUser()))
+                marker.showInfoWindow();
+
+            try {
+                _eu.put(marker, om.writeValueAsString(u));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        List<Event> relevantEvents = new ArrayList<>();
+        relevantEvents.addAll(DataManager.getNearbyEvents());
+        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
+        relevantEvents.addAll(DataManager.getCurUser().getEvents());
+        relevantEvents.removeAll(DataManager.getHostingEvents());
+        relevantEvents.addAll(DataManager.getHostingEvents());
+        for (Event e: relevantEvents) {
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                            .title(e.getTitle())
+                            .snippet("Hosted by " + e.getHost().getUsername())
+                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
+                            .alpha(0.99F)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
+
+            try {
+                _eu.put(marker, om.writeValueAsString(e));
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+        }
+
+    }
 
     public void centerMapOnSelf() {
         if (_curLoc == null || _map == null)

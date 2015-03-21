@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
     private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
@@ -146,6 +146,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
+                System.out.println("updateUser url: " + url.toString());
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
@@ -165,8 +167,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         @Override
         protected void onPostExecute(Void what) {
-            if (updated != null)
-                DataManager.updateCurUser(updated);
+            if (updated == null)
+                Toast.makeText(_appContext, "Error updating current user", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -215,8 +217,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 Toast.makeText(_appContext, "Error updating event", Toast.LENGTH_LONG).show();
         }
     }
-
-
 
     // Managing conversations
     private static List<String> _conversationPreviews;
@@ -281,7 +281,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         }
     }
 
-    // Stupid stuff for settings
+    /**
+     * This section manages storage and access of settings.
+     */
     private static File _settingsFile;
     private static JSONObject _settings;
 
@@ -366,14 +368,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return 10.0;
     }
 
-    // Stupid stuff
 
+
+    /**
+     * This section initializes data of nearby users and events for the ChartFragment.
+     */
     private static Context _appContext;
     private LoginActivity _la;
     private GoogleApiClient _googleApiClient;
-
-    public DataManager() {
-    }
 
     public void initNearby(LoginActivity la) {
         _la = la;
@@ -393,28 +395,32 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     @Override
     public void onConnected(Bundle arg0) {
-        getCurLoc();
+        refreshCurLoc();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult arg0) {
-    }
+    public void onConnectionFailed(ConnectionResult arg0) { }
 
     @Override
     public void onConnectionSuspended(int arg0) {
         System.out.println("onConnectionSuspended");
     }
 
-    private void getCurLoc() {
+    private void refreshCurLoc() {
+
+        if (_googleApiClient == null)
+            buildGoogleApiClient();
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
+            System.out.println(here.getLatitude());
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
+            System.out.println("execute eu");
             new HttpEUGetter().execute(loc);
         }
     }
 
-    private void done() {
+    private void finishInit() {
         _la.goToMain();
     }
 
@@ -426,6 +432,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         private List<Event> hostingEvents;
 
         private void getNearbyEU(LatLng loc) {
+
+            System.out.println("getnearbyeu");
 
             // get the users
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
@@ -441,13 +449,13 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("jsonString: " + jsonString);
+                System.out.println("getNearbyUsers url: " + url.toString());
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {
-                });
+                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
             } catch (Exception e) {
                 nearbyUsers = null;
                 e.printStackTrace();
@@ -467,17 +475,19 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("jsonString: " + jsonString);
+                System.out.println("getNearbyEvents url: " + url.toString());
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {
-                });
+                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
             } catch (Exception e) {
                 nearbyEvents = null;
                 e.printStackTrace();
             }
+
+            System.out.println("end nearbyeu");
         }
 
         private void getHostingEvents() {
@@ -502,11 +512,13 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
+                System.out.println("getHostingEvents url: " + url.toString());
+                System.out.println(jsonString);
+
                 if (jsonString.length() == 0)
                     return;
 
-                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {
-                });
+                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
             } catch (Exception exc) {
                 hostingEvents = null;
                 exc.printStackTrace();
@@ -525,7 +537,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             setNearbyUsers(nearbyUsers);
             setNearbyEvents(nearbyEvents);
             setHostingEvents(hostingEvents);
-            done();
+            System.out.println("fuck this so much");
+            finishInit();
         }
     }
 

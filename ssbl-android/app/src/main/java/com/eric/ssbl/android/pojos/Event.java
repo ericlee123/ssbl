@@ -1,13 +1,14 @@
 package com.eric.ssbl.android.pojos;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.eric.ssbl.android.util.Locatable;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This entity represents a smash bros. event. Events are created by a host user at
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * @see com.hunnymustard.ssbm.model.User
  */
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public class Event {
+public class Event implements Locatable {
 
 	private Integer _id;
 	private String _title, _description;

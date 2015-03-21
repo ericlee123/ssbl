@@ -65,7 +65,7 @@ public class ConversationActivity extends ListActivity {
         new HttpConversationGetter().execute(getIntent().getExtras().getInt("conversation_id"));
     }
 
-    private void populate() {
+    private void showMessages() {
 
         List<Message> reversed = new ArrayList<Message>();
         for (int i = 0; i < _conversation.size(); i++)
@@ -86,6 +86,8 @@ public class ConversationActivity extends ListActivity {
         et.setText("");
 
         new HttpMessageSender().execute(sending);
+        _conversation.add(sending);
+        showMessages();
     }
 
     public void deleteButton(View view) {
@@ -132,6 +134,7 @@ public class ConversationActivity extends ListActivity {
             url.append("?size=" + _loadedMessages);
             url.append("&additional=" + _additionalMessages);
 
+            System.out.println(url.toString());
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet(url.toString());
@@ -146,6 +149,7 @@ public class ConversationActivity extends ListActivity {
 
                 ObjectMapper om = new ObjectMapper();
                 lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+                System.out.println(lm.size());
             } catch (Exception e) {
                 lm = null;
                 e.printStackTrace();
@@ -162,7 +166,7 @@ public class ConversationActivity extends ListActivity {
         protected void onPostExecute(Void what) {
             if (lm != null) {
                 _conversation = lm;
-                populate();
+                showMessages();
             }
             else
                 Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
@@ -180,6 +184,7 @@ public class ConversationActivity extends ListActivity {
             url.append("/" + DataManager.getCurUser().getUsername());
             url.append("/" + DataManager.getCurUser().getUserId());
 
+            System.out.println(url.toString());
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost request = new HttpPost(url.toString());
@@ -213,7 +218,10 @@ public class ConversationActivity extends ListActivity {
         protected void onPostExecute(Void what) {
             if (message == null) {
                 Toast.makeText(_context, "Message not sent", Toast.LENGTH_LONG).show();
-
+            }
+            else {
+                _conversation.add(0, message);
+                showMessages();
             }
         }
     }

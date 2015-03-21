@@ -1,6 +1,8 @@
 package com.eric.ssbl.android.pojos;
 
+import com.eric.ssbl.android.util.Locatable;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -17,8 +19,9 @@ import java.util.List;
  * 
  * @author ashwin
  */
+@JsonIgnoreProperties({"hibernateLazyInitializer", "fieldHandler"})
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-public class User {
+public class User implements Locatable {
 
 	private Integer _id;
 	private String _username, _password, _email, _blurb;
