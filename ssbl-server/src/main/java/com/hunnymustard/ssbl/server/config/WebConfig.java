@@ -2,10 +2,6 @@ package com.hunnymustard.ssbl.server.config;
 
 import java.util.List;
 
-import javax.persistence.EntityManagerFactory;
-
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -13,6 +9,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
@@ -31,6 +28,8 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         // Registering Hibernate4Module to support lazy objects
         mapper.registerModule(new Hibernate4Module());
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 		// mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         

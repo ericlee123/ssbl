@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.User;
-import com.hunnymustard.ssbl.server.repository.ConversationRepository;
 import com.hunnymustard.ssbl.server.repository.MessageRepository;
 import com.hunnymustard.ssbl.server.repository.UserRepository;
 import com.hunnymustard.ssbl.server.service.MessagingService;
@@ -18,9 +17,6 @@ import com.hunnymustard.ssbl.server.service.MessagingService;
 @Service("messagingService")
 @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
 public class MessagingServiceHibernate implements MessagingService {
-
-	@Autowired
-	private ConversationRepository _conversationRepository;
 	
 	@Autowired
 	private MessageRepository _messageRepository;
@@ -31,7 +27,6 @@ public class MessagingServiceHibernate implements MessagingService {
 	@Override
 	public Message send(Message message) {
 		// If the conversation doesn't already exist create it, otherwise update
-		message.setConversation(_conversationRepository.add(message.getConversation()));
 		return _messageRepository.add(message);
 	}
 
