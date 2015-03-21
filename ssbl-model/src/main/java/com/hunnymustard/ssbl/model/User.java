@@ -132,7 +132,6 @@ public class User implements Locatable {
 	}
 	
 	@Column(name="last_login_time")
-	@Basic(fetch=FetchType.LAZY)
 	public Long getLastLoginTime() {
 		return _lastLoginTime;
 	}
@@ -142,7 +141,6 @@ public class User implements Locatable {
 	}
 	
 	@Column(name="last_location_time")
-	@Basic(fetch=FetchType.LAZY)
 	public Long getLastLocationTime() {
 		return _lastLocationTime;
 	}
@@ -152,7 +150,6 @@ public class User implements Locatable {
 	}
 	
 	@Column(name="last_message_time")
-	@Basic(fetch=FetchType.LAZY)
 	public Long getLastMessageTime() {
 		return _lastMessageTime;
 	}
