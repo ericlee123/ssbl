@@ -22,6 +22,7 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
+import com.eric.ssbl.android.services.MessagingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -56,8 +57,8 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        System.out.println("start service");
-//        startService(new Intent(getBaseContext(), MessagingService.class));
+        System.out.println("start service");
+        startService(new Intent(getBaseContext(), MessagingService.class));
 
         _loginFile = new File(getFilesDir(), "yummy.hunnymustard");
 
@@ -226,6 +227,7 @@ public class LoginActivity extends Activity {
 
         new DataManager().initNearby(this);
         DataManager.initSettings(getFilesDir());
+        DataManager.setAppActive(true);
     }
 
     public void goToMain() {
@@ -369,7 +371,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             if (curUser != null) {
-                DataManager.setCurUser(curUser);
+                DataManager.updateCurUser(curUser);
                 initiateApp();
             }
             else {

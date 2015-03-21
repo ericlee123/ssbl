@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.ProfileActivity;
+import com.eric.ssbl.android.managers.DataManager;
 
 public class MessagingService extends Service {
 
@@ -22,7 +23,7 @@ public class MessagingService extends Service {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("My notification")
+                        .setContentTitle(DataManager.getCurUser().getUsername())
                         .setContentText("Hello World!");
 
         Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
@@ -49,11 +50,12 @@ public class MessagingService extends Service {
 
     @Override
     public void onDestroy() {
+
         // I want to restart this service again in 5 seconds
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarm.set(
                 alarm.RTC_WAKEUP,
-                System.currentTimeMillis() + (1000 * 1000),
+                System.currentTimeMillis() + (1000 * 5),
                 PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
         );
     }

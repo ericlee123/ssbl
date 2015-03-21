@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
@@ -49,12 +50,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         Intent intent;
         switch (id) {
             case R.id.action_refresh:
-                // refresh all fragments
-                ChartFragment.makeRefresh();
-                ProfileFragment.makeRefresh();
-                NotificationsFragment.makeRefresh();
-                InboxFragment.makeRefresh();
-                EventListFragment.makeRefresh();
+                Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show();
+                DataManager.refreshEverything();
                 break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -66,6 +63,9 @@ public class MainActivity extends MaterialNavigationDrawer {
                 InboxFragment.clearData();
                 NotificationsFragment.clearData();
                 ProfileFragment.clearData();
+
+                DataManager.setAppActive(false);
+
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();
@@ -80,5 +80,13 @@ public class MainActivity extends MaterialNavigationDrawer {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public static void refreshFragments() {
+        ChartFragment.makeRefresh();
+        ProfileFragment.makeRefresh();
+        NotificationsFragment.makeRefresh();
+        InboxFragment.makeRefresh();
+        EventListFragment.makeRefresh();
     }
 }

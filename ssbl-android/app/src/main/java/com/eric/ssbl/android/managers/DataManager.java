@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.eric.ssbl.android.activities.LoginActivity;
+import com.eric.ssbl.android.activities.MainActivity;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
@@ -108,6 +109,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _eventIdMap.put(updated.getEventId(), updated);
 
         new HttpEventUpdater().execute(updated);
+    }
+
+    private static boolean _refreshing = false;
+    public static void refreshEverything() {
+        _refreshing = true;
+        new DataManager().refreshCurLoc();
     }
 
     public static void clearData() {
@@ -415,13 +422,17 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (here != null) {
             System.out.println(here.getLatitude());
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
-            System.out.println("execute eu");
             new HttpEUGetter().execute(loc);
         }
     }
 
-    private void finishInit() {
-        _la.goToMain();
+    private void initRefreshCallback() {
+        if (_refreshing) {
+            _refreshing = false;
+            MainActivity.refreshFragments();
+        }
+        else
+            _la.goToMain();
     }
 
     private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
@@ -533,9 +544,30 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             setNearbyUsers(nearbyUsers);
             setNearbyEvents(nearbyEvents);
             setHostingEvents(hostingEvents);
-            System.out.println("fuck this so much");
-            finishInit();
+            initRefreshCallback();
         }
     }
 
+
+    /**
+     * Methods for MessagingService
+     */
+    private static boolean _accountActive = false;
+    private static boolean _appActive = false;
+
+    public static void setAccountActive(boolean active) {
+        _accountActive = active;
+    }
+
+    public static boolean isAccountActive() {
+        return _accountActive;
+    }
+
+    public static void setAppActive(boolean active) {
+        _appActive = active;
+    }
+
+    public static boolean isAppActive() {
+        return _appActive;
+    }
 }
