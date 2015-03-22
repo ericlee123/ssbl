@@ -2,15 +2,18 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -24,9 +27,11 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class EditEventActivity extends Activity {
 
@@ -34,6 +39,7 @@ public class EditEventActivity extends Activity {
     private TextView _locationStatus;
     private ProgressDialog _loading;
     private Event _event;
+    private Address _address;
     private Calendar _startCalendar;
     private Calendar _endCalendar;
 
@@ -59,9 +65,12 @@ public class EditEventActivity extends Activity {
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(_event == null ? R.string.create_event : R.string.edit_event);
         setContentView(R.layout.activity_edit_event);
 
+        _locationStatus = (TextView) findViewById(R.id.edit_event_location_status);
+
         if (_event != null) {
 
-            ((EditText) findViewById(R.id.edit_event_event_title)).setText(_event.getTitle());
+            if (_event.getTitle() != null)
+                ((EditText) findViewById(R.id.edit_event_event_title)).setText(_event.getTitle());
 
             // set location
 
@@ -78,15 +87,16 @@ public class EditEventActivity extends Activity {
                     ((CheckBox) findViewById(R.id.edit_event_games_smash4)).setChecked(true);
             }
 
-            // set time
+            _startCalendar.setTimeInMillis(_event.getStartTime());
+            _endCalendar.setTimeInMillis(_event.getEndTime());
 
             ((EditText) findViewById(R.id.edit_event_description)).setText(_event.getDescription());
             ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!_event.isPublic());
         }
         else {
-            _locationStatus = (TextView) findViewById(R.id.edit_event_location_status);
-            _locationStatus.setText(getString(R.string.location) + ": (not set)");
+            updateLocationText();
         }
+        updateTimeButtonText();
     }
 
     public void setLocationMap(View view) {
@@ -94,7 +104,55 @@ public class EditEventActivity extends Activity {
     }
 
     public void setLocationAddress(View view) {
-        // open address dialog
+
+        LayoutInflater li = LayoutInflater.from(this);
+        final View _enterAddressPrompt = li.inflate(R.layout.prompt_enter_address, null);
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+        adb
+                .setView(_enterAddressPrompt)
+                .setTitle("Enter address")
+                .setCancelable(true)
+                .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String textAddress = ((EditText) _enterAddressPrompt.findViewById(R.id.prompt_enter_address_text)).getText().toString();
+
+                        try {
+                            Geocoder coder = new Geocoder(_context);
+                            List<Address> addresses = coder.getFromLocationName(textAddress, 3);
+                            if (addresses.size() >= 1) {
+                                _address = addresses.get(0);
+                                updateLocationText();
+                            } else
+                                Toast.makeText(_context, "Unable to determine location from input", Toast.LENGTH_LONG).show();
+
+                        } catch (Exception e) {
+                            Toast.makeText(_context, "Error finding exact location through address", Toast.LENGTH_LONG).show();
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        adb.create().show();
+    }
+
+    private void updateLocationText() {
+        if (_address == null) {
+            _locationStatus.setText("Location: (not set)");
+            return;
+        }
+
+        StringBuilder temp = new StringBuilder("Location: ");
+        for (int i = 0; i <= _address.getMaxAddressLineIndex(); i++)
+            temp.append(_address.getAddressLine(i) + "\n");
+        _locationStatus.setText(temp.toString());
     }
 
     public void setEventStartTime(View view) {
@@ -107,7 +165,13 @@ public class EditEventActivity extends Activity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), newDate.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+                if (_endCalendar != null && newDate.getTimeInMillis() >= _endCalendar.getTimeInMillis()) {
+                    Toast.makeText(_context, "Please choose a time before the end time", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 _startCalendar = newDate;
+                updateTimeButtonText();
             }
         }, _startCalendar.get(Calendar.HOUR_OF_DAY), _startCalendar.get(Calendar.MINUTE), false);
 
@@ -131,7 +195,13 @@ public class EditEventActivity extends Activity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), newDate.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+                if (_startCalendar != null && newDate.getTimeInMillis() <= _startCalendar.getTimeInMillis()) {
+                    Toast.makeText(_context, "Please choose a time after the start time", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 _endCalendar = newDate;
+                updateTimeButtonText();
             }
         }, _startCalendar.get(Calendar.HOUR_OF_DAY), _startCalendar.get(Calendar.MINUTE), false);
 
@@ -145,7 +215,34 @@ public class EditEventActivity extends Activity {
         }, _endCalendar.get(Calendar.YEAR), _endCalendar.get(Calendar.MONTH), _endCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
+    private void updateTimeButtonText() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+
+        StringBuilder startTime = new StringBuilder("Start time: ");
+        if (_startCalendar == null)
+            startTime.append("(not set)");
+        else
+            startTime.append(sdf.format(_startCalendar.getTime()));
+        ((Button) findViewById(R.id.edit_event_start_time_button)).setText(startTime);
+
+        StringBuilder endTime = new StringBuilder("End time: ");
+        if (_endCalendar == null)
+            endTime.append("(not set)");
+        else
+            endTime.append(sdf.format(_endCalendar.getTime()));
+        ((Button) findViewById(R.id.edit_event_end_time_button)).setText(endTime);
+    }
+
     public void saveEvent(View view) {
+
+        if (_startCalendar == null) {
+            Toast.makeText(_context, "Please enter a start time", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (_endCalendar == null) {
+            Toast.makeText(_context, "Please enter a end time", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if (_event == null)
             _event = new Event();
@@ -165,57 +262,17 @@ public class EditEventActivity extends Activity {
             games.add(Game.SMASH4);
         _event.setGames(games);
 
-        // set time
+        _event.setStartTime(_startCalendar.getTimeInMillis());
+        _event.setEndTime(_endCalendar.getTimeInMillis());
 
         _event.setDescription(((EditText) findViewById(R.id.edit_event_description)).getText().toString());
         _event.setPublic(!((CheckBox) findViewById(R.id.edit_event_private)).isChecked());
 
-        _loading = ProgressDialog.show(this, "Updating event...", getString(R.string.chill_out), true);
+        _loading = ProgressDialog.show(this, "Saving event...", getString(R.string.chill_out), true);
         DataManager.updateEvent(_event);
     }
 
     public void goBack(View view) {
         finish();
-    }
-
-
-    public static class TimePickerFragment extends DialogFragment
-            implements TimePickerDialog.OnTimeSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current time as the default values for the picker
-            final Calendar c = Calendar.getInstance();
-            int hour = c.get(Calendar.HOUR_OF_DAY);
-            int minute = c.get(Calendar.MINUTE);
-
-            // Create a new instance of TimePickerDialog and return it
-            return new TimePickerDialog(getActivity(), this, hour, minute,
-                    DateFormat.is24HourFormat(getActivity()));
-        }
-
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            // Do something with the time chosen by the user
-        }
-    }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-        }
     }
 }

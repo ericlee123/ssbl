@@ -43,7 +43,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class LoginActivity extends Activity {
@@ -196,15 +195,7 @@ public class LoginActivity extends Activity {
                         u.setLastMessageTime(System.currentTimeMillis());
                         u.setGames(new ArrayList<Game>());
                         u.setEvents(new ArrayList<Event>());
-
-                        List<Notification> temp = new ArrayList<>();
-                        Notification welcome = new Notification();
-                        welcome.setMessage("Welcome to Super Smash Bros. Locator!");
-                        welcome.setSendTime(System.currentTimeMillis());
-                        welcome.setType(Notification.Type.SYSTEM);
-                        temp.add(welcome);
-                        u.setNotifications(temp);
-
+                        u.setNotifications(new ArrayList<Notification>());
                         u.setFriends(new ArrayList<User>());
                         u.setConversations(new ArrayList<Conversation>());
                         u.setPrivate(false);
@@ -277,10 +268,6 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println(login.getValue());
-                System.out.println("login url: " + url.toString());
-                System.out.println("curUser: " + jsonString);
-
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
                     errorMessage = "Incorrect login";
@@ -336,6 +323,7 @@ public class LoginActivity extends Activity {
 
             System.out.println("register url: " + url.toString());
             try {
+
                 HttpClient client = new DefaultHttpClient();
                 HttpPost request = new HttpPost(url.toString());
 
@@ -347,35 +335,14 @@ public class LoginActivity extends Activity {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-//                StringEntity body = new StringEntity("{\n" +
-//                        " \"@id\" : 1,\n" +
-//                        " \"location\" : null,\n" +
-//                        " \"private\" : null,\n" +
-//                        " \"username\" : \"weffff\",\n" +
-//                        " \"password\" : \"pwd\",\n" +
-//                        " \"email\" : \";lkjas@you.com\",\n" +
-//                        " \"userId\" : null,\n" +
-//                        " \"lastLoginTime\" : null,\n" +
-//                        " \"lastLocationTime\" : null,\n" +
-//                        " \"lastMessageTime\" : null,\n" +
-//                        " \"blurb\" : null,\n" +
-//                        " \"games\" : null,\n" +
-//                        " \"events\" : null,\n" +
-//                        " \"notifications\" : null,\n" +
-//                        " \"friends\" : null,\n" +
-//                        " \"conversations\" : null\n" +
-//                        "}");
                 StringEntity body = new StringEntity(om.writeValueAsString(newUser), "UTF-8");
                 body.setContentType("application/json");
                 request.setEntity(body);
-
-                System.out.println(om.writeValueAsString(newUser));
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
                 int statusCode = response.getStatusLine().getStatusCode();
-                System.out.println("register status code: " + statusCode);
                 if (statusCode == 500)
                     errorMessage = "Database error. Sorry please try again :(";
                 else if (statusCode == 509)

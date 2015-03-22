@@ -11,7 +11,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -145,14 +147,21 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.addHeader("Accept", "application/json");
 
                 ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(u));
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                StringEntity body = new StringEntity(om.writeValueAsString(u), "UTF-8");
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
+                System.out.println(response.getStatusLine().getStatusCode());
                 System.out.println("updateUser url: " + url.toString());
                 System.out.println(jsonString);
                 if (jsonString.length() == 0)
@@ -420,7 +429,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
-            System.out.println(here.getLatitude());
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
             new HttpEUGetter().execute(loc);
         }

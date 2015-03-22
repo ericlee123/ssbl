@@ -160,7 +160,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Start time:"
                     android:onClick="setEventStartTime" />
 
                 <Button
@@ -168,7 +167,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="End time:"
                     android:onClick="setEventEndTime"/>
                 
                 <TextView
