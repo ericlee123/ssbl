@@ -40,7 +40,7 @@ import com.hunnymustard.ssbl.util.Locatable;
 @Entity
 @Table(name="users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "fieldHandler"})
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=User.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class User implements Locatable {
 
 	private Integer _id;

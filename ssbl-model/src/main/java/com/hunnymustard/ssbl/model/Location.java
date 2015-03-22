@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  */
 @Entity
 @Table(name="locations")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=Location.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Location {
 
 	private Integer _id;

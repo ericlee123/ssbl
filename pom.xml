@@ -14,7 +14,7 @@
 		<ssbl.version>0.1.1</ssbl.version>    
 		
 		<!-- Dependency Versioning -->
-		<jackson.version>2.4.1</jackson.version>
+		<jackson.version>2.4.2</jackson.version>
 		<hibernate.version>4.3.5.Final</hibernate.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<javassist.version>3.18.1-GA</javassist.version>

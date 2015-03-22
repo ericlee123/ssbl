@@ -22,12 +22,11 @@ public class HttpPostExample {
 
 	public static void main(String[] args) throws ClientProtocolException, IOException {
 		User user = new User();
-		user.setUsername("fucker");
-		user.setPassword("password");
-		user.setEmail("fucker@password.com");
+		user.setUsername("fucker3");
+		user.setPassword("passwordpass");
+		user.setEmail("fucke3r@password.com");
 		
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new Hibernate4Module());
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

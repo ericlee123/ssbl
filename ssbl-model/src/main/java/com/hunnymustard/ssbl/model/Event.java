@@ -39,7 +39,7 @@ import com.hunnymustard.ssbl.util.Locatable;
  */
 @Entity
 @Table(name="events")
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=Event.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Event implements Locatable {
 
 	private Integer _id;
