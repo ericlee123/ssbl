@@ -47,7 +47,6 @@ public class EventActivity extends Activity {
         View abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.event));
 
         setContentView(R.layout.fragment_eu);

@@ -34,6 +34,8 @@ public class EditEventActivity extends Activity {
     private TextView _locationStatus;
     private ProgressDialog _loading;
     private Event _event;
+    private Calendar _startCalendar;
+    private Calendar _endCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +97,52 @@ public class EditEventActivity extends Activity {
         // open address dialog
     }
 
-    public void setDateTime(View view) {
-        // open date time picker
+    public void setEventStartTime(View view) {
+
+        if (_startCalendar == null)
+            _startCalendar = Calendar.getInstance();
+
+        final Calendar newDate = Calendar.getInstance();
+        final TimePickerDialog tpd = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), newDate.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                _startCalendar = newDate;
+            }
+        }, _startCalendar.get(Calendar.HOUR_OF_DAY), _startCalendar.get(Calendar.MINUTE), false);
+
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                newDate.set(year, monthOfYear, dayOfMonth);
+                tpd.show();
+            }
+
+        }, _startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH), _startCalendar.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    public void setEventEndTime(View view) {
+
+        if (_endCalendar == null)
+            _endCalendar = Calendar.getInstance();
+
+        final Calendar newDate = Calendar.getInstance();
+        final TimePickerDialog tpd = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                newDate.set(newDate.get(Calendar.YEAR), newDate.get(Calendar.MONTH), newDate.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                _endCalendar = newDate;
+            }
+        }, _startCalendar.get(Calendar.HOUR_OF_DAY), _startCalendar.get(Calendar.MINUTE), false);
+
+        new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                newDate.set(year, monthOfYear, dayOfMonth);
+                tpd.show();
+            }
+
+        }, _endCalendar.get(Calendar.YEAR), _endCalendar.get(Calendar.MONTH), _endCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     public void saveEvent(View view) {

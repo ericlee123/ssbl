@@ -391,7 +391,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     private void buildGoogleApiClient() {
-        _googleApiClient = new GoogleApiClient.Builder(_la)
+        _googleApiClient = new GoogleApiClient.Builder(_appContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -458,13 +458,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getNearbyUsers url: " + url.toString());
-                System.out.println(jsonString);
+//                System.out.println("getNearbyUsers url: " + url.toString());
+//                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
                 ObjectMapper om = new ObjectMapper();
                 nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
+
             } catch (Exception e) {
                 nearbyUsers = null;
                 e.printStackTrace();
@@ -484,8 +485,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getNearbyEvents url: " + url.toString());
-                System.out.println(jsonString);
+//                System.out.println("getNearbyEvents url: " + url.toString());
+//                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
@@ -519,8 +520,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getHostingEvents url: " + url.toString());
-                System.out.println(jsonString);
+//                System.out.println("getHostingEvents url: " + url.toString());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;

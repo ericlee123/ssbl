@@ -48,7 +48,7 @@ public class ConversationActivity extends ListActivity {
         _abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(_abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
+//        _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
         if (getIntent().hasExtra("conversation_title"))
             ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(getIntent().getStringExtra("conversation_title"));
@@ -90,6 +90,10 @@ public class ConversationActivity extends ListActivity {
         showMessages();
     }
 
+    /**
+     * For next release.
+     * @param view i hate programming
+     */
     public void deleteButton(View view) {
 
         AlertDialog.Builder adb = new AlertDialog.Builder(_context);
@@ -147,6 +151,7 @@ public class ConversationActivity extends ListActivity {
                 if (jsonString.length() == 0)
                     return;
 
+                System.out.println(jsonString);
                 ObjectMapper om = new ObjectMapper();
                 lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
                 System.out.println(lm.size());

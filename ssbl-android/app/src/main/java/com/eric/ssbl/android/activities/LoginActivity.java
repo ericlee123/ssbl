@@ -24,6 +24,7 @@ import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
 import com.eric.ssbl.android.services.MessagingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
@@ -34,7 +35,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -113,13 +113,16 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
+        startActivity(new Intent(this, EditEventActivity.class));
+        return;
 
-        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
-        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
-
-        NameValuePair login = new BasicNameValuePair(username, hashPassword(password));
-        new HttpLogin().execute(login);
+//        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
+//
+//        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
+//        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+//
+//        NameValuePair login = new BasicNameValuePair(username, hashPassword(password));
+//        new HttpLogin().execute(login);
     }
 
     private void rememberMe() {
@@ -267,12 +270,14 @@ public class LoginActivity extends Activity {
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet(url.toString());
 
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
                 request.addHeader("password", login.getValue());
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println(login.getValue());
+                System.out.println("login url: " + url.toString());
                 System.out.println("curUser: " + jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -336,6 +341,27 @@ public class LoginActivity extends Activity {
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
 
                 ObjectMapper om = new ObjectMapper();
+//                om.registerModule(new Hibernate4Module());
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+
+//                StringEntity body = new StringEntity("{\n" +
+//                        " \"@id\" : 1,\n" +
+//                        " \"location\" : null,\n" +
+//                        " \"private\" : null,\n" +
+//                        " \"username\" : \"weffff\",\n" +
+//                        " \"password\" : \"pwd\",\n" +
+//                        " \"email\" : \";lkjas@you.com\",\n" +
+//                        " \"userId\" : null,\n" +
+//                        " \"lastLoginTime\" : null,\n" +
+//                        " \"lastLocationTime\" : null,\n" +
+//                        " \"lastMessageTime\" : null,\n" +
+//                        " \"blurb\" : null,\n" +
+//                        " \"games\" : null,\n" +
+//                        " \"events\" : null,\n" +
+//                        " \"notifications\" : null,\n" +
+//                        " \"friends\" : null,\n" +
+//                        " \"conversations\" : null\n" +
+//                        "}");
                 StringEntity body = new StringEntity(om.writeValueAsString(newUser));
                 request.setEntity(body);
 
@@ -345,6 +371,7 @@ public class LoginActivity extends Activity {
                 String jsonString = EntityUtils.toString(response.getEntity());
 
                 int statusCode = response.getStatusLine().getStatusCode();
+                System.out.println("register status code: " + statusCode);
                 if (statusCode == 500)
                     errorMessage = "Database error. Sorry please try again :(";
                 else if (statusCode == 509)

@@ -14,11 +14,14 @@ import com.eric.ssbl.android.managers.DataManager;
 
 public class MessagingService extends Service {
 
-    private static boolean _gettingNewMessages;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Query the database and show alarm if it applies
+
+        if (DataManager.getCurUser() == null) {
+            stopSelf();
+            return START_NOT_STICKY;
+        }
 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext())
