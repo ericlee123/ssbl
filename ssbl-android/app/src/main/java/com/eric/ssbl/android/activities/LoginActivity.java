@@ -23,6 +23,7 @@ import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
 import com.eric.ssbl.android.services.MessagingService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -339,10 +340,12 @@ public class LoginActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.addHeader("Accept", "application/json");
 
                 ObjectMapper om = new ObjectMapper();
-//                om.registerModule(new Hibernate4Module());
                 om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 //                StringEntity body = new StringEntity("{\n" +
 //                        " \"@id\" : 1,\n" +
@@ -362,7 +365,8 @@ public class LoginActivity extends Activity {
 //                        " \"friends\" : null,\n" +
 //                        " \"conversations\" : null\n" +
 //                        "}");
-                StringEntity body = new StringEntity(om.writeValueAsString(newUser));
+                StringEntity body = new StringEntity(om.writeValueAsString(newUser), "UTF-8");
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 System.out.println(om.writeValueAsString(newUser));
