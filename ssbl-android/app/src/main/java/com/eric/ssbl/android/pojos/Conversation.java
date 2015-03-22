@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=Conversation.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Conversation {
 
 	private Integer _id;
