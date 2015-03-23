@@ -2,7 +2,9 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -223,7 +225,24 @@ public class EventActivity extends Activity {
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // end the event?
+                    AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+                    adb
+                            .setTitle("End the event")
+                            .setMessage("Are you sure")
+                            .setCancelable(true)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+//                                    DataManager.deleteEvent(_event);
+                                    finish();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");

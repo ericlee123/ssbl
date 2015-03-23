@@ -299,7 +299,7 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
-                DataManager.updateCurUser(curUser);
+                DataManager.httpUpdateCurUser(curUser);
                 initiateApp();
             }
             else {
@@ -370,7 +370,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             if (curUser != null) {
-                DataManager.updateCurUser(curUser);
+                DataManager.httpUpdateCurUser(curUser);
                 initiateApp();
             }
             else {

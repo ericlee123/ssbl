@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -320,10 +321,32 @@ public class EditEventActivity extends Activity {
         _event.setPublic(!_isPrivate.isChecked());
 
         _loading = ProgressDialog.show(this, "Saving event...", getString(R.string.chill_out), true);
-        DataManager.updateEvent(_event, this);
+        new HttpEventUpdater().execute(_event);
     }
 
     public void goBack(View view) {
         finish();
+    }
+
+    private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
+
+        private Event updated;
+
+        @Override
+        protected Void doInBackground(Event... params) {
+            updated = DataManager.httpUpdateEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            _loading.dismiss();
+            if (updated != null) {
+                Toast.makeText(_context, "Event saved!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(_context, "Error updating event :(", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

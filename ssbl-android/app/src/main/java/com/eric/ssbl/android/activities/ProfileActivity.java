@@ -164,7 +164,7 @@ public class ProfileActivity extends Activity {
                     }
 
                     cur.setFriends(circle);
-                    DataManager.updateCurUser(cur);
+//                    DataManager.updateCurUser(cur); create async task to do this
                 }
             });
 
