@@ -59,8 +59,6 @@ public class EditEventActivity extends Activity {
     private ProgressDialog _loading;
     private Event _event;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,15 +91,20 @@ public class EditEventActivity extends Activity {
         _description = (EditText) findViewById(R.id.edit_event_description);
         _isPrivate = (CheckBox) findViewById(R.id.edit_event_private);
 
+        _startCalendar = Calendar.getInstance();
+        _endCalendar = Calendar.getInstance();
+
         if (_event != null) {
 
             if (_event.getTitle() != null)
                 _title.setText(_event.getTitle());
 
             if (_event.getLocation() != null) {
-                _address = new Address(Locale.US);
-                _address.setLatitude(_event.getLocation().getLatitude());
-                _address.setLongitude(_event.getLocation().getLongitude());
+                try {
+                    _address = new Geocoder(this).getFromLocation(_event.getLocation().getLatitude(), _event.getLocation().getLongitude(), 1).get(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if (_event.getGames() != null) {
@@ -135,11 +138,18 @@ public class EditEventActivity extends Activity {
     }
 
     public void setLocationMap(View view) {
-        startActivity(new Intent(this, EditEventMapActivity.class));
+        Intent i = new Intent(this, EditEventMapActivity.class);
+        Bundle b = new Bundle();
+        if (_address != null) {
+            b.putDouble("latitude", _address.getLatitude());
+            b.putDouble("longitude", _address.getLongitude());
+        }
+        i.putExtras(b);
+        startActivity(i);
     }
 
-    public static void setLocation(Address address) {
-        _address = address;
+    public static void setAddress(Address a) {
+        _address = a;
         updateLocationText();
     }
 
@@ -280,6 +290,11 @@ public class EditEventActivity extends Activity {
             return;
         }
 
+        if (_address == null) {
+            Toast.makeText(_context, "Please enter a location", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (_startCalendar == null) {
             Toast.makeText(_context, "Please enter a start time", Toast.LENGTH_LONG).show();
             return;
@@ -322,6 +337,10 @@ public class EditEventActivity extends Activity {
 
         _loading = ProgressDialog.show(this, "Saving event...", getString(R.string.chill_out), true);
         new HttpEventUpdater().execute(_event);
+
+        // Reset the static fields
+        _address = null;
+        _locationStatus = null;
     }
 
     public void goBack(View view) {
@@ -349,4 +368,6 @@ public class EditEventActivity extends Activity {
             }
         }
     }
+
+
 }

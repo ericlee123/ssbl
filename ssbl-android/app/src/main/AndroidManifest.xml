@@ -50,15 +50,15 @@
             android:theme="@style/LowerLevelTheme"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
+            android:name=".android.activities.EditEventMapActivity"
+            android:theme="@android:style/Theme.Holo.Dialog" />
+        <activity
             android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />
-        <activity
-            android:name=".android.activities.EditEventMapActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" />
     </application>
 
     <!-- For Google Maps -->

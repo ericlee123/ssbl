@@ -76,6 +76,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _curUser;
     }
 
+    public static void setCurUser(User curUser) {
+        _curUser = curUser;
+    }
+
     /**
      * First updates the current user locally, and then sends an HTTP post
      * to the server. If the post is unsuccessful, the current user is reverted
@@ -235,7 +239,48 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return result;
     }
 
+    public static void httpDeleteEvent(Event deleted) {
+        if (deleted == null)
+            return;
 
+        Event result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/delete");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(deleted), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+
+            System.out.println("delete_event");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // Update locally
+        _eventIdMap.remove(deleted);
+//      List<Event> oldList = _curUser.getEvents();              uncomment these later
+
+        _nearbyEvents.remove(deleted);
+        _hostingEvents.remove(deleted);
+//      oldList.remove(deleted);
+    }
 
 
     ///////////////////////////////////////////

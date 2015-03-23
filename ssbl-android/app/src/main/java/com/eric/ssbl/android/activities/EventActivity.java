@@ -186,7 +186,7 @@ public class EventActivity extends Activity {
                     }
 
                     _event.setUsers(attending);
-                    DataManager.updateEvent(_event);
+                    new HttpEventUpdater().execute(_event);
                 }
             });
 
@@ -227,14 +227,12 @@ public class EventActivity extends Activity {
                 public void onClick(View v) {
                     AlertDialog.Builder adb = new AlertDialog.Builder(_context);
                     adb
-                            .setTitle("End the event")
-                            .setMessage("Are you sure")
+                            .setTitle("Are you sure")
                             .setCancelable(true)
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-//                                    DataManager.deleteEvent(_event);
-                                    finish();
+                                    new HttpEventDeleter().execute(_event);
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -243,6 +241,7 @@ public class EventActivity extends Activity {
                                     dialog.dismiss();
                                 }
                             });
+                    adb.show();
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");
@@ -320,6 +319,37 @@ public class EventActivity extends Activity {
             }
             else
                 Toast.makeText(_context, "Error retrieving event", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
+
+        private Event updated;
+
+        @Override
+        protected Void doInBackground(Event... params) {
+            updated = DataManager.httpUpdateEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (updated == null)
+                Toast.makeText(_context, "Error updating RSVP status", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class HttpEventDeleter extends AsyncTask<Event, Void, Void> {
+        @Override
+        protected Void doInBackground(Event... params) {
+            DataManager.httpDeleteEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            MainActivity.refreshFragments();
+            finish();
         }
     }
 }

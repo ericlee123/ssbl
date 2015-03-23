@@ -269,6 +269,11 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
+                System.out.println("login");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
+
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
                     errorMessage = "Incorrect login";
@@ -299,7 +304,8 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
-                DataManager.httpUpdateCurUser(curUser);
+                DataManager.setCurUser(curUser); // Synchronizing issues
+//                DataManager.httpUpdateCurUser(curUser);
                 initiateApp();
             }
             else {

@@ -1,6 +1,7 @@
 package com.eric.ssbl.android.fragments;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
@@ -158,9 +159,26 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             loc.setLongitude(_curLoc.longitude);
             curUser.setLocation(loc);
             curUser.setLastLocationTime(System.currentTimeMillis());
-            DataManager.updateCurUser(curUser);
+            new HttpUserUpdater().execute(curUser);
 
             displayElements();
+        }
+    }
+
+    private class HttpUserUpdater extends AsyncTask<User, Void, Void> {
+
+        private User updated;
+
+        @Override
+        protected Void doInBackground(User... params) {
+            updated = DataManager.httpUpdateCurUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (updated == null)
+                Toast.makeText(getActivity(), "Error updating current user", Toast.LENGTH_SHORT).show();
         }
     }
 

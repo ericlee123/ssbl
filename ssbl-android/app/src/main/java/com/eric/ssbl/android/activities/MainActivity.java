@@ -23,6 +23,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
     @Override
     public void init(Bundle bundle) {
+
         this.disableLearningPattern();
         MaterialAccount account = new MaterialAccount(this.getResources(), DataManager.getCurUser().getUsername(), DataManager.getCurUser().getEmail(), R.drawable.smash_bros_icon, R.drawable.md_gray);
         this.addAccount(account);
