@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +41,7 @@ import java.util.List;
 public class EventActivity extends Activity {
 
     private final Context _context = this;
+    private ProgressDialog _loading;
     private Event _event;
 
     @Override
@@ -61,10 +63,9 @@ public class EventActivity extends Activity {
         }
 
         try {
-            System.out.println("before json");
             String eventJson = getIntent().getStringExtra("event_json");
             Event e = new ObjectMapper().readValue(eventJson, Event.class);
-            System.out.println("here");
+            _loading = ProgressDialog.show(this, "Loading event details", getString(R.string.chill_out), true);
             new HttpEventGetter().execute(e);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
@@ -313,6 +314,7 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (e != null) {
                 _event = e;
                 fillDetails();

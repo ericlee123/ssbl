@@ -3,6 +3,7 @@ package com.eric.ssbl.android.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import java.util.List;
 public class ProfileActivity extends Activity {
 
     private final Context _context = this;
+    private ProgressDialog _loading;
     private User _user;
 
     @Override
@@ -63,6 +65,7 @@ public class ProfileActivity extends Activity {
         try {
             String userJson = getIntent().getStringExtra("user_json");
             User u = new ObjectMapper().readValue(userJson, User.class);
+            _loading = ProgressDialog.show(this, "Loading player details", getString(R.string.chill_out), true);
             new HttpUserGetter().execute(u);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading user :(", Toast.LENGTH_LONG).show();
@@ -291,6 +294,7 @@ public class ProfileActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (u != null) {
                 _user = u;
                 fillDetails();
