@@ -15,7 +15,9 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -30,6 +32,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * @see com.hunnymustard.ssbl.model.User
  */
 @Entity
+@DynamicUpdate(value=true)
+@SelectBeforeUpdate
 @Table(name="notifications")
 @JsonIdentityInfo(scope=Notification.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Notification {

@@ -13,13 +13,17 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@DynamicUpdate(value=true)
+@SelectBeforeUpdate
 @Table(name="messages")
 @JsonIdentityInfo(scope=Message.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Message {

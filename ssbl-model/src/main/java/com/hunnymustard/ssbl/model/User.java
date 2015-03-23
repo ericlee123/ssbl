@@ -22,7 +22,9 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -38,6 +40,8 @@ import com.hunnymustard.ssbl.util.Locatable;
  * @author ashwin
  */
 @Entity
+@DynamicUpdate(value=true)
+@SelectBeforeUpdate
 @Table(name="users")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "fieldHandler"})
 @JsonIdentityInfo(scope=User.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")

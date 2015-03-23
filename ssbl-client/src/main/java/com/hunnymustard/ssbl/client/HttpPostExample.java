@@ -15,7 +15,6 @@ import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.hunnymustard.ssbl.model.User;
 
 public class HttpPostExample {

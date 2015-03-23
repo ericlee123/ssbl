@@ -8,7 +8,9 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -24,6 +26,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * @see com.hunnymustard.ssbm.model.Event
  */
 @Entity
+@DynamicUpdate(value=true)
+@SelectBeforeUpdate
 @Table(name="locations")
 @JsonIdentityInfo(scope=Location.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Location {

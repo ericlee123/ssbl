@@ -20,9 +20,11 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SelectBeforeUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -38,6 +40,8 @@ import com.hunnymustard.ssbl.util.Locatable;
  * @see com.hunnymustard.ssbm.model.User
  */
 @Entity
+@DynamicUpdate(value=true)
+@SelectBeforeUpdate
 @Table(name="events")
 @JsonIdentityInfo(scope=Event.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Event implements Locatable {

@@ -29,8 +29,8 @@ public abstract class HibernateRepository<E, K extends Serializable> {
 		getSession().delete(entity);
 	}
 
+	@SuppressWarnings("unchecked")
 	public E update(E entity) {
-		getSession().update(entity);
-		return entity;
+		return (E) getSession().merge(entity);
 	}
 }
