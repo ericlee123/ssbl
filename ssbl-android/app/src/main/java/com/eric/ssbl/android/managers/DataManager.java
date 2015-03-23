@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.managers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,7 +40,7 @@ import java.util.Scanner;
 public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
-    private static String _serverURL = "http://10.148.221.145:8080/ssbl-server/smash";
+    private static String _serverURL = "http://10.148.130.20:8080/ssbl-server/smash";
 //    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static List<User> _nearbyUsers = new ArrayList<>();
@@ -96,22 +97,35 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
+    private static Activity _updateEventActivity;
     public static void updateEvent(Event updated) {
 
         Event old = _eventIdMap.get(updated.getEventId());
-        List<Event> oldList = _curUser.getEvents();
+//        List<Event> oldList = _curUser.getEvents();
 
         if (old != null) {
             _nearbyEvents.remove(old);
             _hostingEvents.remove(old);
-            oldList.remove(old);
+//            oldList.remove(old);
         }
 
         _hostingEvents.add(updated);
-        oldList.add(updated);
+//        oldList.add(updated);
         _eventIdMap.put(updated.getEventId(), updated);
 
         new HttpEventUpdater().execute(updated);
+    }
+
+    public static void updateEvent(Event updated, Activity updateEventActivity) {
+        _updateEventActivity = updateEventActivity;
+        updateEvent(updated);
+    }
+
+    private static void updateEventCallback() {
+        if (_updateEventActivity != null) {
+            _updateEventActivity.finish();
+            _updateEventActivity = null;
+        }
     }
 
     private static boolean _refreshing = false;
@@ -166,6 +180,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 System.out.println(url.toString());
                 System.out.println(response.getStatusLine().getStatusCode());
                 System.out.println(jsonString);
+
                 if (jsonString.length() == 0)
                     return;
 
@@ -204,13 +219,24 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.addHeader("Accept", "application/json");
 
                 ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(e));
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                StringEntity body = new StringEntity(om.writeValueAsString(e), "UTF-8");
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("update_event");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -220,7 +246,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 updated = null;
                 exc.printStackTrace();
             }
-
         }
 
         @Override
@@ -231,7 +256,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         @Override
         protected void onPostExecute(Void what) {
-            if (updated == null)
+            if (updated != null)
+                updateEventCallback();
+            else
                 Toast.makeText(_appContext, "Error updating event", Toast.LENGTH_LONG).show();
         }
     }

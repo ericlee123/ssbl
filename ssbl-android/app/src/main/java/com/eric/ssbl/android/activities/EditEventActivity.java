@@ -27,6 +27,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Location;
+import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.text.SimpleDateFormat;
@@ -290,7 +291,10 @@ public class EditEventActivity extends Activity {
         if (_event == null)
             _event = new Event();
 
-        // set locaiton
+        _event.setTitle(_title.getText().toString());
+        _event.setHost(DataManager.getCurUser());
+        _event.setUsers(new ArrayList<User>());
+
         Location l = new Location();
         l.setLatitude(_address.getLatitude());
         l.setLongitude(_address.getLongitude());
@@ -316,7 +320,7 @@ public class EditEventActivity extends Activity {
         _event.setPublic(!_isPrivate.isChecked());
 
         _loading = ProgressDialog.show(this, "Saving event...", getString(R.string.chill_out), true);
-        DataManager.updateEvent(_event);
+        DataManager.updateEvent(_event, this);
     }
 
     public void goBack(View view) {
