@@ -36,6 +36,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -113,16 +114,16 @@ public class LoginActivity extends Activity {
 
     public void loginAccount(View view) {
 
-        startActivity(new Intent(this, EditEventActivity.class));
-        return;
+//        startActivity(new Intent(this, EditEventActivity.class));
+//        return;
 
-//        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
-//
-//        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
-//        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
-//
-//        NameValuePair login = new BasicNameValuePair(username, hashPassword(password));
-//        new HttpLogin().execute(login);
+        _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
+
+        String username = ((EditText) findViewById(R.id.login_username)).getText().toString();
+        String password = ((EditText) findViewById(R.id.login_password)).getText().toString();
+
+        NameValuePair login = new BasicNameValuePair(username, hashPassword(password));
+        new HttpLogin().execute(login);
     }
 
     private void rememberMe() {

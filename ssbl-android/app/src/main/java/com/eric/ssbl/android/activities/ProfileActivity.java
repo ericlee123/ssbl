@@ -2,11 +2,14 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +33,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends Activity {
@@ -173,17 +177,6 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
-
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_search);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Create new message
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
-
         }
         else {
 
@@ -206,18 +199,41 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
-
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_search);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Create new message
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
         }
 
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1);
+        List<User> circle = _user.getFriends();
+        List<String> circleNames = new ArrayList<>();
+        if (circle != null)
+            for (int i = 0; i < circle.size(); i++)
+                circleNames.add(circle.get(i).getUsername());
+        adapter.addAll(circleNames);
+
+        ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+        rb.setImageResource(R.drawable.orange_search);
+        rb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+                adb
+                        .setTitle("Circle")
+                        .setCancelable(true)
+                        .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setNeutralButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                adb.create().show();
+            }
+        });
+        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
     }
 
     public void goBack(View view) {

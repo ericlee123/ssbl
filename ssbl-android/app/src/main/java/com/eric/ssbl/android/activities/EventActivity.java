@@ -197,17 +197,6 @@ public class EventActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
-
-            // should be show on map
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.gray_fedora);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.tip_fedora);
         }
         else {
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
@@ -238,18 +227,17 @@ public class EventActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");
-
-            // should be show on map
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.gray_fedora);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
         }
+
+        ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+        rb.setImageResource(R.drawable.gray_fedora);
+        rb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
+            }
+        });
+        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
     }
 
     public void goBack(View view) {

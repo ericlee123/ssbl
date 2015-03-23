@@ -50,10 +50,10 @@
     <string name="add_to_circle">Add to circle</string>
     <string name="remove_from_circle">Remove from circle</string>
     <string name="uncircle">Uncircle</string>
-    <string name="friends">Friends</string>
     <string name="nearby_users">Nearby users</string>
     <string name="message">Message</string>
     <string name="view_friends">View friends</string>
+    <string name="view_circle">View circle</string>
     <string name="error_loading_profile">Error displaying profile :(</string>
 
     <!-- EditProfileActivity -->
