@@ -26,6 +26,7 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.Location;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class EditEventActivity extends Activity {
     private Context _context = this;
 
     private EditText _title;
-    private static Address _location;
+    private static Address _address;
     private static TextView _locationStatus;
     private CheckBox _ssb64;
     private CheckBox _melee;
@@ -50,6 +51,8 @@ public class EditEventActivity extends Activity {
     private Calendar _startCalendar;
     private Calendar _endCalendar;
 
+    private EditText _description;
+    private CheckBox _isPrivate;
 
     private ProgressDialog _loading;
     private Event _event;
@@ -78,12 +81,20 @@ public class EditEventActivity extends Activity {
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(_event == null ? R.string.create_event : R.string.edit_event);
         setContentView(R.layout.activity_edit_event);
 
+        _title = (EditText) findViewById(R.id.edit_event_event_title);
         _locationStatus = (TextView) findViewById(R.id.edit_event_location_status);
+        _ssb64 = (CheckBox) findViewById(R.id.edit_event_games_ssb64);
+        _melee = (CheckBox) findViewById(R.id.edit_event_games_melee);
+        _brawl = (CheckBox) findViewById(R.id.edit_event_games_brawl);
+        _pm = (CheckBox) findViewById(R.id.edit_event_games_pm);
+        _smash4 = (CheckBox) findViewById(R.id.edit_event_games_smash4);
+        _description = (EditText) findViewById(R.id.edit_event_description);
+        _isPrivate = (CheckBox) findViewById(R.id.edit_event_private);
 
         if (_event != null) {
 
             if (_event.getTitle() != null)
-                ((EditText) findViewById(R.id.edit_event_event_title)).setText(_event.getTitle());
+                _title.setText(_event.getTitle());
 
             if (_event.getLocation() != null) {
                 _address = new Address(Locale.US);
@@ -94,15 +105,15 @@ public class EditEventActivity extends Activity {
             if (_event.getGames() != null) {
                 for (Game g : _event.getGames()) {
                     if (g.equals(Game.SSB64))
-                        ((CheckBox) findViewById(R.id.edit_event_games_ssb64)).setChecked(true);
+                        _ssb64.setChecked(true);
                     else if (g.equals(Game.MELEE))
-                        ((CheckBox) findViewById(R.id.edit_event_games_melee)).setChecked(true);
+                        _melee.setChecked(true);
                     else if (g.equals(Game.BRAWL))
-                        ((CheckBox) findViewById(R.id.edit_event_games_brawl)).setChecked(true);
+                        _brawl.setChecked(true);
                     else if (g.equals(Game.PM))
-                        ((CheckBox) findViewById(R.id.edit_event_games_pm)).setChecked(true);
+                        _pm.setChecked(true);
                     else if (g.equals(Game.SMASH4))
-                        ((CheckBox) findViewById(R.id.edit_event_games_smash4)).setChecked(true);
+                        _smash4.setChecked(true);
                 }
             }
 
@@ -112,9 +123,9 @@ public class EditEventActivity extends Activity {
                 _endCalendar.setTimeInMillis(_event.getEndTime());
 
             if (_event.getDescription() != null)
-                ((EditText) findViewById(R.id.edit_event_description)).setText(_event.getDescription());
+                _description.setText(_event.getDescription());
             if (_event.isPublic() != null)
-                ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!_event.isPublic());
+                _isPrivate.setChecked(!_event.isPublic());
         }
 
         updateLocationText();
@@ -262,6 +273,11 @@ public class EditEventActivity extends Activity {
 
     public void saveEvent(View view) {
 
+        if (_title.getText().toString().length() == 0) {
+            Toast.makeText(_context, "Please enter an event title", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if (_startCalendar == null) {
             Toast.makeText(_context, "Please enter a start time", Toast.LENGTH_LONG).show();
             return;
@@ -275,25 +291,29 @@ public class EditEventActivity extends Activity {
             _event = new Event();
 
         // set locaiton
+        Location l = new Location();
+        l.setLatitude(_address.getLatitude());
+        l.setLongitude(_address.getLongitude());
+        _event.setLocation(l);
 
-        List<Game> games = new ArrayList<>();
-        if (((CheckBox) findViewById(R.id.edit_event_games_ssb64)).isChecked())
+        List <Game> games = new ArrayList<>();
+        if (_ssb64.isChecked())
             games.add(Game.SSB64);
-        if (((CheckBox) findViewById(R.id.edit_event_games_melee)).isChecked())
+        if (_melee.isChecked())
             games.add(Game.MELEE);
-        if (((CheckBox) findViewById(R.id.edit_event_games_brawl)).isChecked())
+        if (_brawl.isChecked())
             games.add(Game.BRAWL);
-        if (((CheckBox) findViewById(R.id.edit_event_games_pm)).isChecked())
+        if (_pm.isChecked())
             games.add(Game.PM);
-        if (((CheckBox) findViewById(R.id.edit_event_games_smash4)).isChecked())
+        if (_smash4.isChecked())
             games.add(Game.SMASH4);
         _event.setGames(games);
 
         _event.setStartTime(_startCalendar.getTimeInMillis());
         _event.setEndTime(_endCalendar.getTimeInMillis());
 
-        _event.setDescription(((EditText) findViewById(R.id.edit_event_description)).getText().toString());
-        _event.setPublic(!((CheckBox) findViewById(R.id.edit_event_private)).isChecked());
+        _event.setDescription(_description.getText().toString());
+        _event.setPublic(!_isPrivate.isChecked());
 
         _loading = ProgressDialog.show(this, "Saving event...", getString(R.string.chill_out), true);
         DataManager.updateEvent(_event);
