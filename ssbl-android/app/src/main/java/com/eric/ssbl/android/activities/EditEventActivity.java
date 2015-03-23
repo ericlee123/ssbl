@@ -27,7 +27,6 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,12 +37,24 @@ import java.util.Locale;
 public class EditEventActivity extends Activity {
 
     private Context _context = this;
-    private TextView _locationStatus;
-    private ProgressDialog _loading;
-    private Event _event;
-    private Address _address;
+
+    private EditText _title;
+    private static Address _location;
+    private static TextView _locationStatus;
+    private CheckBox _ssb64;
+    private CheckBox _melee;
+    private CheckBox _brawl;
+    private CheckBox _pm;
+    private CheckBox _smash4;
+
     private Calendar _startCalendar;
     private Calendar _endCalendar;
+
+
+    private ProgressDialog _loading;
+    private Event _event;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,30 +85,39 @@ public class EditEventActivity extends Activity {
             if (_event.getTitle() != null)
                 ((EditText) findViewById(R.id.edit_event_event_title)).setText(_event.getTitle());
 
-            // set location
-
-            for (Game g: _event.getGames()) {
-                if (g.equals(Game.SSB64))
-                    ((CheckBox) findViewById(R.id.edit_event_games_ssb64)).setChecked(true);
-                else if (g.equals(Game.MELEE))
-                    ((CheckBox) findViewById(R.id.edit_event_games_melee)).setChecked(true);
-                else if (g.equals(Game.BRAWL))
-                    ((CheckBox) findViewById(R.id.edit_event_games_brawl)).setChecked(true);
-                else if (g.equals(Game.PM))
-                    ((CheckBox) findViewById(R.id.edit_event_games_pm)).setChecked(true);
-                else if (g.equals(Game.SMASH4))
-                    ((CheckBox) findViewById(R.id.edit_event_games_smash4)).setChecked(true);
+            if (_event.getLocation() != null) {
+                _address = new Address(Locale.US);
+                _address.setLatitude(_event.getLocation().getLatitude());
+                _address.setLongitude(_event.getLocation().getLongitude());
             }
 
-            _startCalendar.setTimeInMillis(_event.getStartTime());
-            _endCalendar.setTimeInMillis(_event.getEndTime());
+            if (_event.getGames() != null) {
+                for (Game g : _event.getGames()) {
+                    if (g.equals(Game.SSB64))
+                        ((CheckBox) findViewById(R.id.edit_event_games_ssb64)).setChecked(true);
+                    else if (g.equals(Game.MELEE))
+                        ((CheckBox) findViewById(R.id.edit_event_games_melee)).setChecked(true);
+                    else if (g.equals(Game.BRAWL))
+                        ((CheckBox) findViewById(R.id.edit_event_games_brawl)).setChecked(true);
+                    else if (g.equals(Game.PM))
+                        ((CheckBox) findViewById(R.id.edit_event_games_pm)).setChecked(true);
+                    else if (g.equals(Game.SMASH4))
+                        ((CheckBox) findViewById(R.id.edit_event_games_smash4)).setChecked(true);
+                }
+            }
 
-            ((EditText) findViewById(R.id.edit_event_description)).setText(_event.getDescription());
-            ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!_event.isPublic());
+            if (_event.getStartTime() != null)
+                _startCalendar.setTimeInMillis(_event.getStartTime());
+            if (_event.getEndTime() != null)
+                _endCalendar.setTimeInMillis(_event.getEndTime());
+
+            if (_event.getDescription() != null)
+                ((EditText) findViewById(R.id.edit_event_description)).setText(_event.getDescription());
+            if (_event.isPublic() != null)
+                ((CheckBox) findViewById(R.id.edit_event_private)).setChecked(!_event.isPublic());
         }
-        else {
-            updateLocationText();
-        }
+
+        updateLocationText();
         updateTimeButtonText();
     }
 
@@ -105,8 +125,9 @@ public class EditEventActivity extends Activity {
         startActivity(new Intent(this, EditEventMapActivity.class));
     }
 
-    public static void setLocation(LatLng loc) {
-
+    public static void setLocation(Address address) {
+        _address = address;
+        updateLocationText();
     }
 
     public void setLocationAddress(View view) {
@@ -127,7 +148,7 @@ public class EditEventActivity extends Activity {
 
                         try {
                             Geocoder coder = new Geocoder(_context);
-                            List<Address> addresses = coder.getFromLocationName(textAddress, 3);
+                            List<Address> addresses = coder.getFromLocationName(textAddress, 1);
                             if (addresses.size() >= 1) {
                                 _address = addresses.get(0);
                                 updateLocationText();
@@ -149,7 +170,7 @@ public class EditEventActivity extends Activity {
         adb.create().show();
     }
 
-    private void updateLocationText() {
+    private static void updateLocationText() {
         if (_address == null) {
             _locationStatus.setText("Location: (not set)");
             return;

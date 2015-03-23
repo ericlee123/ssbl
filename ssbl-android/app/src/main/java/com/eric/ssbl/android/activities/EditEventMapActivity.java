@@ -1,6 +1,8 @@
 package com.eric.ssbl.android.activities;
 
 import android.app.Activity;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
 
@@ -33,6 +35,12 @@ public class EditEventMapActivity extends Activity {
 
     public void setLocation(View view) {
         _setLocation = _map.getCameraPosition().target;
-        EditEventActivity.setLocation(_setLocation);
+
+        try {
+            Address a = new Geocoder(this).getFromLocation(_setLocation.latitude, _setLocation.longitude, 1).get(0);
+            EditEventActivity.setLocation(a);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

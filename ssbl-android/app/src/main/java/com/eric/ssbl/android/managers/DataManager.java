@@ -162,8 +162,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
+                System.out.println("update_user");
+                System.out.println(url.toString());
                 System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println("updateUser url: " + url.toString());
                 System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
@@ -467,8 +468,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-//                System.out.println("getNearbyUsers url: " + url.toString());
-//                System.out.println(jsonString);
+                System.out.println("get_nearby_users");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
@@ -494,8 +497,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-//                System.out.println("getNearbyEvents url: " + url.toString());
-//                System.out.println(jsonString);
+                System.out.println("get_nearby_events");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
@@ -529,8 +534,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-//                System.out.println("getHostingEvents url: " + url.toString());
-//                System.out.println(jsonString);
+                System.out.println("get_hosting_events");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
