@@ -90,25 +90,25 @@ public class EventActivity extends Activity {
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        if (_event.getGames() != null) {
+        if (_event.getGames() == null || _event.getGames().size() == 0)
+            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
+        else {
             for (Game g : _event.getGames()) {
-                games.append("\t\t\t\t");
-                if (g.equals(Game.SSB64))
-                    games.append(getString(R.string.ssb64));
-                else if (g.equals(Game.MELEE))
-                    games.append(getString(R.string.melee));
-                else if (g.equals(Game.BRAWL))
-                    games.append(getString(R.string.brawl));
-                else if (g.equals(Game.PM))
-                    games.append(getString(R.string.pm));
-                else if (g.equals(Game.SMASH4))
-                    games.append(getString(R.string.smash4));
-                games.append("\n");
-            }
+                             games.append("\t\t\t\t");
+                             if (g.equals(Game.SSB64))
+                                 games.append(getString(R.string.ssb64));
+                             else if (g.equals(Game.MELEE))
+                                 games.append(getString(R.string.melee));
+                             else if (g.equals(Game.BRAWL))
+                                 games.append(getString(R.string.brawl));
+                             else if (g.equals(Game.PM))
+                                 games.append(getString(R.string.pm));
+                             else if (g.equals(Game.SMASH4))
+                                 games.append(getString(R.string.smash4));
+                             games.append("\n");
+                         }
             games.delete(games.length() - 1, games.length());
         }
-        else
-            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         // set time description

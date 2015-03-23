@@ -70,53 +70,62 @@ public class ProfileActivity extends Activity {
         if (_user == null)
             return;
 
-        System.out.println("user id: " + _user.getUserId());
-
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_tangents);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
-        ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
+        if (_user.getUsername() != null)
+            ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
 
-        String lastLogin = "Logged in ";
-        long now = System.currentTimeMillis();
-        int elapsed = (int) ((now - _user.getLastLoginTime()) / 60000);
-        if (elapsed < 60)
-            lastLogin += elapsed + " minutes ago";
-        else if (elapsed < 1440)
-            lastLogin += (elapsed / 60) + " hours ago";
+        String lastLogin;
+        if (_user.getLastLoginTime() != null) {
+            lastLogin = "Logged in ";
+            long now = System.currentTimeMillis();
+            int elapsed = (int) ((now - _user.getLastLoginTime()) / 60000);
+            if (elapsed < 60)
+                lastLogin += elapsed + " minutes ago";
+            else if (elapsed < 1440)
+                lastLogin += (elapsed / 60) + " hours ago";
+            else
+                lastLogin += (elapsed / 1440) + " days ago";
+        }
         else
-            lastLogin += (elapsed / 1440) + " days ago";
-
+            lastLogin = "Last login unavailable";
         ((TextView) findViewById(R.id.eu_subtitle)).setText(lastLogin);
+
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        for (Game g: _user.getGames()) {
-            games.append("\t\t\t\t");
-            if (g == Game.SSB64)
-                games.append("Smash 64");
-            else if (g == Game.MELEE)
-                games.append("Melee");
-            else if (g == Game.BRAWL)
-                games.append("Brawl");
-            else if (g == Game.PM)
-                games.append("Project M.");
-            else if (g == Game.SMASH4)
-                games.append("Smash 4");
-            games.append("\n");
+        if (_user.getGames() == null || _user.getGames().size() == 0)
+            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
+        else {
+            for (Game g : _user.getGames()) {
+                games.append("\t\t\t\t");
+                if (g.equals(Game.SSB64))
+                    games.append(getString(R.string.ssb64));
+                else if (g.equals(Game.MELEE))
+                    games.append(getString(R.string.melee));
+                else if (g.equals(Game.BRAWL))
+                    games.append(getString(R.string.brawl));
+                else if (g.equals(Game.PM))
+                    games.append(getString(R.string.pm));
+                else if (g.equals(Game.SMASH4))
+                    games.append(getString(R.string.smash4));
+                games.append("\n");
+            }
+            games.delete(games.length() - 1, games.length());
         }
-        if (_user.getGames().size() == 0)
-            games.append("\t\t\t\t(none)\n");
-        games.delete(games.length() - 1, games.length());
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.bio) + "\n\t\t\t\t");
-        bio.append(_user.getBlurb());
+        if (_user.getBlurb() != null)
+            bio.append(_user.getBlurb());
+        else
+            bio.append("(N/A)");
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         StringBuilder attendingEvents = new StringBuilder();
         attendingEvents.append("Attending events\n");
-        if (_user.getEvents() == null)
+        if (_user.getEvents() == null || _user.getEvents().size() == 0)
             attendingEvents.append("\t\t\t\tNot attending anything.");
         else {
             for (Event e : _user.getEvents())
