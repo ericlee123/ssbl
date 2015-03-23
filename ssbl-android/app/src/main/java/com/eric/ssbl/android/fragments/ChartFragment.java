@@ -1,6 +1,7 @@
 package com.eric.ssbl.android.fragments;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
@@ -17,6 +18,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -25,8 +27,10 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +41,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private View _view;
     private static GoogleMap _map;
     private GoogleApiClient _googleApiClient;
-    private LatLng _curLoc;
+    private static LatLng _curLoc;
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     public static List<Event> _nearbyEvents = new ArrayList<>();
@@ -155,10 +159,31 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             loc.setLongitude(_curLoc.longitude);
             curUser.setLocation(loc);
             curUser.setLastLocationTime(System.currentTimeMillis());
-            DataManager.updateCurUser(curUser);
+            new HttpUserUpdater().execute(curUser);
 
             displayElements();
         }
+    }
+
+    private class HttpUserUpdater extends AsyncTask<User, Void, Void> {
+
+        private User updated;
+
+        @Override
+        protected Void doInBackground(User... params) {
+            updated = DataManager.httpUpdateCurUser(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (updated == null)
+                Toast.makeText(getActivity(), "Error updating current user", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static LatLng getCurLoc() {
+        return _curLoc;
     }
 
     public void displayElements() {
@@ -169,73 +194,73 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
         else
             Toast.makeText(getActivity(), "Error finding current location", Toast.LENGTH_SHORT).show();
 
-//        _eu.clear();
-//
-//        ObjectMapper om = new ObjectMapper();
-//        long now = System.currentTimeMillis();
-//
-//        List<User> relevantUsers = new ArrayList<>();
-//        relevantUsers.addAll(DataManager.getNearbyUsers());
+        _eu.clear();
+
+        ObjectMapper om = new ObjectMapper();
+        long now = System.currentTimeMillis();
+
+        List<User> relevantUsers = new ArrayList<>();
+        relevantUsers.addAll(DataManager.getNearbyUsers());
 //        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
 //        relevantUsers.addAll(DataManager.getCurUser().getFriends());
-//        for (User u: relevantUsers) {
-//
-//            // To enforce synchronization with the current user
-//            if (u.equals(DataManager.getCurUser())) {
-//                Location loc = u.getLocation();
-//                if (loc == null)
-//                    loc = new Location();
-//                loc.setLatitude(_curLoc.latitude);
-//                loc.setLongitude(_curLoc.longitude);
-//                u.setLocation(loc);
-//            }
-//
-//            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
-//            String updated = "Here ";
-//            if (elapsed < 60)
-//                updated += elapsed + " minutes ago";
-//            else if (elapsed < 1440)
-//                updated += (elapsed / 60) + " hours ago";
-//            else
-//                updated += (elapsed / 1440) + " days ago";
-//
-//            Marker marker = _map.addMarker(new MarkerOptions()
-//                    .title(u.getUsername())
-//                    .snippet(updated)
-//                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
-//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
-//
-//            if (u.equals(DataManager.getCurUser()))
-//                marker.showInfoWindow();
-//
-//            try {
-//                _eu.put(marker, om.writeValueAsString(u));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        List<Event> relevantEvents = new ArrayList<>();
-//        relevantEvents.addAll(DataManager.getNearbyEvents());
+        for (User u: relevantUsers) {
+
+            // To enforce synchronization with the current user
+            if (u.equals(DataManager.getCurUser())) {
+                Location loc = u.getLocation();
+                if (loc == null)
+                    loc = new Location();
+                loc.setLatitude(_curLoc.latitude);
+                loc.setLongitude(_curLoc.longitude);
+                u.setLocation(loc);
+            }
+
+            int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
+            String updated = "Here ";
+            if (elapsed < 60)
+                updated += elapsed + " minutes ago";
+            else if (elapsed < 1440)
+                updated += (elapsed / 60) + " hours ago";
+            else
+                updated += (elapsed / 1440) + " days ago";
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                    .title(u.getUsername())
+                    .snippet(updated)
+                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
+
+            if (u.equals(DataManager.getCurUser()))
+                marker.showInfoWindow();
+
+            try {
+                _eu.put(marker, om.writeValueAsString(u));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        List<Event> relevantEvents = new ArrayList<>();
+        relevantEvents.addAll(DataManager.getNearbyEvents());
 //        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
 //        relevantEvents.addAll(DataManager.getCurUser().getEvents());
 //        relevantEvents.removeAll(DataManager.getHostingEvents());
 //        relevantEvents.addAll(DataManager.getHostingEvents());
-//        for (Event e: relevantEvents) {
-//
-//            Marker marker = _map.addMarker(new MarkerOptions()
-//                            .title(e.getTitle())
-//                            .snippet("Hosted by " + e.getHost().getUsername())
-//                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
-//                            .alpha(0.99F)
-//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
-//
-//            try {
-//                _eu.put(marker, om.writeValueAsString(e));
-//            } catch (Exception exc) {
-//                exc.printStackTrace();
-//            }
-//        }
+        for (Event e: relevantEvents) {
+
+            Marker marker = _map.addMarker(new MarkerOptions()
+                            .title(e.getTitle())
+                            .snippet("Hosted by " + e.getHost().getUsername())
+                            .position(new LatLng(e.getLocation().getLatitude(), e.getLocation().getLongitude()))
+                            .alpha(0.99F)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.event)));
+
+            try {
+                _eu.put(marker, om.writeValueAsString(e));
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+        }
 
     }
 

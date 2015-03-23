@@ -19,7 +19,7 @@ import java.util.List;
  * 
  * @see com.hunnymustard.ssbm.model.User
  */
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=Event.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Event implements Locatable {
 
 	private Integer _id;

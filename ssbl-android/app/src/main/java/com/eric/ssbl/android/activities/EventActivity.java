@@ -2,7 +2,10 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,7 +21,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,6 +41,7 @@ import java.util.List;
 public class EventActivity extends Activity {
 
     private final Context _context = this;
+    private ProgressDialog _loading;
     private Event _event;
 
     @Override
@@ -47,7 +53,6 @@ public class EventActivity extends Activity {
         View abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.event));
 
         setContentView(R.layout.fragment_eu);
@@ -60,6 +65,7 @@ public class EventActivity extends Activity {
         try {
             String eventJson = getIntent().getStringExtra("event_json");
             Event e = new ObjectMapper().readValue(eventJson, Event.class);
+            _loading = ProgressDialog.show(this, "Loading event details", getString(R.string.chill_out), true);
             new HttpEventGetter().execute(e);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
@@ -75,27 +81,37 @@ public class EventActivity extends Activity {
         // Fill in the deets
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.red_explosion);
-        ((TextView) findViewById(R.id.eu_title)).setText(_event.getTitle());
-        ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " " + _event.getHost().getUsername());
+        if (_event.getTitle() != null)
+            ((TextView) findViewById(R.id.eu_title)).setText(_event.getTitle());
+
+        if (_event.getHost() != null)
+            ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " " + _event.getHost().getUsername());
+        else {
+            Toast.makeText(_context, "This event does not have a host....weird", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        for (Game g: _event.getGames()) {
-            games.append("\t\t\t\t");
-            if (g.equals(Game.SSB64))
-                games.append("Smash 64");
-            else if (g.equals(Game.MELEE))
-                games.append("Melee");
-            else if (g.equals(Game.BRAWL))
-                games.append("Brawl");
-            else if (g.equals(Game.PM))
-                games.append("Project M.");
-            else if (g.equals(Game.SMASH4))
-                games.append("Smash 4");
-            games.append("\n");
-        }
-        if (games.length() != 0)
+        if (_event.getGames() == null || _event.getGames().size() == 0)
+            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
+        else {
+            for (Game g : _event.getGames()) {
+                             games.append("\t\t\t\t");
+                             if (g.equals(Game.SSB64))
+                                 games.append(getString(R.string.ssb64));
+                             else if (g.equals(Game.MELEE))
+                                 games.append(getString(R.string.melee));
+                             else if (g.equals(Game.BRAWL))
+                                 games.append(getString(R.string.brawl));
+                             else if (g.equals(Game.PM))
+                                 games.append(getString(R.string.pm));
+                             else if (g.equals(Game.SMASH4))
+                                 games.append(getString(R.string.smash4));
+                             games.append("\n");
+                         }
             games.delete(games.length() - 1, games.length());
+        }
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         // set time description
@@ -103,26 +119,40 @@ public class EventActivity extends Activity {
         time.setVisibility(View.VISIBLE);
 
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date start = new Date(_event.getStartTime());
-        Date end = new Date(_event.getEndTime());
-        String startFormatted = formatter.format(start);
-        String endFormatted = formatter.format(end);
         StringBuilder timeString = new StringBuilder();
-        timeString.append(getString(R.string.start_time) + " - " + startFormatted + "\n");
-        timeString.append(getString(R.string.end_time) + " - " + endFormatted);
+        timeString.append(getString(R.string.start_time) + " - ");
+        if (_event.getStartTime() != null) {
+            Date start = new Date(_event.getStartTime());
+            String startFormatted = formatter.format(start);
+            timeString.append(startFormatted);
+        }
+        else
+            timeString.append("(N/A)");
+        timeString.append("\n");
 
+        timeString.append(getString(R.string.end_time) + " - ");
+        if (_event.getEndTime() != null) {
+            Date end = new Date(_event.getEndTime());
+            String endFormatted = formatter.format(end);
+            timeString.append(endFormatted);
+        }
+        else
+            timeString.append("(N/A)");
         time.setText(timeString.toString());
 
         // set description
         StringBuilder description = new StringBuilder();
         description.append(getString(R.string.description) + "\n\t\t\t\t");
-        description.append(_event.getDescription());
+        if (_event.getDescription() != null)
+            description.append(_event.getDescription());
+        else
+            description.append("(N/A)");
         ((TextView) findViewById(R.id.eu_description)).setText(description.toString());
 
         // set attendance list
         StringBuilder attendance = new StringBuilder();
         attendance.append(getString(R.string.whos_going) + "\n");
-        if (_event.getUsers() == null)
+        if (_event.getUsers() == null || _event.getUsers().size() == 0)
             attendance.append("\t\t\t\tNo one is going to this event");
         else {
             for (User u : _event.getUsers())
@@ -157,7 +187,7 @@ public class EventActivity extends Activity {
                     }
 
                     _event.setUsers(attending);
-                    DataManager.updateEvent(_event);
+                    new HttpEventUpdater().execute(_event);
                 }
             });
 
@@ -170,17 +200,6 @@ public class EventActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
-
-            // should be show on map
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.gray_fedora);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(R.string.tip_fedora);
         }
         else {
             ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
@@ -207,22 +226,37 @@ public class EventActivity extends Activity {
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // end the event?
+                    AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+                    adb
+                            .setTitle("Are you sure")
+                            .setCancelable(true)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    new HttpEventDeleter().execute(_event);
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    adb.show();
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText("End event");
-
-            // should be show on map
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.gray_fedora);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
         }
+
+        ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+        rb.setImageResource(R.drawable.gray_fedora);
+        rb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(_context, getString(R.string.mlady), Toast.LENGTH_SHORT).show();
+            }
+        });
+        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
     }
 
     public void goBack(View view) {
@@ -243,14 +277,23 @@ public class EventActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
 
-                // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                 StringEntity body = new StringEntity(om.writeValueAsString(template));
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("getEvent url: " + url.toString());
+                System.out.println("status code: " + response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -271,12 +314,44 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (e != null) {
                 _event = e;
                 fillDetails();
             }
             else
                 Toast.makeText(_context, "Error retrieving event", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
+
+        private Event updated;
+
+        @Override
+        protected Void doInBackground(Event... params) {
+            updated = DataManager.httpUpdateEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (updated == null)
+                Toast.makeText(_context, "Error updating RSVP status", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class HttpEventDeleter extends AsyncTask<Event, Void, Void> {
+        @Override
+        protected Void doInBackground(Event... params) {
+            DataManager.httpDeleteEvent(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            MainActivity.refreshFragments();
+            finish();
         }
     }
 }

@@ -15,6 +15,7 @@ import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.adapters.EventListAdapter;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,6 @@ public class EventListFragment extends ListFragment {
             List<Event> hosting = DataManager.getHostingEvents();
             List<Event> attending = DataManager.getCurUser().getEvents();
             List<Event> nearby = DataManager.getNearbyEvents();
-
-            System.out.println("hosting size" + hosting.size());
 
             attending.removeAll(hosting);
             nearby.removeAll(hosting);
@@ -73,7 +72,11 @@ public class EventListFragment extends ListFragment {
 
         Intent i = new Intent(getActivity(), EventActivity.class);
         Bundle b = new Bundle();
-        b.putInt("event_id", _allEvents.get(position).getEventId());
+        try {
+            b.putString("event_json", new ObjectMapper().writeValueAsString(_allEvents.get(position)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         i.putExtras(b);
         startActivity(i);
     }

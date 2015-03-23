@@ -3,7 +3,6 @@ package com.eric.ssbl.android.managers;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.eric.ssbl.android.activities.LoginActivity;
 import com.eric.ssbl.android.activities.MainActivity;
@@ -11,7 +10,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -37,27 +38,111 @@ import java.util.Scanner;
 public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
-    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
+    private static String _serverURL = "http://10.148.130.20:8080/ssbl-server/smash";
+//    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
     private static List<Event> _hostingEvents = new ArrayList<>();
     private static HashMap<Integer, Event> _eventIdMap = new HashMap<>();
 
+    ///////////////////////////////////////////////////
+    // General stuff
+    ///////////////////////////////////////////////////
+    private static boolean _refreshing = false;
+    public static void refreshEverything() {
+        if (!_refreshing)
+            new DataManager().refreshCurLoc();
+        _refreshing = true;
+    }
+
+    public static void clearData() {
+        _curUser = null;
+
+        _nearbyUsers.clear();
+
+        _eventIdMap.clear();
+        _nearbyEvents.clear();
+        _hostingEvents.clear();
+    }
+    public static String getServerUrl() {
+        return _serverURL;
+    }
+
+    /////////////////////////////////////////////////
+    // curUser section
+    /////////////////////////////////////////////////
     public static User getCurUser() {
         return _curUser;
     }
 
-    public static void updateCurUser(User updated) {
-        if (updated == null)
-            return;
-        _curUser = updated;
-        new HttpUserUpdater().execute(updated);
+    public static void setCurUser(User curUser) {
+        _curUser = curUser;
     }
 
-    public static void setCurUser(User u) {
-        _curUser = u;
+    /**
+     * First updates the current user locally, and then sends an HTTP post
+     * to the server. If the post is unsuccessful, the current user is reverted
+     * back to normal. Returns the user object response from the server, otherwise
+     * null if the request failed.
+     * @param updated the updated current user
+     * @return the result
+     */
+    public static User httpUpdateCurUser(User updated) {
+        if (updated == null)
+            return null;
+
+        User backup = _curUser;
+        _curUser = updated;
+
+        User result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/user/update");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("update_cur_user");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                result = null;
+            else
+                result = om.readValue(jsonString, User.class);
+        } catch (Exception e) {
+            result = null;
+            e.printStackTrace();
+        }
+
+        _curUser = (result != null) ? result : backup;
+        return result;
     }
+
+
+
+
+
+    ////////////////////////////////////////////////////////
+    // Relevant users and events
+    ////////////////////////////////////////////////
 
     public static void setNearbyUsers(List<User> nearbyUsers) {
         if (nearbyUsers == null)
@@ -93,139 +178,114 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
-    public static void updateEvent(Event updated) {
+    public static Event httpUpdateEvent(Event updated) {
 
-        Event old = _eventIdMap.get(updated.getEventId());
-        List<Event> oldList = _curUser.getEvents();
+        if (updated == null)
+            return null;
 
-        if (old != null) {
-            _nearbyEvents.remove(old);
-            _hostingEvents.remove(old);
-            oldList.remove(old);
+        Event result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/update");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("update_event");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                result = null;
+            else
+                result = om.readValue(jsonString, Event.class);
+        } catch (Exception e) {
+            result = null;
+            e.printStackTrace();
         }
 
-        _hostingEvents.add(updated);
-        oldList.add(updated);
-        _eventIdMap.put(updated.getEventId(), updated);
+        // update if successful
+        if (result != null) {
+            // Update locally
+            Event backup = _eventIdMap.get(updated.getEventId());
+//        List<Event> oldList = _curUser.getEvents();              uncomment these later
 
-        new HttpEventUpdater().execute(updated);
-    }
-
-    private static boolean _refreshing = false;
-    public static void refreshEverything() {
-        _refreshing = true;
-        new DataManager().refreshCurLoc();
-    }
-
-    public static void clearData() {
-        _curUser = null;
-
-        _nearbyUsers.clear();
-
-        _eventIdMap.clear();
-        _nearbyEvents.clear();
-        _hostingEvents.clear();
-    }
-
-    public static String getServerUrl() {
-        return _serverURL;
-    }
-
-    private static class HttpUserUpdater extends AsyncTask<User, Void, Void> {
-
-        private User updated;
-
-        private void updateUser(User u) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/user/update");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(u));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("updateUser url: " + url.toString());
-                System.out.println(jsonString);
-                if (jsonString.length() == 0)
-                    return;
-
-                updated = om.readValue(jsonString, User.class);
-            } catch (Exception e) {
-                updated = null;
-                e.printStackTrace();
+            if (backup != null) {
+                _nearbyEvents.remove(backup);
+                _hostingEvents.remove(backup);
+//            oldList.remove(old);
             }
 
+            _hostingEvents.add(result);
+//        oldList.add(updated);
+            _eventIdMap.put(result.getEventId(), result);
         }
-
-        @Override
-        protected Void doInBackground(User... params) {
-            updateUser(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (updated == null)
-                Toast.makeText(_appContext, "Error updating current user", Toast.LENGTH_LONG).show();
-        }
+        return result;
     }
 
-    private static class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
+    public static void httpDeleteEvent(Event deleted) {
+        if (deleted == null)
+            return;
 
-        private Event updated;
+        Event result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/delete");
 
-        private void updateEvent(Event e) {
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
 
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/event/update");
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
 
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            StringEntity body = new StringEntity(om.writeValueAsString(deleted), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
 
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(e));
-                request.setEntity(body);
+            HttpResponse response = client.execute(request);
 
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                updated = om.readValue(jsonString, Event.class);
-            } catch (Exception exc) {
-                updated = null;
-                exc.printStackTrace();
-            }
-
+            System.out.println("delete_event");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        @Override
-        protected Void doInBackground(Event... params) {
-            updateEvent(params[0]);
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Void what) {
-            if (updated == null)
-                Toast.makeText(_appContext, "Error updating event", Toast.LENGTH_LONG).show();
-        }
+        // Update locally
+        _eventIdMap.remove(deleted);
+//      List<Event> oldList = _curUser.getEvents();              uncomment these later
+
+        _nearbyEvents.remove(deleted);
+        _hostingEvents.remove(deleted);
+//      oldList.remove(deleted);
     }
 
-    // Managing conversations
+
+    ///////////////////////////////////////////
+    // Conversations
+    /////////////////////////////////////////////
     private static List<String> _conversationPreviews;
 
     public static void initConversationPreviews() {
@@ -288,15 +348,20 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         }
     }
 
-    /**
-     * This section manages storage and access of settings.
-     */
+
+
+
+
+
+    ////////////////////////////////////////////////
+    // Settings
+    //////////////////////////////////////////
+
     private static File _settingsFile;
     private static JSONObject _settings;
 
     public static void initSettings(File fileDir) {
         _settingsFile = new File(fileDir, "settings");
-
         try {
             if (!_settingsFile.exists()) {
                 _settingsFile.createNewFile();
@@ -337,7 +402,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         try {
             User u = getCurUser();
             u.setPrivate(_settings.getBoolean("location_private"));
-            updateCurUser(u);
+            httpUpdateCurUser(u);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -391,7 +456,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     private void buildGoogleApiClient() {
-        _googleApiClient = new GoogleApiClient.Builder(_la)
+        _googleApiClient = new GoogleApiClient.Builder(_appContext)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
@@ -420,7 +485,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
-            System.out.println(here.getLatitude());
             LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
             new HttpEUGetter().execute(loc);
         }
@@ -458,13 +522,16 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getNearbyUsers url: " + url.toString());
+                System.out.println("get_nearby_users");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
                 System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
 
                 ObjectMapper om = new ObjectMapper();
                 nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
+
             } catch (Exception e) {
                 nearbyUsers = null;
                 e.printStackTrace();
@@ -484,7 +551,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getNearbyEvents url: " + url.toString());
+                System.out.println("get_nearby_events");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
                 System.out.println(jsonString);
                 if (jsonString.length() == 0)
                     return;
@@ -519,7 +588,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getHostingEvents url: " + url.toString());
+                System.out.println("get_hosting_events");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
                 System.out.println(jsonString);
 
                 if (jsonString.length() == 0)

@@ -23,7 +23,9 @@ import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Notification;
 import com.eric.ssbl.android.pojos.User;
 import com.eric.ssbl.android.services.MessagingService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
@@ -42,7 +44,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class LoginActivity extends Activity {
@@ -112,6 +113,9 @@ public class LoginActivity extends Activity {
     }
 
     public void loginAccount(View view) {
+
+//        startActivity(new Intent(this, EditEventActivity.class));
+//        return;
 
         _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
 
@@ -192,15 +196,7 @@ public class LoginActivity extends Activity {
                         u.setLastMessageTime(System.currentTimeMillis());
                         u.setGames(new ArrayList<Game>());
                         u.setEvents(new ArrayList<Event>());
-
-                        List<Notification> temp = new ArrayList<>();
-                        Notification welcome = new Notification();
-                        welcome.setMessage("Welcome to Super Smash Bros. Locator!");
-                        welcome.setSendTime(System.currentTimeMillis());
-                        welcome.setType(Notification.Type.SYSTEM);
-                        temp.add(welcome);
-                        u.setNotifications(temp);
-
+                        u.setNotifications(new ArrayList<Notification>());
                         u.setFriends(new ArrayList<User>());
                         u.setConversations(new ArrayList<Conversation>());
                         u.setPrivate(false);
@@ -267,13 +263,16 @@ public class LoginActivity extends Activity {
                 HttpClient client = new DefaultHttpClient();
                 HttpGet request = new HttpGet(url.toString());
 
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
                 request.addHeader("username", login.getName());
                 request.addHeader("password", login.getValue());
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
-                System.out.println("curUser: " + jsonString);
+
+                System.out.println("login");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
@@ -305,7 +304,8 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
-                DataManager.updateCurUser(curUser);
+                DataManager.setCurUser(curUser); // Synchronizing issues
+//                DataManager.httpUpdateCurUser(curUser);
                 initiateApp();
             }
             else {
@@ -330,16 +330,21 @@ public class LoginActivity extends Activity {
 
             System.out.println("register url: " + url.toString());
             try {
+
                 HttpClient client = new DefaultHttpClient();
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
 
                 ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(newUser));
-                request.setEntity(body);
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                System.out.println(om.writeValueAsString(newUser));
+                StringEntity body = new StringEntity(om.writeValueAsString(newUser), "UTF-8");
+                body.setContentType("application/json");
+                request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
@@ -371,7 +376,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             if (curUser != null) {
-                DataManager.updateCurUser(curUser);
+                DataManager.httpUpdateCurUser(curUser);
                 initiateApp();
             }
             else {

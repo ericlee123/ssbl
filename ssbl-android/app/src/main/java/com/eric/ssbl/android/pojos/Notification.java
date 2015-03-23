@@ -1,5 +1,6 @@
 package com.eric.ssbl.android.pojos;
 
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -15,7 +16,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
  * 
  * @see com.hunnymustard.ssbl.model.User
  */
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(scope=Notification.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
 public class Notification {
 	
 	private Integer _id;

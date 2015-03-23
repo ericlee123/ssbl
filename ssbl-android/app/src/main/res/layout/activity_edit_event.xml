@@ -156,10 +156,18 @@
                     android:background="@color/dark_gray" />
 
                 <Button
+                    android:id="@+id/edit_event_start_time_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/set_date_time"
-                    android:onClick="setDateTime" />
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="setEventStartTime" />
+
+                <Button
+                    android:id="@+id/edit_event_end_time_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="setEventEndTime"/>
                 
                 <TextView
                     android:id="@+id/edit_event_time_status"

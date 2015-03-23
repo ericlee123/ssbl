@@ -16,15 +16,6 @@ import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,39 +87,9 @@ public class EditProfileActivity extends Activity {
 
         private User updated;
 
-        private void updateProfile(User edited) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/edit/user");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(edited));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                updated = om.readValue(jsonString, User.class);
-
-            } catch (Exception e) {
-                updated = null;
-                e.printStackTrace();
-            }
-        }
-
         @Override
         protected Void doInBackground(User... params) {
-
-            updateProfile(params[0]);
+            updated = DataManager.httpUpdateCurUser(params[0]);
             return null;
         }
 
@@ -138,7 +99,6 @@ public class EditProfileActivity extends Activity {
 
             if (updated != null) {
                 Toast.makeText(_context, "Profile saved!", Toast.LENGTH_SHORT).show();
-                DataManager.setCurUser(updated);
                 finish();
             } else {
                 Toast.makeText(_context, "Error updating profile :(", Toast.LENGTH_SHORT).show();

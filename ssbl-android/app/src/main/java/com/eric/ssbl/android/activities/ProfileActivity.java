@@ -2,11 +2,15 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +22,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -28,11 +34,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends Activity {
 
     private final Context _context = this;
+    private ProgressDialog _loading;
     private User _user;
 
     @Override
@@ -57,6 +65,7 @@ public class ProfileActivity extends Activity {
         try {
             String userJson = getIntent().getStringExtra("user_json");
             User u = new ObjectMapper().readValue(userJson, User.class);
+            _loading = ProgressDialog.show(this, "Loading player details", getString(R.string.chill_out), true);
             new HttpUserGetter().execute(u);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading user :(", Toast.LENGTH_LONG).show();
@@ -68,53 +77,62 @@ public class ProfileActivity extends Activity {
         if (_user == null)
             return;
 
-        System.out.println("user id: " + _user.getUserId());
-
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_tangents);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.honey);
-        ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
+        if (_user.getUsername() != null)
+            ((TextView) findViewById(R.id.eu_title)).setText(_user.getUsername());
 
-        String lastLogin = "Logged in ";
-        long now = System.currentTimeMillis();
-        int elapsed = (int) ((now - _user.getLastLoginTime()) / 60000);
-        if (elapsed < 60)
-            lastLogin += elapsed + " minutes ago";
-        else if (elapsed < 1440)
-            lastLogin += (elapsed / 60) + " hours ago";
+        String lastLogin;
+        if (_user.getLastLoginTime() != null) {
+            lastLogin = "Logged in ";
+            long now = System.currentTimeMillis();
+            int elapsed = (int) ((now - _user.getLastLoginTime()) / 60000);
+            if (elapsed < 60)
+                lastLogin += elapsed + " minutes ago";
+            else if (elapsed < 1440)
+                lastLogin += (elapsed / 60) + " hours ago";
+            else
+                lastLogin += (elapsed / 1440) + " days ago";
+        }
         else
-            lastLogin += (elapsed / 1440) + " days ago";
-
+            lastLogin = "Last login unavailable";
         ((TextView) findViewById(R.id.eu_subtitle)).setText(lastLogin);
+
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        for (Game g: _user.getGames()) {
-            games.append("\t\t\t\t");
-            if (g == Game.SSB64)
-                games.append("Smash 64");
-            else if (g == Game.MELEE)
-                games.append("Melee");
-            else if (g == Game.BRAWL)
-                games.append("Brawl");
-            else if (g == Game.PM)
-                games.append("Project M.");
-            else if (g == Game.SMASH4)
-                games.append("Smash 4");
-            games.append("\n");
+        if (_user.getGames() == null || _user.getGames().size() == 0)
+            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
+        else {
+            for (Game g : _user.getGames()) {
+                games.append("\t\t\t\t");
+                if (g.equals(Game.SSB64))
+                    games.append(getString(R.string.ssb64));
+                else if (g.equals(Game.MELEE))
+                    games.append(getString(R.string.melee));
+                else if (g.equals(Game.BRAWL))
+                    games.append(getString(R.string.brawl));
+                else if (g.equals(Game.PM))
+                    games.append(getString(R.string.pm));
+                else if (g.equals(Game.SMASH4))
+                    games.append(getString(R.string.smash4));
+                games.append("\n");
+            }
+            games.delete(games.length() - 1, games.length());
         }
-        if (_user.getGames().size() == 0)
-            games.append("\t\t\t\t(none)\n");
-        games.delete(games.length() - 1, games.length());
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         StringBuilder bio = new StringBuilder();
         bio.append(getString(R.string.bio) + "\n\t\t\t\t");
-        bio.append(_user.getBlurb());
+        if (_user.getBlurb() != null)
+            bio.append(_user.getBlurb());
+        else
+            bio.append("(N/A)");
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         StringBuilder attendingEvents = new StringBuilder();
         attendingEvents.append("Attending events\n");
-        if (_user.getEvents() == null)
+        if (_user.getEvents() == null || _user.getEvents().size() == 0)
             attendingEvents.append("\t\t\t\tNot attending anything.");
         else {
             for (Event e : _user.getEvents())
@@ -129,7 +147,7 @@ public class ProfileActivity extends Activity {
             final boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
 
             final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
-            leftCaption.setText(getString(inCircle ? R.string.remove_from_circle : R.string.add_to_circle));
+            leftCaption.setText(getString(inCircle ? R.string.uncircle : R.string.add_to_circle));
             final ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(inCircle ? R.drawable.red_x : R.drawable.green_plus);
             lb.setOnClickListener(new View.OnClickListener() {
@@ -145,11 +163,11 @@ public class ProfileActivity extends Activity {
                     } else {
                         circle.add(_user);
                         lb.setImageResource(R.drawable.red_x);
-                        leftCaption.setText(getString(R.string.remove_from_circle));
+                        leftCaption.setText(getString(R.string.uncircle));
                     }
 
                     cur.setFriends(circle);
-                    DataManager.updateCurUser(cur);
+//                    DataManager.updateCurUser(cur); create async task to do this
                 }
             });
 
@@ -162,17 +180,6 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message));
-
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_search);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Create new message
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
-
         }
         else {
 
@@ -195,18 +202,41 @@ public class ProfileActivity extends Activity {
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
-
-            ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
-            rb.setImageResource(R.drawable.orange_search);
-            rb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Create new message
-                }
-            });
-            ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
         }
 
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(_context, android.R.layout.simple_list_item_1);
+        List<User> circle = _user.getFriends();
+        List<String> circleNames = new ArrayList<>();
+        if (circle != null)
+            for (int i = 0; i < circle.size(); i++)
+                circleNames.add(circle.get(i).getUsername());
+        adapter.addAll(circleNames);
+
+        ImageButton rb = (ImageButton) findViewById(R.id.eu_button_right);
+        rb.setImageResource(R.drawable.orange_search);
+        rb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder adb = new AlertDialog.Builder(_context);
+                adb
+                        .setTitle("Circle")
+                        .setCancelable(true)
+                        .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setNeutralButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                adb.create().show();
+            }
+        });
+        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
     }
 
     public void goBack(View view) {
@@ -227,14 +257,23 @@ public class ProfileActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
 
-                // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                 StringEntity body = new StringEntity(om.writeValueAsString(template));
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("getUser url: " + url.toString());
+                System.out.println("status code: " + response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -249,13 +288,13 @@ public class ProfileActivity extends Activity {
 
         @Override
         protected Void doInBackground(User... params) {
-
             getUser(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (u != null) {
                 _user = u;
                 fillDetails();
