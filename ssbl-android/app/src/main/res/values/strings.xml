@@ -49,6 +49,7 @@
     <string name="set_mood">Set mood</string>
     <string name="add_to_circle">Add to circle</string>
     <string name="remove_from_circle">Remove from circle</string>
+    <string name="uncircle">Uncircle</string>
     <string name="friends">Friends</string>
     <string name="nearby_users">Nearby users</string>
     <string name="message">Message</string>
@@ -116,6 +117,7 @@
     <string name="smash4">Smash 4</string>
 
     <!-- Miscellaneous -->
+    <string name="none">none</string>
     <string name="tip_fedora">Tip fedora</string>
     <string name="mlady">M\'lady</string>
     <string name="sww_error">Something went wrong :(</string>

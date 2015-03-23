@@ -56,6 +56,9 @@
         <activity
             android:name=".android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme" />
+        <activity
+            android:name=".android.activities.EditEventMapActivity"
+            android:theme="@android:style/Theme.Holo.Dialog" />
     </application>
 
     <!-- For Google Maps -->

@@ -18,7 +18,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -129,7 +131,7 @@ public class ProfileActivity extends Activity {
             final boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
 
             final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
-            leftCaption.setText(getString(inCircle ? R.string.remove_from_circle : R.string.add_to_circle));
+            leftCaption.setText(getString(inCircle ? R.string.uncircle : R.string.add_to_circle));
             final ImageButton lb = (ImageButton) findViewById(R.id.eu_button_left);
             lb.setImageResource(inCircle ? R.drawable.red_x : R.drawable.green_plus);
             lb.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +147,7 @@ public class ProfileActivity extends Activity {
                     } else {
                         circle.add(_user);
                         lb.setImageResource(R.drawable.red_x);
-                        leftCaption.setText(getString(R.string.remove_from_circle));
+                        leftCaption.setText(getString(R.string.uncircle));
                     }
 
                     cur.setFriends(circle);
@@ -227,14 +229,23 @@ public class ProfileActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
 
-                // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                 StringEntity body = new StringEntity(om.writeValueAsString(template));
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("getUser url: " + url.toString());
+                System.out.println("status code: " + response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -249,7 +260,6 @@ public class ProfileActivity extends Activity {
 
         @Override
         protected Void doInBackground(User... params) {
-
             getUser(params[0]);
             return null;
         }

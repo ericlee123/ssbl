@@ -18,7 +18,9 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,8 +59,10 @@ public class EventActivity extends Activity {
         }
 
         try {
+            System.out.println("before json");
             String eventJson = getIntent().getStringExtra("event_json");
             Event e = new ObjectMapper().readValue(eventJson, Event.class);
+            System.out.println("here");
             new HttpEventGetter().execute(e);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
@@ -74,27 +78,37 @@ public class EventActivity extends Activity {
         // Fill in the deets
         ((ImageView) findViewById(R.id.eu_cover_photo)).setImageResource(R.drawable.md_blue_black_x);
         ((ImageView) findViewById(R.id.eu_icon)).setImageResource(R.drawable.red_explosion);
-        ((TextView) findViewById(R.id.eu_title)).setText(_event.getTitle());
-        ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " " + _event.getHost().getUsername());
+        if (_event.getTitle() != null)
+            ((TextView) findViewById(R.id.eu_title)).setText(_event.getTitle());
+
+        if (_event.getHost() != null)
+            ((TextView) findViewById(R.id.eu_subtitle)).setText(getString(R.string.hosted_by) + " " + _event.getHost().getUsername());
+        else {
+            Toast.makeText(_context, "This event does not have a host....weird", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         StringBuilder games = new StringBuilder();
         games.append(getString(R.string.games) + "\n");
-        for (Game g: _event.getGames()) {
-            games.append("\t\t\t\t");
-            if (g.equals(Game.SSB64))
-                games.append("Smash 64");
-            else if (g.equals(Game.MELEE))
-                games.append("Melee");
-            else if (g.equals(Game.BRAWL))
-                games.append("Brawl");
-            else if (g.equals(Game.PM))
-                games.append("Project M.");
-            else if (g.equals(Game.SMASH4))
-                games.append("Smash 4");
-            games.append("\n");
-        }
-        if (games.length() != 0)
+        if (_event.getGames() != null) {
+            for (Game g : _event.getGames()) {
+                games.append("\t\t\t\t");
+                if (g.equals(Game.SSB64))
+                    games.append(getString(R.string.ssb64));
+                else if (g.equals(Game.MELEE))
+                    games.append(getString(R.string.melee));
+                else if (g.equals(Game.BRAWL))
+                    games.append(getString(R.string.brawl));
+                else if (g.equals(Game.PM))
+                    games.append(getString(R.string.pm));
+                else if (g.equals(Game.SMASH4))
+                    games.append(getString(R.string.smash4));
+                games.append("\n");
+            }
             games.delete(games.length() - 1, games.length());
+        }
+        else
+            games.append("\t\t\t\t(" + getString(R.string.none) + ")");
         ((TextView) findViewById(R.id.eu_games)).setText(games.toString());
 
         // set time description
@@ -102,26 +116,40 @@ public class EventActivity extends Activity {
         time.setVisibility(View.VISIBLE);
 
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date start = new Date(_event.getStartTime());
-        Date end = new Date(_event.getEndTime());
-        String startFormatted = formatter.format(start);
-        String endFormatted = formatter.format(end);
         StringBuilder timeString = new StringBuilder();
-        timeString.append(getString(R.string.start_time) + " - " + startFormatted + "\n");
-        timeString.append(getString(R.string.end_time) + " - " + endFormatted);
+        timeString.append(getString(R.string.start_time) + " - ");
+        if (_event.getStartTime() != null) {
+            Date start = new Date(_event.getStartTime());
+            String startFormatted = formatter.format(start);
+            timeString.append(startFormatted);
+        }
+        else
+            timeString.append("(N/A)");
+        timeString.append("\n");
 
+        timeString.append(getString(R.string.end_time) + " - ");
+        if (_event.getEndTime() != null) {
+            Date end = new Date(_event.getEndTime());
+            String endFormatted = formatter.format(end);
+            timeString.append(endFormatted);
+        }
+        else
+            timeString.append("(N/A)");
         time.setText(timeString.toString());
 
         // set description
         StringBuilder description = new StringBuilder();
         description.append(getString(R.string.description) + "\n\t\t\t\t");
-        description.append(_event.getDescription());
+        if (_event.getDescription() != null)
+            description.append(_event.getDescription());
+        else
+            description.append("(N/A)");
         ((TextView) findViewById(R.id.eu_description)).setText(description.toString());
 
         // set attendance list
         StringBuilder attendance = new StringBuilder();
         attendance.append(getString(R.string.whos_going) + "\n");
-        if (_event.getUsers() == null)
+        if (_event.getUsers() == null || _event.getUsers().size() == 0)
             attendance.append("\t\t\t\tNo one is going to this event");
         else {
             for (User u : _event.getUsers())
@@ -242,14 +270,23 @@ public class EventActivity extends Activity {
                 HttpPost request = new HttpPost(url.toString());
 
                 request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
 
-                // encode the user template into the request
                 ObjectMapper om = new ObjectMapper();
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                 StringEntity body = new StringEntity(om.writeValueAsString(template));
+                body.setContentType("application/json");
                 request.setEntity(body);
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("getEvent url: " + url.toString());
+                System.out.println("status code: " + response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;

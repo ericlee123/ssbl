@@ -40,7 +40,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
     private View _view;
     private static GoogleMap _map;
     private GoogleApiClient _googleApiClient;
-    private LatLng _curLoc;
+    private static LatLng _curLoc;
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     public static List<Event> _nearbyEvents = new ArrayList<>();
@@ -162,6 +162,10 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
             displayElements();
         }
+    }
+
+    public static LatLng getCurLoc() {
+        return _curLoc;
     }
 
     public void displayElements() {

@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,7 +102,11 @@ public class EditEventActivity extends Activity {
     }
 
     public void setLocationMap(View view) {
-        // Open the interactive map
+        startActivity(new Intent(this, EditEventMapActivity.class));
+    }
+
+    public static void setLocation(LatLng loc) {
+
     }
 
     public void setLocationAddress(View view) {
