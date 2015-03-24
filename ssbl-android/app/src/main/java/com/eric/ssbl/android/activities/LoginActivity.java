@@ -218,17 +218,24 @@ public class LoginActivity extends Activity {
     }
 
     private void initiateApp() {
-        // set the current user in the general manager
-        if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
-            rememberMe();
-        else
-            _loginFile.delete();
 
-        startService(new Intent(this, MessagingService.class));
+        _loading = ProgressDialog.show(_context, "Initializing data...", "Almost there, chill", true);
 
-        new DataManager().initNearby(this);
-        DataManager.initSettings(getFilesDir());
-        DataManager.refreshConversations();
+        new AppInitializer().execute();
+
+//        if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
+//            rememberMe();
+//        else
+//            _loginFile.delete();
+//
+//        DataManager.httpUpdateCurUser(DataManager.getCurUser());
+//        new DataManager().initLocationData(getApplicationContext());
+//        DataManager.initSettings(getFilesDir());
+//        DataManager.refreshConversations();
+//
+//        startService(new Intent(this, MessagingService.class));
+//
+//        goToMain();
     }
 
     public void goToMain() {
@@ -271,9 +278,6 @@ public class LoginActivity extends Activity {
                 request.addHeader("username", login.getName());
                 request.addHeader("password", login.getValue());
 
-
-                System.out.println(login.getValue());
-
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
@@ -313,14 +317,12 @@ public class LoginActivity extends Activity {
             _loading.dismiss();
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
-                DataManager.setCurUser(curUser); // Synchronizing issues
-//                DataManager.httpUpdateCurUser(curUser);
+                DataManager.setCurUser(curUser);
                 initiateApp();
             }
             else {
                 if (errorMessage == null)
                     errorMessage = "Something unexpected happened...";
-
                 Toast.makeText(_context, errorMessage, Toast.LENGTH_LONG).show();
             }
         }
@@ -387,6 +389,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (curUser != null) {
                 DataManager.setCurUser(curUser);
                 initiateApp();
@@ -394,10 +397,36 @@ public class LoginActivity extends Activity {
             else {
                 if (errorMessage == null)
                     errorMessage = "Something unexpected occurred";
-
-                _loading.dismiss();
                 Toast.makeText(_context, errorMessage, Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private class AppInitializer extends AsyncTask<Void, Void, Void> {
+
+        private void initiateData() {
+            if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
+                rememberMe();
+            else
+                _loginFile.delete();
+
+            DataManager.httpUpdateCurUser(DataManager.getCurUser());
+            new DataManager().initLocationData(getApplicationContext());
+            DataManager.initSettings(getFilesDir());
+            DataManager.refreshConversations();
+
+            startService(new Intent(_context, MessagingService.class));
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            initiateData();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            goToMain();
         }
     }
 }

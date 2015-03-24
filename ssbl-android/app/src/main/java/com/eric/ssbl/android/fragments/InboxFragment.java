@@ -52,6 +52,8 @@ public class InboxFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         final List<User> relevantUsers = new ArrayList<>();
         List<User> nearbyTemp = DataManager.getNearbyUsers();
         relevantUsers.addAll(DataManager.getCurUser().getFriends());
@@ -136,13 +138,8 @@ public class InboxFragment extends ListFragment {
             }
         });
 
-        if (!_refreshed) {
-            _conversations = DataManager.getCurUser().getConversations();
-            if (_conversations != null)
-                setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
-            else
-                Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
-        }
+        if (!_refreshed)
+            refresh();
 
         return _view;
     }
@@ -155,6 +152,15 @@ public class InboxFragment extends ListFragment {
         b.putInt("conversation_index", position);
         i.putExtras(b);
         startActivity(i);
+    }
+
+    public void refresh() {
+        _refreshed = true;
+        _conversations = DataManager.getCurUser().getConversations();
+        if (_conversations != null)
+            setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
+        else
+            Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
     }
 
     public static void makeRefresh() {

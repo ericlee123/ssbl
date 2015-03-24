@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    private View _view;
+    private static View _view;
     private static boolean _refreshed = false;
     private static User _user;
 
