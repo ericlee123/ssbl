@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.eric.ssbl.android.activities.ConversationActivity;
-import com.eric.ssbl.android.activities.LoginActivity;
-import com.eric.ssbl.android.activities.MainActivity;
+import com.eric.ssbl.android.fragments.ChartFragment;
+import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
+import com.eric.ssbl.android.fragments.ProfileFragment;
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -54,14 +56,63 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     ///////////////////////////////////////////////////
     // General stuff
     ///////////////////////////////////////////////////
-    private static boolean _refreshing = false;
+    private static ChartFragment _chartFragment;
+    private static ProfileFragment _profileFragment;
+    private static InboxFragment _inboxFragment;
+//    private static NotificationsFragment _notificationsFragment;
+    private static EventListFragment _eventListFragment;
 
-    public static void refreshEverything() {
-        if (!_refreshing) {
-            new DataManager().refreshCurLoc();
-            refreshConversations();
-        }
-        _refreshing = true;
+    public static void setChartFragment(ChartFragment cf) {
+        _chartFragment = cf;
+    }
+
+    public static void setProfileFragment(ProfileFragment pf) {
+        _profileFragment = pf;
+    }
+
+    public static void setInboxFragment(InboxFragment inboxFragment) {
+        _inboxFragment = inboxFragment;
+    }
+
+//    public static void setNotificationsFragment(NotificationsFragment nf) {
+//        _notificationsFragment = nf;
+//    }
+
+    public static void setEventListFragment(EventListFragment elf) {
+        _eventListFragment = elf;
+    }
+
+    public static ChartFragment getChartFragment() {
+        return _chartFragment;
+    }
+
+    public static ProfileFragment getProfileFragment() {
+        return _profileFragment;
+    }
+
+    public static InboxFragment getInboxFragment() {
+        return _inboxFragment;
+    }
+
+//    public static ChartFragment getNotificationsFragment() {
+//        return _notificationsFragment;
+//    }
+
+    public static EventListFragment getEventListFragment() {
+        return _eventListFragment;
+    }
+
+    public static void refreshFragments() {
+        if (_chartFragment != null)
+            _chartFragment.refresh();
+        if (_profileFragment != null)
+            _profileFragment.refresh();
+        if (_inboxFragment != null)
+            _inboxFragment.refresh();
+//        if (_notificationsFragment != null)
+//            _notificationsFragment.refresh();
+        if (_eventListFragment != null)
+            _eventListFragment.refresh();
     }
 
     public static void clearData() {
@@ -152,8 +203,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     ////////////////////////////////////////////////////////
     // Relevant users and events
-    ////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////////////
     public static void setNearbyUsers(List<User> nearbyUsers) {
         if (nearbyUsers == null)
             return;
@@ -328,7 +378,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 _conversationMap.get(m.getConversation()).add(0, m);
         }
 
-        InboxFragment.makeRefresh();
+        if (_inboxFragment != null)
+            _inboxFragment.refresh();
         if (_openConversation != null) {
             _openConversation.showMessages();
         }
@@ -515,8 +566,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // Nearby users and events
     ////////////////////////////////////////////////////////
     private static Context _appContext;
-    private LoginActivity _la;
     private static GoogleApiClient _googleApiClient;
+    private static LatLng _curLoc;
 
     public void initLocationData(Context appContext) {
         _appContext = appContext;
@@ -551,29 +602,40 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     /**
      * This should always be called from an aysnc task.
      */
-    private void refreshCurLoc() {
+    public void refreshCurLoc() {
 
         if (_googleApiClient == null)
             buildGoogleApiClient();
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
-            LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
-            new HttpNearbyHostingFetcher().execute(loc);
+            _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
+
+            if (_curUser != null) {
+                _curUser.setLastLocationTime(System.currentTimeMillis());
+                Location l;
+                // create new location object?
+                if (_curUser.getLocation() == null)
+                    l = new Location();
+                else
+                    l = _curUser.getLocation();
+                l.setLatitude(here.getLatitude());
+                l.setLongitude(here.getLongitude());
+                _curUser.setLocation(l);
+            }
+
+            new HttpNearbyHostingFetcher().execute(_curLoc);
         }
     }
 
-    private void initRefreshCallback() {
-        if (_refreshing) {
-            _refreshing = false;
-            MainActivity.refreshFragments();
-        } else
-            _la.goToMain();
+    public static LatLng getCurLoc() {
+        return _curLoc;
     }
 
     private class HttpNearbyHostingFetcher extends AsyncTask<LatLng, Void, Void> {
         @Override
         protected Void doInBackground(LatLng... params) {
+            httpUpdateCurUser(_curUser);
             fetchNearbyUsers(params[0]);
             fetchNearbyEvents(params[0]);
             fetchHostingEvents();
@@ -582,7 +644,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     private void fetchNearbyUsers(LatLng loc) {
-        System.out.println("here: " + loc.latitude);
         List<User> nearbyUsers;
 
         // get the users

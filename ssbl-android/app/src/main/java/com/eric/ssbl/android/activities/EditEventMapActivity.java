@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.eric.ssbl.R;
-import com.eric.ssbl.android.fragments.ChartFragment;
+import com.eric.ssbl.android.managers.DataManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -35,7 +35,7 @@ public class EditEventMapActivity extends Activity {
         if (_loc != null)
             _map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(_loc.latitude, _loc.longitude), 15));
         else
-            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(ChartFragment.getCurLoc(), 15));
+            _map.moveCamera(CameraUpdateFactory.newLatLngZoom(DataManager.getCurLoc(), 15));
     }
 
     public void setLocation(View view) {

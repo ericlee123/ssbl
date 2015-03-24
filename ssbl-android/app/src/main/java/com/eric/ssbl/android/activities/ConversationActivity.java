@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
-import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
@@ -85,7 +84,7 @@ public class ConversationActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         DataManager.setOpenConversationActivity(null);
-        InboxFragment.makeRefresh();
+        DataManager.getInboxFragment().refresh();
     }
 
     public void showMessages() {

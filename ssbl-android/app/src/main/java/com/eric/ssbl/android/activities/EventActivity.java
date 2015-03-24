@@ -350,7 +350,8 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            MainActivity.refreshFragments();
+            if (DataManager.getEventListFragment() != null)
+                DataManager.getEventListFragment().refresh();
             finish();
         }
     }

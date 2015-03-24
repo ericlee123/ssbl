@@ -27,22 +27,26 @@ import java.util.List;
 public class ProfileFragment extends Fragment {
 
     private static View _view;
-    private static boolean _refreshed = false;
     private static User _user;
+    private static boolean _refreshed;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        System.out.println("onCreateView called");
+        DataManager.setProfileFragment(this);
 
         _view = inflater.inflate(R.layout.fragment_eu, container, false);
 
-        if (!_refreshed) {
-            _user = DataManager.getCurUser();
-            fillDetails();
-        }
+        if (!_refreshed)
+            refresh();
 
         return _view;
+    }
+
+    public void refresh() {
+        _refreshed = true;
+        _user = DataManager.getCurUser();
+        fillDetails();
     }
 
     private void fillDetails() {
@@ -156,12 +160,8 @@ public class ProfileFragment extends Fragment {
         ((TextView) _view.findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_circle));
     }
 
-    public static void makeRefresh() {
-        _refreshed = false;
-    }
-
     public static void clearData() {
-        makeRefresh();
+        _refreshed = false;
         _user = null;
     }
 }

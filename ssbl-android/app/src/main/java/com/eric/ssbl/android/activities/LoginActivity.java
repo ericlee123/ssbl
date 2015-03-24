@@ -410,7 +410,6 @@ public class LoginActivity extends Activity {
             else
                 _loginFile.delete();
 
-            DataManager.httpUpdateCurUser(DataManager.getCurUser());
             new DataManager().initLocationData(getApplicationContext());
             DataManager.initSettings(getFilesDir());
             DataManager.refreshConversations();

@@ -23,17 +23,22 @@ public class NotificationsFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (!_refreshed) {
-            _refreshed = true;
-            _notifs = DataManager.getCurUser().getNotifications();
-            if (_notifs != null)
-                setListAdapter(new NotificationArrayAdapter(getActivity(), _notifs));
-            else
-                Toast.makeText(getActivity(), "Error retrieving notifications", Toast.LENGTH_SHORT).show();
-        }
+//        DataManager.setNotificationsFragment(this);
+
+        if (!_refreshed)
+            refresh();
 
         View v = inflater.inflate(R.layout.fragment_notifications, container, false);
         return v;
+    }
+
+    public void refresh() {
+        _refreshed = true;
+        _notifs = DataManager.getCurUser().getNotifications();
+        if (_notifs != null)
+            setListAdapter(new NotificationArrayAdapter(getActivity(), _notifs));
+        else
+            Toast.makeText(getActivity(), "Error retrieving notifications", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -42,12 +47,9 @@ public class NotificationsFragment extends ListFragment {
         // figure out type and stuff
     }
 
-    public static void makeRefresh() {
-        _refreshed = false;
-    }
 
     public static void clearData() {
-        makeRefresh();
+        _refreshed = false;
         if (_notifs != null)
             _notifs.clear();
     }

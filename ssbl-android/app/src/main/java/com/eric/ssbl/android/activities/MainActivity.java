@@ -1,11 +1,12 @@
 package com.eric.ssbl.android.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
@@ -20,6 +21,8 @@ import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
 import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 public class MainActivity extends MaterialNavigationDrawer {
+
+    private ProgressDialog _loading;
 
     @Override
     public void init(Bundle bundle) {
@@ -51,8 +54,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         Intent intent;
         switch (id) {
             case R.id.action_refresh:
-                Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show();
-                DataManager.refreshEverything();
+                _loading = ProgressDialog.show(this, "Refreshing...", "Just sit back and relax ;)", true);
+                new EverythingRefresher().execute();
                 break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -81,12 +84,23 @@ public class MainActivity extends MaterialNavigationDrawer {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public static void refreshFragments() {
-        ChartFragment.makeRefresh();
-        ProfileFragment.makeRefresh();
-        NotificationsFragment.makeRefresh();
-        InboxFragment.makeRefresh();
+    private class EverythingRefresher extends AsyncTask<Void, Void, Void> {
 
-        DataManager.refreshConversations();
+        private void doStuff() {
+            new DataManager().refreshCurLoc();
+            DataManager.refreshConversations();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            doStuff();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            DataManager.refreshFragments();
+            _loading.dismiss();
+        }
     }
 }

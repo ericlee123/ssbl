@@ -52,8 +52,6 @@ public class InboxFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         final List<User> relevantUsers = new ArrayList<>();
         List<User> nearbyTemp = DataManager.getNearbyUsers();
         relevantUsers.addAll(DataManager.getCurUser().getFriends());
@@ -129,6 +127,8 @@ public class InboxFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        DataManager.setInboxFragment(this);
+
         View _view = inflater.inflate(R.layout.fragment_inbox, container, false);
         ImageButton createMessage = (ImageButton) _view.findViewById(R.id.new_message);
         createMessage.setOnClickListener(new View.OnClickListener() {
@@ -163,12 +163,8 @@ public class InboxFragment extends ListFragment {
             Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
     }
 
-    public static void makeRefresh() {
-        _refreshed = false;
-    }
-
     public static void clearData() {
-        makeRefresh();
+        _refreshed = false;
         if (_conversations != null)
             _conversations.clear();
     }
