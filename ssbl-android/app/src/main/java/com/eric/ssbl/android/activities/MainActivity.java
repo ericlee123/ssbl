@@ -31,14 +31,14 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());
         MaterialSection profile = newSection(getString(R.string.profile), new ProfileFragment());
         MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
-        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
+//        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
         MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
 
         // divisor
 
         this.addSection(map);
         this.addSection(profile);
-        this.addSection(notifs);
+//        this.addSection(notifs);
         this.addSection(inbox);
         this.addSection(events);
 
@@ -65,8 +65,6 @@ public class MainActivity extends MaterialNavigationDrawer {
                 NotificationsFragment.clearData();
                 ProfileFragment.clearData();
 
-                DataManager.setAppActive(false);
-
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 finish();
@@ -88,6 +86,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         ProfileFragment.makeRefresh();
         NotificationsFragment.makeRefresh();
         InboxFragment.makeRefresh();
-        EventListFragment.makeRefresh();
+
+        DataManager.refreshConversations();
     }
 }

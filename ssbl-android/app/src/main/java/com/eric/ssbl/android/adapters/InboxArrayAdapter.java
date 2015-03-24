@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Conversation;
+import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 
 import java.util.Iterator;
@@ -48,12 +49,16 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
 
         title.setText(titleText.toString());
 
-//        StringBuilder previewText = new StringBuilder();
-//        Message last = c.getMessages().get(c.getMessages().size() - 1);
-//        if (last.getSender().equals(DataManager.getCurUser()))
-//            previewText.append("You: ");
-//        previewText.append(last.getBody());
-//        preview.setText(previewText.toString());
+        List<Message> lm = DataManager.getConversationMap().get(_conversations.get(position));
+        if (lm != null && lm.size() > 0)
+            preview.setText(lm.get(0).getBody());
+        else {
+            StringBuilder blah = new StringBuilder();
+            int rand = (int) (Math.random() * 4) + 1;
+            for (int j = 0; j < rand; j++)
+                blah.append("blah ");
+            preview.setText(blah.toString());
+        }
 
         return singleConversation;
     }

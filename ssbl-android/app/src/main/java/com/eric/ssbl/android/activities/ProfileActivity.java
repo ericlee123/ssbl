@@ -236,7 +236,7 @@ public class ProfileActivity extends Activity {
                 adb.create().show();
             }
         });
-        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_friends));
+        ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_circle));
     }
 
     public void goBack(View view) {

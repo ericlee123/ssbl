@@ -4,8 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import com.eric.ssbl.android.activities.ConversationActivity;
 import com.eric.ssbl.android.activities.LoginActivity;
 import com.eric.ssbl.android.activities.MainActivity;
+import com.eric.ssbl.android.fragments.InboxFragment;
+import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
@@ -35,11 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
-    private static String _serverURL = "http://10.148.130.20:8080/ssbl-server/smash";
-//    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
+    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server-2.0/smash";
+//    private static String _serverURL = "http://10.148.130.20:8080/ssbl-server-2.0/smash";
+    //    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
@@ -50,9 +53,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // General stuff
     ///////////////////////////////////////////////////
     private static boolean _refreshing = false;
+
     public static void refreshEverything() {
-        if (!_refreshing)
+        if (!_refreshing) {
             new DataManager().refreshCurLoc();
+            refreshConversations();
+        }
         _refreshing = true;
     }
 
@@ -65,6 +71,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _nearbyEvents.clear();
         _hostingEvents.clear();
     }
+
     public static String getServerUrl() {
         return _serverURL;
     }
@@ -85,6 +92,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
      * to the server. If the post is unsuccessful, the current user is reverted
      * back to normal. Returns the user object response from the server, otherwise
      * null if the request failed.
+     *
      * @param updated the updated current user
      * @return the result
      */
@@ -135,9 +143,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _curUser = (result != null) ? result : backup;
         return result;
     }
-
-
-
 
 
     ////////////////////////////////////////////////////////
@@ -224,16 +229,16 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (result != null) {
             // Update locally
             Event backup = _eventIdMap.get(updated.getEventId());
-//        List<Event> oldList = _curUser.getEvents();              uncomment these later
+            List<Event> oldList = _curUser.getEvents();
 
             if (backup != null) {
                 _nearbyEvents.remove(backup);
                 _hostingEvents.remove(backup);
-//            oldList.remove(old);
+                oldList.remove(backup);
             }
 
             _hostingEvents.add(result);
-//        oldList.add(updated);
+            oldList.add(result);
             _eventIdMap.put(result.getEventId(), result);
         }
         return result;
@@ -286,30 +291,95 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     ///////////////////////////////////////////
     // Conversations
     /////////////////////////////////////////////
-    private static List<String> _conversationPreviews;
+    private static HashMap<Conversation, List<Message>> _conversationMap;
+    private static ConversationActivity _openConversation;
 
-    public static void initConversationPreviews() {
-        _conversationPreviews = new ArrayList<>();
+    public static void refreshConversations() {
+        List<Conversation> empties = _curUser.getConversations();
+        _conversationMap = new HashMap<>();
+        for (int i = 0; i < empties.size(); i++)
+            _conversationMap.put(empties.get(i), new ArrayList<Message>());
         new HttpConversationPreviewer().execute();
     }
 
-    public static List<String> getConversationPreviews() {
-        return _conversationPreviews;
+    public static void setOpenConversationActivity(ConversationActivity open) {
+        _openConversation = open;
+    }
+
+    public static ConversationActivity getOpenConversationActivity() {
+        return _openConversation;
+    }
+
+    public static void addNewMessages(List<Message> messageList) {
+
+        for (Message m : messageList)
+            _conversationMap.get(m.getConversation()).add(m);
+
+        InboxFragment.makeRefresh();
+        if (_openConversation != null) {
+            _openConversation.showMessages();
+        }
+    }
+
+    public static HashMap<Conversation, List<Message>> getConversationMap() {
+        return _conversationMap;
+    }
+
+    public static List<Message> httpFetchConversation(Conversation c) {
+
+        // get the users
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/messaging");
+        url.append("/" + DataManager.getCurUser().getUsername());
+        url.append("/" + DataManager.getCurUser().getUserId());
+        url.append("/" + c.getConversationId());
+        url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
+        url.append("&additional=" + 40);
+
+        List<Message> lm;
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            if (jsonString.length() == 0)
+                return null;
+
+            System.out.println("fetch_conversation");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            ObjectMapper om = new ObjectMapper();
+            lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+
+            for (int i = lm.size() - 1; i > 0; i -= 2)
+                lm.remove(i);
+        } catch (Exception e) {
+            lm = null;
+            e.printStackTrace();
+        }
+
+        if (lm != null)
+            _conversationMap.get(c).addAll(lm);
+        return lm;
     }
 
     private static class HttpConversationPreviewer extends AsyncTask<Void, Void, Void> {
 
-        private List<String> cp = new ArrayList<>();
-
         private void fetchPreviews() {
 
-            for (int i = 0; i < getCurUser().getConversations().size(); i++) {
+            for (Conversation c : _conversationMap.keySet()) {
                 // get the users
                 StringBuilder url = new StringBuilder(DataManager.getServerUrl());
                 url.append("/messaging");
                 url.append("/" + getCurUser().getUsername());
                 url.append("/" + getCurUser().getUserId());
-                url.append("/" + i);
+                url.append("/" + c.getConversationId());
                 url.append("?size=0");
                 url.append("&additional=1");
 
@@ -327,9 +397,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
                     ObjectMapper om = new ObjectMapper();
                     List<Message> lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
-                    cp.add(i, lm.get(0).getBody());
+                    _conversationMap.put(c, lm);
                 } catch (Exception e) {
-                    cp = null;
                     e.printStackTrace();
                 }
             }
@@ -343,14 +412,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         @Override
         protected void onPostExecute(Void what) {
-            if (cp != null)
-                _conversationPreviews = cp;
+            InboxFragment.makeRefresh();
         }
     }
-
-
-
-
 
 
     ////////////////////////////////////////////////
@@ -441,7 +505,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
 
-
     /**
      * This section initializes data of nearby users and events for the ChartFragment.
      */
@@ -471,7 +534,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult arg0) { }
+    public void onConnectionFailed(ConnectionResult arg0) {
+    }
 
     @Override
     public void onConnectionSuspended(int arg0) {
@@ -494,8 +558,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (_refreshing) {
             _refreshing = false;
             MainActivity.refreshFragments();
-        }
-        else
+        } else
             _la.goToMain();
     }
 
@@ -530,7 +593,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
+                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {
+                });
 
             } catch (Exception e) {
                 nearbyUsers = null;
@@ -559,7 +623,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                     return;
 
                 ObjectMapper om = new ObjectMapper();
-                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
+                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {
+                });
             } catch (Exception e) {
                 nearbyEvents = null;
                 e.printStackTrace();
@@ -596,7 +661,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 if (jsonString.length() == 0)
                     return;
 
-                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
+                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {
+                });
             } catch (Exception exc) {
                 hostingEvents = null;
                 exc.printStackTrace();
@@ -617,28 +683,5 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             setHostingEvents(hostingEvents);
             initRefreshCallback();
         }
-    }
-
-
-    /**
-     * Methods for MessagingService
-     */
-    private static boolean _accountActive = false;
-    private static boolean _appActive = false;
-
-    public static void setAccountActive(boolean active) {
-        _accountActive = active;
-    }
-
-    public static boolean isAccountActive() {
-        return _accountActive;
-    }
-
-    public static void setAppActive(boolean active) {
-        _appActive = active;
-    }
-
-    public static boolean isAppActive() {
-        return _appActive;
     }
 }

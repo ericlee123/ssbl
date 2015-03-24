@@ -58,9 +58,6 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("start service");
-        startService(new Intent(getBaseContext(), MessagingService.class));
-
         _loginFile = new File(getFilesDir(), "yummy.hunnymustard");
 
         // Remove title bar
@@ -113,9 +110,6 @@ public class LoginActivity extends Activity {
     }
 
     public void loginAccount(View view) {
-
-//        startActivity(new Intent(this, EditEventActivity.class));
-//        return;
 
         _loading = ProgressDialog.show(this, getString(R.string.logging_in), getString(R.string.chill_out), true);
 
@@ -196,6 +190,16 @@ public class LoginActivity extends Activity {
                         u.setLastMessageTime(System.currentTimeMillis());
                         u.setGames(new ArrayList<Game>());
                         u.setEvents(new ArrayList<Event>());
+
+//                        List<Notification> temp = new ArrayList<>();
+//                        Notification n = new Notification();
+//                        n.setMessage("Welcome to Super Smash Bros. Locator!");
+//                        n.setSendTime(System.currentTimeMillis());
+//                        n.setReceiver(u);
+//                        n.setType(Notification.Type.SYSTEM);
+//                        temp.add(n);
+//                        u.setNotifications(temp);
+
                         u.setNotifications(new ArrayList<Notification>());
                         u.setFriends(new ArrayList<User>());
                         u.setConversations(new ArrayList<Conversation>());
@@ -214,16 +218,17 @@ public class LoginActivity extends Activity {
     }
 
     private void initiateApp() {
-
         // set the current user in the general manager
         if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
             rememberMe();
         else
             _loginFile.delete();
 
+        startService(new Intent(this, MessagingService.class));
+
         new DataManager().initNearby(this);
         DataManager.initSettings(getFilesDir());
-        DataManager.setAppActive(true);
+        DataManager.refreshConversations();
     }
 
     public void goToMain() {
@@ -266,6 +271,9 @@ public class LoginActivity extends Activity {
                 request.addHeader("username", login.getName());
                 request.addHeader("password", login.getValue());
 
+
+                System.out.println(login.getValue());
+
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
@@ -302,6 +310,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
+            _loading.dismiss();
             if (curUser != null) {
                 curUser.setLastLoginTime(System.currentTimeMillis());
                 DataManager.setCurUser(curUser); // Synchronizing issues
@@ -313,7 +322,6 @@ public class LoginActivity extends Activity {
                     errorMessage = "Something unexpected happened...";
 
                 Toast.makeText(_context, errorMessage, Toast.LENGTH_LONG).show();
-                _loading.dismiss();
             }
         }
     }
@@ -328,7 +336,6 @@ public class LoginActivity extends Activity {
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/auth/register");
 
-            System.out.println("register url: " + url.toString());
             try {
 
                 HttpClient client = new DefaultHttpClient();
@@ -348,6 +355,11 @@ public class LoginActivity extends Activity {
 
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("register");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 500)
@@ -376,7 +388,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             if (curUser != null) {
-                DataManager.httpUpdateCurUser(curUser);
+                DataManager.setCurUser(curUser);
                 initiateApp();
             }
             else {
