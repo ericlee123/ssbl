@@ -44,6 +44,7 @@ public class SearchServiceHibernate implements SearchService {
 			Hibernate.initialize(user.getLocation());
 			Hibernate.initialize(user.getGames());
 			Hibernate.initialize(user.getEvents());
+			Hibernate.initialize(user.getFriends());
 		}
 		return users;
 	}

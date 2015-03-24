@@ -26,7 +26,8 @@ public class AuthServiceHibernate implements AuthService {
 		if(user == null) throw new AuthException();
 		
 		user.setLastLoginTime(System.currentTimeMillis());
-		Hibernate.initialize(user.getEmail());
+		user.setPassword((String) _userRepository.load(User.class, "password", user.getUserId()));
+		user.setEmail((String) _userRepository.load(User.class, "email", user.getUserId()));
 		Hibernate.initialize(user.getLocation());
 		Hibernate.initialize(user.getGames());
 		Hibernate.initialize(user.getNotifications());

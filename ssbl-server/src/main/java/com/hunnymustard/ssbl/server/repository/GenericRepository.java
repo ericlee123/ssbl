@@ -9,4 +9,5 @@ public interface GenericRepository<E, K extends Serializable> {
 	void remove(E entity);
 	E update(E entity);
 	
+	Object load(Class<?> cls, String property, K key);
 }

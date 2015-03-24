@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `test`;
-CREATE DATABASE `test`;
-USE `test`;
+DROP DATABASE IF EXISTS `ssbl-2.0`;
+CREATE DATABASE `ssbl-2.0`;
+USE `ssbl-2.0`;
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (

@@ -3,10 +3,10 @@ package com.hunnymustard.ssbl.server.repository.impl;
 import java.util.Collections;
 import java.util.List;
 
-import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -30,7 +30,7 @@ public class UserRepositoryHibernate extends HibernateRepository<User, Integer> 
 	public User findByCredentials(String username, String password) {
 		return (User) getSession().createCriteria(User.class)
 				.add(Restrictions.eq("username", username))
-				.add(Restrictions.eq("password", password))
+				.add(Restrictions.eq("password", password))				
 				.uniqueResult();
 	}
 	

@@ -21,9 +21,9 @@ public class HttpPostExample {
 
 	public static void main(String[] args) throws ClientProtocolException, IOException {
 		User user = new User();
-		user.setUsername("fucker3");
+		user.setUsername("fucker3345");
 		user.setPassword("passwordpass");
-		user.setEmail("fucke3r@password.com");
+		user.setEmail("fucke3345r@password.com");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
