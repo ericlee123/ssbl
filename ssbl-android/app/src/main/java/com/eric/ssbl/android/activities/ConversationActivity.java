@@ -16,15 +16,15 @@ import android.widget.Toast;
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.adapters.ConversationArrayAdapter;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Message;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -32,16 +32,15 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ConversationActivity extends ListActivity {
 
     private final Context _context = this;
     private ProgressDialog _loading;
-    private List<Message> _conversation;
+    private Conversation _conversation;
     private View _abv;
-    private int _loadedMessages;
-    private int _additionalMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,42 +53,70 @@ public class ConversationActivity extends ListActivity {
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 //        _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
-        if (getIntent().hasExtra("conversation_title"))
-            ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(getIntent().getStringExtra("conversation_title"));
-
-        if (!getIntent().hasExtra("conversation_id")) {
+        if (!getIntent().hasExtra("conversation_index")) {
             Toast.makeText(_context, "Error loading conversation", Toast.LENGTH_LONG).show();
             return;
         }
 
+        DataManager.setOpenConversationActivity(this);
+
+        _conversation = DataManager.getCurUser().getConversations().get(getIntent().getExtras().getInt("conversation_index"));
+
         setContentView(R.layout.activity_conversation);
 
-        _conversation = new ArrayList<>();
+        StringBuilder abTitle = new StringBuilder();
+        Iterator<User> i = _conversation.getRecipients().iterator();
+        while (i.hasNext()) {
+            User temp = i.next();
+            if (!temp.equals(DataManager.getCurUser()))
+                abTitle.append(temp.getUsername() + ", ");
+        }
+        if (abTitle.length() >= 2)
+            abTitle.delete(abTitle.length() - 2, abTitle.length());
+        ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(abTitle.toString());
 
-        _loadedMessages = 0;
-        _additionalMessages = 100;
+        System.out.println("fetch conversations");
         _loading = ProgressDialog.show(this, "Loading conversation...", getString(R.string.chill_out), true);
-        new HttpConversationGetter().execute(getIntent().getExtras().getInt("conversation_id"));
+        new HttpConversationFetcher().execute(_conversation);
     }
 
-    private void showMessages() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DataManager.setOpenConversationActivity(null);
+        DataManager.getInboxFragment().refresh();
+    }
 
-        setListAdapter(new ConversationArrayAdapter(this, _conversation));
-        getListView().setSelection(getListAdapter().getCount() - 1);
+    public void showMessages() {
+        List<Message> lm = DataManager.getConversationMap().get(_conversation);
+        List<Message> reversed = new ArrayList<>();
+        for (int i = lm.size() - 1; i >= 0; i--)
+            reversed.add(lm.get(i));
+
+        if (lm != null) {
+            setListAdapter(new ConversationArrayAdapter(this, reversed));
+            getListView().setSelection(getListAdapter().getCount() - 1);
+        }
     }
 
     public void sendMessage(View view) {
-        // send message in the edit text
+
+        EditText et = (EditText) findViewById(R.id.send_message);
+        if (et.getText().length() == 0) {
+            Toast.makeText(_context, "Save the trees. Don't send blank messages.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Message sending = new Message();
         sending.setSender(DataManager.getCurUser());
         sending.setSentTime(System.currentTimeMillis());
+        sending.setConversation(_conversation);
 
-        EditText et = (EditText) findViewById(R.id.send_message);
         sending.setBody(et.getText().toString());
         et.setText("");
 
+        DataManager.getConversationMap().get(_conversation).add(0, sending);
         new HttpMessageSender().execute(sending);
-        _conversation.add(sending);
         showMessages();
     }
 
@@ -126,62 +153,21 @@ public class ConversationActivity extends ListActivity {
         finish();
     }
 
-    private class HttpConversationGetter extends AsyncTask<Integer, Void, Void> {
+    private class HttpConversationFetcher extends AsyncTask<Conversation, Void, Void> {
 
         private List<Message> lm;
 
-        private void fetchConversation(int id) {
-
-            // get the users
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/messaging");
-            url.append("/" + DataManager.getCurUser().getUsername());
-            url.append("/" + DataManager.getCurUser().getUserId());
-            url.append("/" + id);
-            url.append("?size=" + _loadedMessages);
-            url.append("&additional=" + _additionalMessages);
-
-            System.out.println(url.toString());
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                if (jsonString.length() == 0)
-                    return;
-
-                System.out.println(jsonString);
-                ObjectMapper om = new ObjectMapper();
-                lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
-
-                for (int i = lm.size() - 1; i > 0; i -= 2)
-                    lm.remove(i);
-                System.out.println(lm.size());
-            } catch (Exception e) {
-                lm = null;
-                e.printStackTrace();
-            }
-        }
-
         @Override
-        protected Void doInBackground(Integer... params) {
-            fetchConversation(params[0]);
+        protected Void doInBackground(Conversation... params) {
+            lm = DataManager.httpFetchConversation(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-            if (lm != null) {
-                // Reverse it here
-                for (int i = 0; i < lm.size(); i++)
-                    _conversation.add(lm.get(lm.size() - 1 - i));
+            if (lm != null)
                 showMessages();
-            }
             else
                 Toast.makeText(_context, "Error retrieving messages", Toast.LENGTH_SHORT).show();
         }
@@ -240,11 +226,10 @@ public class ConversationActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(Void what) {
-            _conversation.remove(_conversation.size() - 1);
-            if (message == null)
+            if (message == null) {
+                DataManager.getConversationMap().get(_conversation).remove(DataManager.getConversationMap().get(_conversation).size() - 1);
                 Toast.makeText(_context, "Message not sent", Toast.LENGTH_LONG).show();
-            else
-                _conversation.add(message);
+            }
             showMessages();
         }
     }

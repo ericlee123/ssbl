@@ -1,11 +1,12 @@
 package com.eric.ssbl.android.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.fragments.ChartFragment;
@@ -21,6 +22,8 @@ import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 public class MainActivity extends MaterialNavigationDrawer {
 
+    private ProgressDialog _loading;
+
     @Override
     public void init(Bundle bundle) {
 
@@ -31,14 +34,14 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());
         MaterialSection profile = newSection(getString(R.string.profile), new ProfileFragment());
         MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
-        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
+//        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
         MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
 
         // divisor
 
         this.addSection(map);
         this.addSection(profile);
-        this.addSection(notifs);
+//        this.addSection(notifs);
         this.addSection(inbox);
         this.addSection(events);
 
@@ -51,8 +54,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         Intent intent;
         switch (id) {
             case R.id.action_refresh:
-                Toast.makeText(this, "Refreshing...", Toast.LENGTH_SHORT).show();
-                DataManager.refreshEverything();
+                _loading = ProgressDialog.show(this, "Refreshing...", "Just sit back and relax ;)", true);
+                new EverythingRefresher().execute();
                 break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -64,8 +67,6 @@ public class MainActivity extends MaterialNavigationDrawer {
                 InboxFragment.clearData();
                 NotificationsFragment.clearData();
                 ProfileFragment.clearData();
-
-                DataManager.setAppActive(false);
 
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
@@ -83,11 +84,23 @@ public class MainActivity extends MaterialNavigationDrawer {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public static void refreshFragments() {
-        ChartFragment.makeRefresh();
-        ProfileFragment.makeRefresh();
-        NotificationsFragment.makeRefresh();
-        InboxFragment.makeRefresh();
-        EventListFragment.makeRefresh();
+    private class EverythingRefresher extends AsyncTask<Void, Void, Void> {
+
+        private void doStuff() {
+            new DataManager().refreshCurLoc();
+            DataManager.refreshConversations();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            doStuff();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            DataManager.refreshFragments();
+            _loading.dismiss();
+        }
     }
 }

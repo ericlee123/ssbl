@@ -1,7 +1,6 @@
 package com.eric.ssbl.android.fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
@@ -19,11 +18,6 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -36,22 +30,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChartFragment extends Fragment implements ConnectionCallbacks, OnConnectionFailedListener {
+public class ChartFragment extends Fragment {
 
     private View _view;
     private static GoogleMap _map;
-    private GoogleApiClient _googleApiClient;
     private static LatLng _curLoc;
     private static int _defaultZoom = 13;
     private static List<User> _nearbyUsers = new ArrayList<>();
     public static List<Event> _nearbyEvents = new ArrayList<>();
     private static HashMap<Marker, String> _eu = new HashMap<>();
-    private static boolean _refreshed;
+    private static boolean _refreshed = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        System.out.println("ChartFragment onCreateView called");
+        DataManager.setChartFragment(this);
 
         if (_view != null) {
             ViewGroup parent = (ViewGroup) _view.getParent();
@@ -65,9 +58,6 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             /* map is already there, just return view as it is */
             e.printStackTrace();
         }
-
-        if (_googleApiClient == null)
-            buildGoogleApiClient();
 
         if (_map == null) {
             _map = ((MapFragment) getActivity().getFragmentManager().findFragmentById(R.id.fragment_chart)).getMap();
@@ -90,6 +80,9 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             });
         }
 
+        if (!_refreshed)
+            refresh();
+
         ImageButton center = (ImageButton) _view.findViewById(R.id.chart_center);
         center.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -98,92 +91,7 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
                 }
             });
 
-        if (!_refreshed)
-            refresh();
-
         return _view;
-    }
-
-    private void refresh() {
-        _refreshed = true;
-        if (_googleApiClient == null)
-            buildGoogleApiClient();
-        else
-            refreshCurLoc();
-    }
-
-    // put all of these map operations in a class?
-
-    /**
-     * This is the beginning of the sequence to create a GoogleApiClient, connect, and
-     * then update the current location.
-     */
-    private void buildGoogleApiClient() {
-        _googleApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        if (_googleApiClient != null)
-            _googleApiClient.connect();
-        else
-            Toast.makeText(getActivity(), "Error trying to connect to Google", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-        refreshCurLoc();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult arg0) {
-        Toast.makeText(getActivity(), "Connection failed", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        System.out.println("onConnectionSuspended");
-    }
-
-    private void refreshCurLoc() {
-
-        android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
-        if (here != null) {
-            _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
-
-            User curUser = DataManager.getCurUser();
-            Location loc = curUser.getLocation();
-            if (loc == null)
-                loc = new Location();
-            loc.setLatitude(_curLoc.latitude);
-            loc.setLongitude(_curLoc.longitude);
-            curUser.setLocation(loc);
-            curUser.setLastLocationTime(System.currentTimeMillis());
-            new HttpUserUpdater().execute(curUser);
-
-            displayElements();
-        }
-    }
-
-    private class HttpUserUpdater extends AsyncTask<User, Void, Void> {
-
-        private User updated;
-
-        @Override
-        protected Void doInBackground(User... params) {
-            updated = DataManager.httpUpdateCurUser(params[0]);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (updated == null)
-                Toast.makeText(getActivity(), "Error updating current user", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static LatLng getCurLoc() {
-        return _curLoc;
     }
 
     public void displayElements() {
@@ -264,6 +172,13 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
 
     }
 
+    public void refresh() {
+        // get fresh data from datamanager
+        _curLoc = DataManager.getCurLoc();
+        centerMapOnSelf();
+        displayElements();
+    }
+
     public void centerMapOnSelf() {
         if (_curLoc == null || _map == null)
             Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
@@ -271,12 +186,8 @@ public class ChartFragment extends Fragment implements ConnectionCallbacks, OnCo
             _map.moveCamera(CameraUpdateFactory.newLatLngZoom(_curLoc, _defaultZoom));
     }
 
-    public static void makeRefresh() {
-        _refreshed = false;
-    }
-
     public static void clearData() {
-        makeRefresh();
+        _refreshed = false;
         if (_map != null)
             _map.clear();
 

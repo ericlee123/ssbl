@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,8 +19,10 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
+import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -36,6 +40,7 @@ import org.apache.http.util.EntityUtils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class EventActivity extends Activity {
@@ -196,7 +201,47 @@ public class EventActivity extends Activity {
             mb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Create new message
+
+                    LayoutInflater li = LayoutInflater.from(_context);
+                    final View temp = li.inflate(R.layout.prompt_first_message, null);
+
+                    AlertDialog.Builder firstMessage = new AlertDialog.Builder(_context);
+                    firstMessage
+                            .setTitle("Compose message")
+                            .setCancelable(true)
+                            .setView(temp)
+                            .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    EditText body = (EditText) temp.findViewById(R.id.prompt_first_message_body);
+                                    if (body.getText().length() == 0) {
+                                        Toast.makeText(_context, "Why would you send a blank message?", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    Message first = new Message();
+                                    first.setSentTime(System.currentTimeMillis());
+                                    first.setSender(DataManager.getCurUser());
+                                    first.setBody(body.getText().toString());
+
+                                    Conversation temp = new Conversation();
+                                    temp.addRecipient(_event.getHost());
+                                    temp.addRecipient(DataManager.getCurUser());
+                                    first.setConversation(temp);
+
+                                    DataManager.getCurUser().addConversation(temp);
+                                    DataManager.refreshConversations();
+                                    new HttpFirstMessageSender().execute(first);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    firstMessage.show();
                 }
             });
             ((TextView) findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.message_host));
@@ -257,6 +302,76 @@ public class EventActivity extends Activity {
             }
         });
         ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.tip_fedora));
+    }
+
+    private class HttpFirstMessageSender extends AsyncTask<Message, Void, Void> {
+
+        private Message message;
+
+        private void message(Message m) {
+
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/messaging");
+            url.append("/" + DataManager.getCurUser().getUsername());
+            url.append("/" + DataManager.getCurUser().getUserId());
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost request = new HttpPost(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+                request.setHeader("Accept", "application/json");
+
+                ObjectMapper om = new ObjectMapper();
+                om.enable(SerializationFeature.INDENT_OUTPUT);
+                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                StringEntity body = new StringEntity(om.writeValueAsString(m), "UTF-8");
+                body.setContentType("application/json");
+                request.setEntity(body);
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                System.out.println("send_first_message");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
+
+                if (jsonString.length() == 0)
+                    message = null;
+                else
+                    message = om.readValue(jsonString, Message.class);
+            } catch (Exception e) {
+                message = null;
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Message... params) {
+            message(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (message != null) {
+                DataManager.getCurUser().getConversations().add(message.getConversation());
+                List<Message> one = new LinkedList<>();
+                one.add(message);
+                DataManager.getConversationMap().put(message.getConversation(), one);
+
+                Intent i = new Intent(_context, ConversationActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("conversation_index", DataManager.getCurUser().getConversations().size() - 1);
+                i.putExtras(b);
+                startActivity(i);
+            }
+            else
+                Toast.makeText(_context, "Error creating new conversation :(", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void goBack(View view) {
@@ -350,7 +465,8 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            MainActivity.refreshFragments();
+            if (DataManager.getEventListFragment() != null)
+                DataManager.getEventListFragment().refresh();
             finish();
         }
     }

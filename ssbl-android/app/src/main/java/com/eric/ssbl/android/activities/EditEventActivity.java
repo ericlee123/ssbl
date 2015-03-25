@@ -364,7 +364,7 @@ public class EditEventActivity extends Activity {
                 Toast.makeText(_context, "Event saved!", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Toast.makeText(_context, "Error updating event :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Error saving event :(", Toast.LENGTH_SHORT).show();
             }
         }
     }

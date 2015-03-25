@@ -28,30 +28,12 @@ public class EventListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        DataManager.setEventListFragment(this);
+
         View v = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-        if (!_refreshed || _allEvents == null) {
-            _refreshed = true;
-
-            _allEvents = new ArrayList<>();
-            List<Event> hosting = DataManager.getHostingEvents();
-            List<Event> attending = DataManager.getCurUser().getEvents();
-            List<Event> nearby = DataManager.getNearbyEvents();
-
-            attending.removeAll(hosting);
-            nearby.removeAll(hosting);
-            nearby.removeAll(attending);
-
-            _allEvents.addAll(hosting);
-            _allEvents.addAll(attending);
-            _allEvents.addAll(nearby);
-
-            int num1 = (hosting.size() == 0) ? -1 : 0;
-            int num2 = (attending.size() == 0) ? -1 : hosting.size();
-            int num3 = (nearby.size() == 0) ? -1 : hosting.size() + attending.size();
-
-            setListAdapter(new EventListAdapter(getActivity(), _allEvents, num1, num2, num3));
-        }
+        if (!_refreshed)
+            refresh();
 
         ImageButton createEvent = (ImageButton) v.findViewById(R.id.create_event);
         createEvent.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +47,29 @@ public class EventListFragment extends ListFragment {
             }
         });
         return v;
+    }
+
+    public void refresh() {
+        _refreshed = true;
+
+        _allEvents = new ArrayList<>();
+        List<Event> hosting = DataManager.getHostingEvents();
+        List<Event> attending = DataManager.getCurUser().getEvents();
+        List<Event> nearby = DataManager.getNearbyEvents();
+
+        attending.removeAll(hosting);
+        nearby.removeAll(hosting);
+        nearby.removeAll(attending);
+
+        _allEvents.addAll(hosting);
+        _allEvents.addAll(attending);
+        _allEvents.addAll(nearby);
+
+        int num1 = (hosting.size() == 0) ? -1 : 0;
+        int num2 = (attending.size() == 0) ? -1 : hosting.size();
+        int num3 = (nearby.size() == 0) ? -1 : hosting.size() + attending.size();
+
+        setListAdapter(new EventListAdapter(getActivity(), _allEvents, num1, num2, num3));
     }
 
     @Override
@@ -81,12 +86,8 @@ public class EventListFragment extends ListFragment {
         startActivity(i);
     }
 
-    public static void makeRefresh() {
-        _refreshed = false;
-    }
-
     public static void clearData() {
-        makeRefresh();
+        _refreshed = false;
         if (_allEvents != null)
             _allEvents.clear();
     }

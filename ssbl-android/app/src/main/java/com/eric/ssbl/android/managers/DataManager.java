@@ -3,10 +3,16 @@ package com.eric.ssbl.android.managers;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import com.eric.ssbl.android.activities.LoginActivity;
-import com.eric.ssbl.android.activities.MainActivity;
+import com.eric.ssbl.android.activities.ConversationActivity;
+import com.eric.ssbl.android.fragments.ChartFragment;
+import com.eric.ssbl.android.fragments.EventListFragment;
+import com.eric.ssbl.android.fragments.InboxFragment;
+import com.eric.ssbl.android.fragments.ProfileFragment;
+import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
+import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -32,14 +38,15 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    //    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server/smash";
-    private static String _serverURL = "http://10.148.130.20:8080/ssbl-server/smash";
-//    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
+    private static String _serverURL = "http://ec2-54-69-43-179.us-west-2.compute.amazonaws.com:8080/ssbl-server-2.0/smash";
+//    private static String _90serverURL = "http://10.148.130.20:8080/ssbl-server-2.0/smash";
+    //    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
@@ -49,11 +56,63 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     ///////////////////////////////////////////////////
     // General stuff
     ///////////////////////////////////////////////////
-    private static boolean _refreshing = false;
-    public static void refreshEverything() {
-        if (!_refreshing)
-            new DataManager().refreshCurLoc();
-        _refreshing = true;
+    private static ChartFragment _chartFragment;
+    private static ProfileFragment _profileFragment;
+    private static InboxFragment _inboxFragment;
+//    private static NotificationsFragment _notificationsFragment;
+    private static EventListFragment _eventListFragment;
+
+    public static void setChartFragment(ChartFragment cf) {
+        _chartFragment = cf;
+    }
+
+    public static void setProfileFragment(ProfileFragment pf) {
+        _profileFragment = pf;
+    }
+
+    public static void setInboxFragment(InboxFragment inboxFragment) {
+        _inboxFragment = inboxFragment;
+    }
+
+//    public static void setNotificationsFragment(NotificationsFragment nf) {
+//        _notificationsFragment = nf;
+//    }
+
+    public static void setEventListFragment(EventListFragment elf) {
+        _eventListFragment = elf;
+    }
+
+    public static ChartFragment getChartFragment() {
+        return _chartFragment;
+    }
+
+    public static ProfileFragment getProfileFragment() {
+        return _profileFragment;
+    }
+
+    public static InboxFragment getInboxFragment() {
+        return _inboxFragment;
+    }
+
+//    public static ChartFragment getNotificationsFragment() {
+//        return _notificationsFragment;
+//    }
+
+    public static EventListFragment getEventListFragment() {
+        return _eventListFragment;
+    }
+
+    public static void refreshFragments() {
+        if (_chartFragment != null)
+            _chartFragment.refresh();
+        if (_profileFragment != null)
+            _profileFragment.refresh();
+        if (_inboxFragment != null)
+            _inboxFragment.refresh();
+//        if (_notificationsFragment != null)
+//            _notificationsFragment.refresh();
+        if (_eventListFragment != null)
+            _eventListFragment.refresh();
     }
 
     public static void clearData() {
@@ -65,6 +124,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _nearbyEvents.clear();
         _hostingEvents.clear();
     }
+
     public static String getServerUrl() {
         return _serverURL;
     }
@@ -85,6 +145,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
      * to the server. If the post is unsuccessful, the current user is reverted
      * back to normal. Returns the user object response from the server, otherwise
      * null if the request failed.
+     *
      * @param updated the updated current user
      * @return the result
      */
@@ -111,6 +172,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+            System.out.println(om.writeValueAsString(updated));
+
             StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
             body.setContentType("application/json");
             request.setEntity(body);
@@ -127,6 +190,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 result = null;
             else
                 result = om.readValue(jsonString, User.class);
+
+            System.out.println("updated loc: " + (updated.getLocation() == null));
+            System.out.println("result loc: " + (result.getLocation() == null));
         } catch (Exception e) {
             result = null;
             e.printStackTrace();
@@ -137,13 +203,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
 
-
-
-
     ////////////////////////////////////////////////////////
     // Relevant users and events
-    ////////////////////////////////////////////////
-
+    ///////////////////////////////////////////////////////
     public static void setNearbyUsers(List<User> nearbyUsers) {
         if (nearbyUsers == null)
             return;
@@ -224,16 +286,16 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (result != null) {
             // Update locally
             Event backup = _eventIdMap.get(updated.getEventId());
-//        List<Event> oldList = _curUser.getEvents();              uncomment these later
+            List<Event> oldList = _curUser.getEvents();
 
             if (backup != null) {
                 _nearbyEvents.remove(backup);
                 _hostingEvents.remove(backup);
-//            oldList.remove(old);
+                oldList.remove(backup);
             }
 
             _hostingEvents.add(result);
-//        oldList.add(updated);
+            oldList.add(result);
             _eventIdMap.put(result.getEventId(), result);
         }
         return result;
@@ -275,82 +337,143 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         // Update locally
         _eventIdMap.remove(deleted);
-//      List<Event> oldList = _curUser.getEvents();              uncomment these later
+        List<Event> oldList = _curUser.getEvents();
 
         _nearbyEvents.remove(deleted);
         _hostingEvents.remove(deleted);
-//      oldList.remove(deleted);
+        oldList.remove(deleted);
     }
 
 
     ///////////////////////////////////////////
     // Conversations
     /////////////////////////////////////////////
-    private static List<String> _conversationPreviews;
+    private static HashMap<Conversation, List<Message>> _conversationMap;
+    private static ConversationActivity _openConversation;
 
-    public static void initConversationPreviews() {
-        _conversationPreviews = new ArrayList<>();
-        new HttpConversationPreviewer().execute();
+    public static void refreshConversations() {
+        List<Conversation> empties = _curUser.getConversations();
+        _conversationMap = new HashMap<>();
+        for (int i = 0; i < empties.size(); i++)
+            _conversationMap.put(empties.get(i), new LinkedList<Message>());
+//        fetchConversationPreviews();
     }
 
-    public static List<String> getConversationPreviews() {
-        return _conversationPreviews;
+    public static void setOpenConversationActivity(ConversationActivity open) {
+        _openConversation = open;
     }
 
-    private static class HttpConversationPreviewer extends AsyncTask<Void, Void, Void> {
+    public static ConversationActivity getOpenConversationActivity() {
+        return _openConversation;
+    }
 
-        private List<String> cp = new ArrayList<>();
+    public static void addNewMessages(List<Message> messageList) {
+        for (Message m : messageList) {
+            if (!_curUser.getConversations().contains(m.getConversation()))
+                _curUser.addConversation(m.getConversation());
 
-        private void fetchPreviews() {
+            if (_conversationMap.get(m.getConversation()) == null) {
+                List<Message> lm = new LinkedList<>();
+                lm.add(m);
+                _conversationMap.put(m.getConversation(), lm);
+            } else
+                _conversationMap.get(m.getConversation()).add(0, m);
+        }
 
-            for (int i = 0; i < getCurUser().getConversations().size(); i++) {
-                // get the users
-                StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-                url.append("/messaging");
-                url.append("/" + getCurUser().getUsername());
-                url.append("/" + getCurUser().getUserId());
-                url.append("/" + i);
-                url.append("?size=0");
-                url.append("&additional=1");
+        if (_inboxFragment != null)
+            _inboxFragment.refresh();
+        if (_openConversation != null) {
+            _openConversation.showMessages();
+        }
+    }
 
-                try {
-                    HttpClient client = new DefaultHttpClient();
-                    HttpGet request = new HttpGet(url.toString());
+    public static HashMap<Conversation, List<Message>> getConversationMap() {
+        return _conversationMap;
+    }
 
-                    request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+    public static List<Message> httpFetchConversation(Conversation c) {
 
-                    HttpResponse response = client.execute(request);
-                    String jsonString = EntityUtils.toString(response.getEntity());
+        // get the users
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/messaging");
+        url.append("/" + DataManager.getCurUser().getUsername());
+        url.append("/" + DataManager.getCurUser().getUserId());
+        url.append("/" + c.getConversationId());
+        url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
+        url.append("&additional=" + 40);
 
-                    if (jsonString.length() == 0)
-                        return;
+        System.out.println("c size: " + _conversationMap.get(c).size());
 
-                    ObjectMapper om = new ObjectMapper();
-                    List<Message> lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
-                    cp.add(i, lm.get(0).getBody());
-                } catch (Exception e) {
-                    cp = null;
-                    e.printStackTrace();
-                }
+        List<Message> lm;
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            if (jsonString.length() == 0)
+                return null;
+
+            System.out.println("fetch_conversation");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            ObjectMapper om = new ObjectMapper();
+            lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+
+            for (int i = lm.size() - 1; i > 0; i -= 2)
+                lm.remove(i);
+        } catch (Exception e) {
+            lm = null;
+            e.printStackTrace();
+        }
+
+        if (lm != null)
+            _conversationMap.get(c).addAll(lm);
+        return lm;
+    }
+
+    private static void fetchConversationPreviews() {
+
+        for (Conversation c : _conversationMap.keySet()) {
+
+            // Skip getting a preview if the conversation already has messages
+            if (_conversationMap.get(c) != null && _conversationMap.get(c).size() > 0)
+                continue;
+
+            // get the users
+            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+            url.append("/messaging");
+            url.append("/" + getCurUser().getUsername());
+            url.append("/" + getCurUser().getUserId());
+            url.append("/" + c.getConversationId());
+            url.append("?size=0");
+            url.append("&additional=1");
+
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpGet request = new HttpGet(url.toString());
+
+                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+                HttpResponse response = client.execute(request);
+                String jsonString = EntityUtils.toString(response.getEntity());
+
+                if (jsonString.length() == 0)
+                    return;
+
+                ObjectMapper om = new ObjectMapper();
+                List<Message> lm = om.readValue(jsonString, new TypeReference<List<Message>>() {});
+                _conversationMap.put(c, lm);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            fetchPreviews();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void what) {
-            if (cp != null)
-                _conversationPreviews = cp;
-        }
     }
-
-
-
-
 
 
     ////////////////////////////////////////////////
@@ -441,17 +564,15 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
 
-
-    /**
-     * This section initializes data of nearby users and events for the ChartFragment.
-     */
+    ////////////////////////////////////////////////////////
+    // Nearby users and events
+    ////////////////////////////////////////////////////////
     private static Context _appContext;
-    private LoginActivity _la;
-    private GoogleApiClient _googleApiClient;
+    private static GoogleApiClient _googleApiClient;
+    private static LatLng _curLoc;
 
-    public void initNearby(LoginActivity la) {
-        _la = la;
-        _appContext = _la.getApplicationContext();
+    public void initLocationData(Context appContext) {
+        _appContext = appContext;
         buildGoogleApiClient();
     }
 
@@ -471,174 +592,178 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult arg0) { }
+    public void onConnectionFailed(ConnectionResult arg0) {
+        Toast.makeText(_appContext, "Failed to connect to Google client", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onConnectionSuspended(int arg0) {
         System.out.println("onConnectionSuspended");
     }
 
-    private void refreshCurLoc() {
+    /**
+     * This should always be called from an aysnc task.
+     */
+    public void refreshCurLoc() {
 
         if (_googleApiClient == null)
             buildGoogleApiClient();
 
         android.location.Location here = LocationServices.FusedLocationApi.getLastLocation(_googleApiClient);
         if (here != null) {
-            LatLng loc = new LatLng(here.getLatitude(), here.getLongitude());
-            new HttpEUGetter().execute(loc);
+            _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
+
+            if (_curUser != null) {
+                _curUser.setLastLocationTime(System.currentTimeMillis());
+                Location l = new Location();
+                l.setLatitude(here.getLatitude());
+                l.setLongitude(here.getLongitude());
+                _curUser.setLocation(l);
+            }
+
+            new HttpNearbyHostingFetcher().execute(_curLoc);
         }
     }
 
-    private void initRefreshCallback() {
-        if (_refreshing) {
-            _refreshing = false;
-            MainActivity.refreshFragments();
-        }
-        else
-            _la.goToMain();
+    public static LatLng getCurLoc() {
+        return _curLoc;
     }
 
-    private class HttpEUGetter extends AsyncTask<LatLng, Void, Void> {
-
-        private List<User> nearbyUsers;
-        private List<Event> nearbyEvents;
-
-        private List<Event> hostingEvents;
-
-        private void getNearbyEU(LatLng loc) {
-
-            // get the users
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/search/user");
-            url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("get_nearby_users");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
-                if (jsonString.length() == 0)
-                    return;
-
-                ObjectMapper om = new ObjectMapper();
-                nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
-
-            } catch (Exception e) {
-                nearbyUsers = null;
-                e.printStackTrace();
-            }
-
-            // get the events
-            StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
-            url2.append("/search/event");
-            url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpGet request = new HttpGet(url2.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("get_nearby_events");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
-                if (jsonString.length() == 0)
-                    return;
-
-                ObjectMapper om = new ObjectMapper();
-                nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
-            } catch (Exception e) {
-                nearbyEvents = null;
-                e.printStackTrace();
-            }
-        }
-
-        private void getHostingEvents() {
-
-            Event e = new Event();
-            e.setHost(getCurUser());
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/search/event");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
-                // encode the user template into the request
-                ObjectMapper om = new ObjectMapper();
-                StringEntity body = new StringEntity(om.writeValueAsString(e));
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-                System.out.println("get_hosting_events");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
-
-                if (jsonString.length() == 0)
-                    return;
-
-                hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
-            } catch (Exception exc) {
-                hostingEvents = null;
-                exc.printStackTrace();
-            }
-        }
-
+    private class HttpNearbyHostingFetcher extends AsyncTask<LatLng, Void, Void> {
         @Override
         protected Void doInBackground(LatLng... params) {
-            getNearbyEU(params[0]);
-            getHostingEvents();
+            httpUpdateCurUser(_curUser);
+            fetchNearbyUsers(params[0]);
+            fetchNearbyEvents(params[0]);
+            fetchHostingEvents();
             return null;
         }
+    }
 
-        @Override
-        protected void onPostExecute(Void what) {
-            setNearbyUsers(nearbyUsers);
-            setNearbyEvents(nearbyEvents);
-            setHostingEvents(hostingEvents);
-            initRefreshCallback();
+    private void fetchNearbyUsers(LatLng loc) {
+        List<User> nearbyUsers;
+
+        // get the users
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/user");
+        url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("get_nearby_users");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+            if (jsonString.length() == 0)
+                return;
+
+            ObjectMapper om = new ObjectMapper();
+            nearbyUsers = om.readValue(jsonString, new TypeReference<List<User>>() {});
+        } catch (Exception e) {
+            nearbyUsers = null;
+            e.printStackTrace();
         }
+
+        if (nearbyUsers != null)
+            setNearbyUsers(nearbyUsers);
+        else
+            Toast.makeText(_appContext, "Error fetching nearby users", Toast.LENGTH_LONG).show();
     }
 
+    private void fetchNearbyEvents(LatLng loc) {
 
-    /**
-     * Methods for MessagingService
-     */
-    private static boolean _accountActive = false;
-    private static boolean _appActive = false;
+        List<Event> nearbyEvents;
 
-    public static void setAccountActive(boolean active) {
-        _accountActive = active;
+        // get the events
+        StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
+        url2.append("/search/event");
+        url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url2.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("get_nearby_events");
+            System.out.println(url2.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                return;
+
+            ObjectMapper om = new ObjectMapper();
+            nearbyEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
+        } catch (Exception e) {
+            nearbyEvents = null;
+            e.printStackTrace();
+        }
+
+        if (nearbyEvents != null)
+            setNearbyEvents(nearbyEvents);
+        else
+            Toast.makeText(_appContext, "Error fetching nearby events", Toast.LENGTH_LONG).show();
     }
 
-    public static boolean isAccountActive() {
-        return _accountActive;
-    }
+    private void fetchHostingEvents() {
 
-    public static void setAppActive(boolean active) {
-        _appActive = active;
-    }
+        if (_curUser == null)
+            return;
 
-    public static boolean isAppActive() {
-        return _appActive;
+        Event e = new Event();
+        e.setHost(_curUser);
+        List<Event> hostingEvents;
+
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/event");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(e));
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("get_hosting_events");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                return;
+
+            hostingEvents = om.readValue(jsonString, new TypeReference<List<Event>>() {});
+        } catch (Exception exc) {
+            hostingEvents = null;
+            exc.printStackTrace();
+        }
+
+        if (hostingEvents != null)
+            setHostingEvents(hostingEvents);
+        else
+            Toast.makeText(_appContext, "Error fetching hosting events", Toast.LENGTH_LONG).show();
     }
 }
