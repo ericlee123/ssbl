@@ -124,7 +124,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _inboxFragment = null;
         _eventListFragment = null;
 
-
         _nearbyUsers.clear();
         _eventIdMap.clear();
         _nearbyEvents.clear();
@@ -134,6 +133,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static String getServerUrl() {
         return _serverURL;
     }
+
+
+
 
     /////////////////////////////////////////////////
     // curUser section
@@ -196,15 +198,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 result = null;
             else
                 result = om.readValue(jsonString, User.class);
-
-            System.out.println("updated loc: " + (updated.getLocation() == null));
-            System.out.println("result loc: " + (result.getLocation() == null));
         } catch (Exception e) {
             result = null;
             e.printStackTrace();
         }
-
         _curUser = (result != null) ? result : backup;
+
         return result;
     }
 
@@ -213,8 +212,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // Relevant users and events
     ///////////////////////////////////////////////////////
     public static void setNearbyUsers(List<User> nearbyUsers) {
-        if (nearbyUsers == null)
-            return;
         _nearbyUsers = nearbyUsers;
     }
 
@@ -223,8 +220,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public static void setNearbyEvents(List<Event> nearbyEvents) {
-        if (nearbyEvents == null)
-            return;
         _nearbyEvents = nearbyEvents;
         for (Event e : nearbyEvents)
             _eventIdMap.put(e.getEventId(), e);
@@ -235,8 +230,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public static void setHostingEvents(List<Event> hostingEvents) {
-        if (hostingEvents == null)
-            return;
         _hostingEvents = hostingEvents;
         for (Event e : hostingEvents)
             _eventIdMap.put(e.getEventId(), e);
@@ -246,7 +239,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
-    public static Event httpUpdateEvent(Event updated, boolean fresh) {
+    public static Event httpUpdateEvent(Event updated, boolean isNew) {
 
         if (updated == null)
             return null;
@@ -254,7 +247,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         Event result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
         url.append("/edit/event");
-        if (fresh)
+        if (isNew)
             url.append("/create");
         else
             url.append("/update");
@@ -270,8 +263,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.enable(SerializationFeature.INDENT_OUTPUT);
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            System.out.println("eventJson: " + om.writeValueAsString(updated));
 
             StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
             body.setContentType("application/json");
@@ -296,20 +287,27 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         // update if successful
         if (result != null) {
-            // Update locally
-            Event backup = _eventIdMap.get(updated.getEventId());
-            List<Event> oldList = _curUser.getEvents();
-
-            if (backup != null) {
-                _nearbyEvents.remove(backup);
-                _hostingEvents.remove(backup);
-                oldList.remove(backup);
+            if (isNew) {
+                _eventIdMap.put(result.getEventId(), result);
+                _hostingEvents.add(result);
+                _nearbyEvents.add(result);
+                _curUser.getEvents().add(result);
             }
+            else {
+                Event backup = _eventIdMap.get(updated.getEventId());
+                List<Event> oldList = _curUser.getEvents();
 
-            _hostingEvents.add(result);
-            oldList.add(result);
-            _eventIdMap.put(result.getEventId(), result);
+                if (backup != null) {
+                    _nearbyEvents.remove(backup);
+                    _hostingEvents.remove(backup);
+                    oldList.remove(backup);
+                }
+                _hostingEvents.add(result);
+                oldList.add(result);
+                _eventIdMap.put(result.getEventId(), result);
+            }
         }
+        refreshFragments();
         return result;
     }
 
@@ -317,7 +315,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (deleted == null)
             return;
 
-        Event result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
         url.append("/edit/event/delete");
 
@@ -339,13 +336,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
             HttpResponse response = client.execute(request);
 
-            System.out.println("delete_event");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println("delete_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         // Update locally
         _eventIdMap.remove(deleted);
@@ -354,6 +350,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _nearbyEvents.remove(deleted);
         _hostingEvents.remove(deleted);
         oldList.remove(deleted);
+
+        refreshFragments();
     }
 
 
@@ -379,11 +377,17 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _openConversation;
     }
 
+    /**
+     * Called from async task in MessagingService
+     * @param messageList new messages
+     */
     public static void addNewMessages(List<Message> messageList) {
-        for (Message m : messageList) {
+        for (int i = messageList.size(); i >= 0; i--) {
+            Message m = messageList.get(i);
             if (!_curUser.getConversations().contains(m.getConversation())) {
                 m.getConversation().addRecipient(m.getSender());
                 _curUser.addConversation(m.getConversation());
+                httpUpdateCurUser(_curUser);
             }
 
             if (_conversationMap.get(m.getConversation()) == null) {
@@ -394,8 +398,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 _conversationMap.get(m.getConversation()).add(0, m);
         }
 
-        new StuffDoer().execute();
-
         if (_inboxFragment != null)
             _inboxFragment.refresh();
         if (_openConversation != null) {
@@ -403,17 +405,11 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         }
     }
 
-    private static class StuffDoer extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            httpUpdateCurUser(_curUser);
-            return null;
-        }
-    }
-
     public static HashMap<Conversation, List<Message>> getConversationMap() {
         return _conversationMap;
     }
+
+    private static final int ADDITONAL_MESSAGES = 40;
 
     public static List<Message> httpFetchConversation(Conversation c) {
 
@@ -424,9 +420,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         url.append("/" + DataManager.getCurUser().getUserId());
         url.append("/" + c.getConversationId());
         url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
-        url.append("&additional=" + 40);
-
-        System.out.println("c size: " + _conversationMap.get(c).size());
+        url.append("&additional=" + ADDITONAL_MESSAGES);
 
         List<Message> lm;
         try {

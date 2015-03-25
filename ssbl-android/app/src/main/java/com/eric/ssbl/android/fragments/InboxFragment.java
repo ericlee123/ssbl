@@ -213,7 +213,7 @@ public class InboxFragment extends ListFragment {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-//                System.out.println(om.writeValueAsString(m));
+                System.out.println(om.writeValueAsString(m));
 
                 StringEntity body = new StringEntity(om.writeValueAsString(m), "UTF-8");
                 body.setContentType("application/json");

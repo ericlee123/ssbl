@@ -129,6 +129,13 @@ public class MessagingService extends Service {
                 newMessages = null;
                 e.printStackTrace();
             }
+
+            if (newMessages != null && newMessages.size() > 0) {
+                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
+                DataManager.addNewMessages(newMessages);
+                if (DataManager.getOpenConversationActivity() == null)
+                    createNotification();
+            }
         }
 
         @Override
@@ -139,12 +146,12 @@ public class MessagingService extends Service {
 
         @Override
         protected void onPostExecute(Void what) {
-            if (newMessages != null && newMessages.size() > 0) {
-                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
-                DataManager.addNewMessages(newMessages);
-                if (DataManager.getOpenConversationActivity() == null)
-                    createNotification();
-            }
+//            if (newMessages != null && newMessages.size() > 0) {
+//                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
+//                DataManager.addNewMessages(newMessages);
+//                if (DataManager.getOpenConversationActivity() == null)
+//                    createNotification();
+//            }
         }
     }
 }

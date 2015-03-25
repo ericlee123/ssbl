@@ -222,20 +222,6 @@ public class LoginActivity extends Activity {
         _loading = ProgressDialog.show(_context, "Initializing data...", "Almost there, chill", true);
 
         new AppInitializer().execute();
-
-//        if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
-//            rememberMe();
-//        else
-//            _loginFile.delete();
-//
-//        DataManager.httpUpdateCurUser(DataManager.getCurUser());
-//        new DataManager().initLocationData(getApplicationContext());
-//        DataManager.initSettings(getFilesDir());
-//        DataManager.refreshConversations();
-//
-//        startService(new Intent(this, MessagingService.class));
-//
-//        goToMain();
     }
 
     public void goToMain() {
@@ -413,7 +399,6 @@ public class LoginActivity extends Activity {
             new DataManager().initLocationData(getApplicationContext());
             DataManager.initSettings(getFilesDir());
             DataManager.refreshConversations();
-
             startService(new Intent(_context, MessagingService.class));
         }
 

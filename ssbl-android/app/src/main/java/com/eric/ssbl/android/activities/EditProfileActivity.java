@@ -96,8 +96,9 @@ public class EditProfileActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-
             if (updated != null) {
+                if (DataManager.getProfileFragment() != null)
+                    DataManager.getProfileFragment().refresh();
                 Toast.makeText(_context, "Profile saved!", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
