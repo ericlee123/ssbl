@@ -32,6 +32,11 @@ public class EditServiceHibernate implements EditService {
 	}
 
 	@Override
+	public User create(User user) {
+		return _userRepository.add(user);
+	}
+
+	@Override
 	public Event update(Event event) {
 		return _eventRepository.update(event);
 	}
@@ -41,4 +46,8 @@ public class EditServiceHibernate implements EditService {
 		_eventRepository.remove(event);
 	}
 	
+	@Override
+	public Event create(Event user) {
+		return _eventRepository.add(user);
+	}
 }

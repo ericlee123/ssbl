@@ -72,11 +72,6 @@ public class SmashController {
 		return _authService.getByCredentials(username, password);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST, value="/auth/register")
-	public @ResponseBody User register(@RequestBody User user) {
-		return _authService.register(user);
-	}
-	
 	@RequestMapping(method=RequestMethod.GET, value="/messaging/{username}/{id}/new")
 	public @ResponseBody List<Message> getNewMessages(@PathVariable String username, @PathVariable Integer id) {
 		return _messagingService.getByNew(_authService.getByParameters(username, id));
@@ -125,6 +120,11 @@ public class SmashController {
 		_editService.delete(user);
 	}
 	
+	@RequestMapping(method=RequestMethod.POST, value="/edit/user/create")
+	public @ResponseBody User register(@RequestBody User user) {
+		return _editService.create(user);
+	}
+	
 	@RequestMapping(method=RequestMethod.POST, value="/edit/event/update")
 	public @ResponseBody Event updateEvent(@RequestBody Event event) {
 		return _editService.update(event);
@@ -133,5 +133,10 @@ public class SmashController {
 	@RequestMapping(method=RequestMethod.POST, value="/edit/event/delete")
 	public void deleteEvent(@RequestBody Event event) {
 		_editService.delete(event);
+	}
+
+	@RequestMapping(method=RequestMethod.POST, value="/edit/event/create")
+	public @ResponseBody Event register(@RequestBody Event event) {
+		return _editService.create(event);
 	}
 }

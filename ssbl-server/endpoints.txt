@@ -37,11 +37,6 @@ web-server: tomcat7
 		- Params: username, password (Header)
 		- Return: User
 		- Example: http://localhost:8080/ssbl-server/smash/auth/login
-	/register [POST]
-		- Desc: Register a new user
-		- Params: User (Body)
-		- Return: User
-		- Example: http://localhost:8080/ssbl-server/smash/auth/register
 
 /smash/messaging
 	/{username}/{id} [POST]
@@ -88,6 +83,11 @@ web-server: tomcat7
 		- Params: User (Body)
 		- Return: Void
 		- Example: UNTESTED (Probably works though)
+	/user/create [POST]
+		- Desc: Register a new user
+		- Params: User (Body)
+		- Return: User
+		- Example: http://localhost:8080/ssbl-server/smash/edit/user/create
 	/event/update [POST]
 		- Desc: Update an event
 		- Params: Event (Body)
@@ -98,3 +98,8 @@ web-server: tomcat7
 		- Params: Event (Body)
 		- Return: Void
 		- Example: UNTESTED (Probably works though)
+	/event/create [POST]
+		- Desc: Register a new event
+		- Params: Event (Body)
+		- Return: Event
+		- Example: http://localhost:8080/ssbl-server/smash/edit/event/create

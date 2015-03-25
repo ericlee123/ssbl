@@ -32,8 +32,9 @@ public class AuthServiceHibernate implements AuthService {
 		Hibernate.initialize(user.getGames());
 		Hibernate.initialize(user.getNotifications());
 		Hibernate.initialize(user.getEvents());
-		Hibernate.initialize(user.getConversations());
 		Hibernate.initialize(user.getFriends());
+		
+		Hibernate.initialize(user.getConversations());
 		return _userRepository.update(user);
 	}
 
@@ -42,11 +43,6 @@ public class AuthServiceHibernate implements AuthService {
 		User user = _userRepository.findByParameters(username, id);
 		if(user == null) throw new AuthException();
 		return _userRepository.findByParameters(username, id);
-	}
-
-	@Override
-	public User register(User user) {
-		return _userRepository.add(user);
 	}
 	
 }

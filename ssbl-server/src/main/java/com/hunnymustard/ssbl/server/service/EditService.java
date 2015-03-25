@@ -7,7 +7,9 @@ public interface EditService {
 
 	User update(User user);
 	void delete(User user);
+	User create(User user);
+	
 	Event update(Event event);
 	void delete(Event event);
-	
+	Event create(Event event);
 }

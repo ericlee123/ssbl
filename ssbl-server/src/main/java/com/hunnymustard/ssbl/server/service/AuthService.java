@@ -7,5 +7,4 @@ public interface AuthService {
 	User getByCredentials(String username, String password);
 	User getByParameters(String username, Integer id);
 	
-	User register(User user);
 }
