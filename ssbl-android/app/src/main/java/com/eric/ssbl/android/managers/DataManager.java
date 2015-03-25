@@ -172,6 +172,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+            System.out.println(om.writeValueAsString(updated));
+
             StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
             body.setContentType("application/json");
             request.setEntity(body);
@@ -613,12 +615,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
             if (_curUser != null) {
                 _curUser.setLastLocationTime(System.currentTimeMillis());
-                Location l;
-                // create new location object?
-                if (_curUser.getLocation() == null)
-                    l = new Location();
-                else
-                    l = _curUser.getLocation();
+                Location l = new Location();
                 l.setLatitude(here.getLatitude());
                 l.setLongitude(here.getLongitude());
                 _curUser.setLocation(l);
