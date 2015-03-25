@@ -125,7 +125,7 @@ public class User implements Locatable {
 		_email = email;
 	}
 	
-	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="location_id")
 	public Location getLocation() {
 		return _location;

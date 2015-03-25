@@ -23,7 +23,8 @@ public class ExceptionController {
 	
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Database Error")
 	@ExceptionHandler({SQLException.class, DataAccessException.class})
-	public void handleDatabaseError() {
+	public void handleDatabaseError(Exception ex, HttpServletResponse response) {
+		ex.printStackTrace();
 		// http://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
 	}
 }
