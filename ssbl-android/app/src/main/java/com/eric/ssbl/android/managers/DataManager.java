@@ -118,8 +118,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static void clearData() {
         _curUser = null;
 
-        _nearbyUsers.clear();
+        _chartFragment = null;
+        _profileFragment = null;
+//        _notificationsFragment = null;
+        _inboxFragment = null;
+        _eventListFragment = null;
 
+
+        _nearbyUsers.clear();
         _eventIdMap.clear();
         _nearbyEvents.clear();
         _hostingEvents.clear();
@@ -181,10 +187,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("update_cur_user");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("update_cur_user");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 result = null;
@@ -240,14 +246,18 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
-    public static Event httpUpdateEvent(Event updated) {
+    public static Event httpUpdateEvent(Event updated, boolean fresh) {
 
         if (updated == null)
             return null;
 
         Event result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-        url.append("/edit/event/update");
+        url.append("/edit/event");
+        if (fresh)
+            url.append("/create");
+        else
+            url.append("/update");
 
         try {
             HttpClient client = new DefaultHttpClient();
@@ -261,6 +271,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+            System.out.println("eventJson: " + om.writeValueAsString(updated));
+
             StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
             body.setContentType("application/json");
             request.setEntity(body);
@@ -268,10 +280,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("update_event");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("update_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 result = null;
@@ -369,8 +381,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     public static void addNewMessages(List<Message> messageList) {
         for (Message m : messageList) {
-            if (!_curUser.getConversations().contains(m.getConversation()))
+            if (!_curUser.getConversations().contains(m.getConversation())) {
+                m.getConversation().addRecipient(m.getSender());
                 _curUser.addConversation(m.getConversation());
+            }
 
             if (_conversationMap.get(m.getConversation()) == null) {
                 List<Message> lm = new LinkedList<>();
@@ -380,10 +394,20 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 _conversationMap.get(m.getConversation()).add(0, m);
         }
 
+        new StuffDoer().execute();
+
         if (_inboxFragment != null)
             _inboxFragment.refresh();
         if (_openConversation != null) {
             _openConversation.showMessages();
+        }
+    }
+
+    private static class StuffDoer extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            httpUpdateCurUser(_curUser);
+            return null;
         }
     }
 
@@ -638,6 +662,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             fetchHostingEvents();
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (_chartFragment != null)
+                _chartFragment.refresh();
+        }
     }
 
     private void fetchNearbyUsers(LatLng loc) {
@@ -657,10 +687,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_nearby_users");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_nearby_users");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
             if (jsonString.length() == 0)
                 return;
 
@@ -695,10 +725,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_nearby_events");
-            System.out.println(url2.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_nearby_events");
+//            System.out.println(url2.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;
@@ -747,10 +777,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_hosting_events");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_hosting_events");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;

@@ -69,6 +69,7 @@ public class ProfileActivity extends Activity {
 
         try {
             String userJson = getIntent().getStringExtra("user_json");
+            System.out.println("userJson: " + userJson);
             User u = new ObjectMapper().readValue(userJson, User.class);
             _loading = ProgressDialog.show(this, "Loading player details", getString(R.string.chill_out), true);
             new HttpUserGetter().execute(u);
@@ -379,7 +380,11 @@ public class ProfileActivity extends Activity {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                StringEntity body = new StringEntity(om.writeValueAsString(template));
+                User barren = new User();
+                barren.setUserId(template.getUserId());
+                barren.setUsername(template.getUsername());
+
+                StringEntity body = new StringEntity(om.writeValueAsString(barren));
                 body.setContentType("application/json");
                 request.setEntity(body);
 

@@ -38,7 +38,6 @@ public class MessagingService extends Service {
             return START_NOT_STICKY;
         }
 
-        System.out.println("MessageService active");
         new HttpNewMessageGetter().execute(DataManager.getCurUser());
 
         // I don't want this service to stay in memory, so I stop it
@@ -117,10 +116,10 @@ public class MessagingService extends Service {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("fetch_new_messages");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("fetch_new_messages");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -141,6 +140,7 @@ public class MessagingService extends Service {
         @Override
         protected void onPostExecute(Void what) {
             if (newMessages != null && newMessages.size() > 0) {
+                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
                 DataManager.addNewMessages(newMessages);
                 if (DataManager.getOpenConversationActivity() == null)
                     createNotification();

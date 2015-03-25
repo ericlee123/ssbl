@@ -46,7 +46,6 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         }
         if (titleText.length() >= 2)
             titleText.delete(titleText.length() - 2, titleText.length());
-
         title.setText(titleText.toString());
 
         List<Message> lm = DataManager.getConversationMap().get(_conversations.get(position));

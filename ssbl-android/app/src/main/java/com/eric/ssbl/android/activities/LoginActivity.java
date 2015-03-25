@@ -281,10 +281,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("login");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("login");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
@@ -336,7 +336,7 @@ public class LoginActivity extends Activity {
         private void httpRegister(User newUser) {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/auth/register");
+            url.append("/edit/user/create");
 
             try {
 
@@ -358,10 +358,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("register");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("register");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 500)

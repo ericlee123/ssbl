@@ -84,7 +84,8 @@ public class ConversationActivity extends ListActivity {
     protected void onDestroy() {
         super.onDestroy();
         DataManager.setOpenConversationActivity(null);
-        DataManager.getInboxFragment().refresh();
+        if (DataManager.getInboxFragment() != null)
+            DataManager.getInboxFragment().refresh();
     }
 
     public void showMessages() {
@@ -203,10 +204,10 @@ public class ConversationActivity extends ListActivity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("send_message");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("send_message");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     message = null;

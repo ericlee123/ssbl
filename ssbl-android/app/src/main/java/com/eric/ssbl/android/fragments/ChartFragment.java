@@ -15,7 +15,6 @@ import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.activities.ProfileActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
-import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -95,6 +94,7 @@ public class ChartFragment extends Fragment {
     }
 
     public void displayElements() {
+
         _map.clear();
 
         if (_curLoc != null)
@@ -109,19 +109,12 @@ public class ChartFragment extends Fragment {
 
         List<User> relevantUsers = new ArrayList<>();
         relevantUsers.addAll(DataManager.getNearbyUsers());
+        System.out.println("relevant users size: " + relevantUsers.size());
 //        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
 //        relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
 
-            // To enforce synchronization with the current user
-            if (u.equals(DataManager.getCurUser())) {
-                Location loc = u.getLocation();
-                if (loc == null)
-                    loc = new Location();
-                loc.setLatitude(_curLoc.latitude);
-                loc.setLongitude(_curLoc.longitude);
-                u.setLocation(loc);
-            }
+            System.out.println("relevant users: " + u.getUsername());
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Here ";
@@ -173,6 +166,7 @@ public class ChartFragment extends Fragment {
     }
 
     public void refresh() {
+        _refreshed = true;
         // get fresh data from datamanager
         _curLoc = DataManager.getCurLoc();
         centerMapOnSelf();

@@ -40,9 +40,6 @@ public class EventListFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), EditEventActivity.class);
-                Bundle b = new Bundle();
-                b.putInt("event_id", -1);
-                i.putExtras(b);
                 startActivity(i);
             }
         });
@@ -50,6 +47,10 @@ public class EventListFragment extends ListFragment {
     }
 
     public void refresh() {
+
+        if (getActivity() == null)
+            return;
+
         _refreshed = true;
 
         _allEvents = new ArrayList<>();
