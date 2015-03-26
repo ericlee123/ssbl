@@ -230,8 +230,6 @@ public class EventActivity extends Activity {
                                     temp.addRecipient(DataManager.getCurUser());
                                     first.setConversation(temp);
 
-                                    DataManager.getCurUser().addConversation(temp);
-                                    DataManager.refreshConversations();
                                     new HttpFirstMessageSender().execute(first);
                                 }
                             })

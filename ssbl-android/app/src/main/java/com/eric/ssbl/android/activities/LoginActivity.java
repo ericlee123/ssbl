@@ -398,7 +398,7 @@ public class LoginActivity extends Activity {
 
             new DataManager().initLocationData(getApplicationContext());
             DataManager.initSettings(getFilesDir());
-            DataManager.refreshConversations();
+            DataManager.reloadConversations();
             startService(new Intent(_context, MessagingService.class));
         }
 

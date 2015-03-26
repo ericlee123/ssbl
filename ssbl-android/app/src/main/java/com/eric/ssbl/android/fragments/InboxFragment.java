@@ -97,7 +97,7 @@ public class InboxFragment extends ListFragment {
                             first.setConversation(temp);
 
                             DataManager.getCurUser().addConversation(temp);
-                            DataManager.refreshConversations();
+                            DataManager.reloadConversations();
                             new HttpFirstMessageSender().execute(first);
                         }
                     })

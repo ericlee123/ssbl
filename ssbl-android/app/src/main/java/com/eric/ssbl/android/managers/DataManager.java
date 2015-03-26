@@ -361,7 +361,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private static HashMap<Conversation, List<Message>> _conversationMap;
     private static ConversationActivity _openConversation;
 
-    public static void refreshConversations() {
+    public static void reloadConversations() {
         List<Conversation> empties = _curUser.getConversations();
         _conversationMap = new HashMap<>();
         for (int i = 0; i < empties.size(); i++)
@@ -382,15 +382,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
      * @param messageList new messages
      */
     public static void addNewMessages(List<Message> messageList) {
-        for (int i = messageList.size(); i >= 0; i--) {
+        for (int i = messageList.size() - 1; i >= 0; i--) {
             Message m = messageList.get(i);
             if (!_curUser.getConversations().contains(m.getConversation())) {
-                m.getConversation().addRecipient(m.getSender());
                 _curUser.addConversation(m.getConversation());
                 httpUpdateCurUser(_curUser);
             }
 
-            if (_conversationMap.get(m.getConversation()) == null) {
+            if (_conversationMap.get(m.getConversation()) == null) { // this shouldnt be null ever ??
                 List<Message> lm = new LinkedList<>();
                 lm.add(m);
                 _conversationMap.put(m.getConversation(), lm);
