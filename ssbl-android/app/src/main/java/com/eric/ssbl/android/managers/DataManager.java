@@ -189,10 +189,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-//            System.out.println("update_cur_user");
-//            System.out.println(url.toString());
-//            System.out.println(response.getStatusLine().getStatusCode());
-//            System.out.println(jsonString);
+            System.out.println("update_cur_user");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 result = null;

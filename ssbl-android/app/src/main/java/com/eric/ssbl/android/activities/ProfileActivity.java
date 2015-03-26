@@ -150,7 +150,7 @@ public class ProfileActivity extends Activity {
         // Check to see if it's the current user's profile
         if (!_user.equals(DataManager.getCurUser())) {
 
-            final boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
+            boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
 
             final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
             leftCaption.setText(getString(inCircle ? R.string.uncircle : R.string.add_to_circle));
@@ -159,10 +159,16 @@ public class ProfileActivity extends Activity {
             lb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (_circling) {
+                        Toast.makeText(_context, "How about you wait a little?", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     User cur = DataManager.getCurUser();
                     List<User> circle = cur.getFriends();
 
-                    if (inCircle) {
+                    if (DataManager.getCurUser().getFriends().contains(_user)) {
                         circle.remove(_user);
                         lb.setImageResource(R.drawable.green_plus);
                         leftCaption.setText(getString(R.string.add_to_circle));
@@ -173,7 +179,7 @@ public class ProfileActivity extends Activity {
                     }
 
                     cur.setFriends(circle);
-//                    DataManager.updateCurUser(cur); create async task to do this
+                    new HttpUserUpdater().execute();
                 }
             });
 
@@ -283,6 +289,10 @@ public class ProfileActivity extends Activity {
         ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_circle));
     }
 
+    public void goBack(View view) {
+        finish();
+    }
+
     private class HttpFirstMessageSender extends AsyncTask<Message, Void, Void> {
 
         private Message message;
@@ -313,10 +323,10 @@ public class ProfileActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("send_first_message");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("send_first_message");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     message = null;
@@ -351,10 +361,6 @@ public class ProfileActivity extends Activity {
             else
                 Toast.makeText(_context, "Error creating new conversation :(", Toast.LENGTH_LONG).show();
         }
-    }
-
-    public void goBack(View view) {
-        finish();
     }
 
     private class HttpUserGetter extends AsyncTask<User, Void, Void> {
@@ -419,6 +425,21 @@ public class ProfileActivity extends Activity {
             }
             else
                 Toast.makeText(_context, "Error retrieving profile", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean _circling = false;
+
+    private class HttpUserUpdater extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            _circling = true;
+            DataManager.httpUpdateCurUser(DataManager.getCurUser());
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void what) {
+            _circling = false;
         }
     }
 }
