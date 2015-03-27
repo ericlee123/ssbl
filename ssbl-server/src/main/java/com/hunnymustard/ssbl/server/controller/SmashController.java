@@ -88,7 +88,7 @@ public class SmashController {
 	@RequestMapping(method=RequestMethod.POST, value="/messaging/{username}/{id}")
 	public @ResponseBody Message sendMessage(@PathVariable String username, 
 			@PathVariable Integer id, @RequestBody Message message) {
-		if(!_authService.getByParameters(username, id).equals(message.getSender())) throw new AuthException();
+		_authService.getByParameters(username, id);
 		return _messagingService.send(message);
 	}
 	
@@ -105,7 +105,7 @@ public class SmashController {
 	
 	@RequestMapping(method=RequestMethod.POST, value="/notif/{username}/{id}")
 	public @ResponseBody Notification sendNotification(@PathVariable String username, @PathVariable Integer id, @RequestBody Notification notification) {
-		if(!_authService.getByParameters(username, id).equals(notification.getSender())) throw new AuthException();
+		_authService.getByParameters(username, id);
 		return _notificationService.create(notification);
 	}
 
@@ -121,7 +121,7 @@ public class SmashController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST, value="/edit/user/create")
-	public @ResponseBody User register(@RequestBody User user) {
+	public @ResponseBody User createUser(@RequestBody User user) {
 		return _editService.create(user);
 	}
 	
@@ -136,7 +136,7 @@ public class SmashController {
 	}
 
 	@RequestMapping(method=RequestMethod.POST, value="/edit/event/create")
-	public @ResponseBody Event register(@RequestBody Event event) {
+	public @ResponseBody Event createEvent(@RequestBody Event event) {
 		return _editService.create(event);
 	}
 }
