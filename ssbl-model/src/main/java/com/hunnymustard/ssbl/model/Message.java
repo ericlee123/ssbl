@@ -66,7 +66,7 @@ public class Message {
 		_conversation = conversation;
 	}
 	
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
 	@JoinColumn(name="sender_id")
 	public User getSender() {
 		return _sender;

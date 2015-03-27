@@ -103,7 +103,7 @@ public class Event implements Locatable {
 		_title = title;
 	}
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST)
+	@OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="location_id", nullable=false)
 	public Location getLocation() {
 		return _location;
