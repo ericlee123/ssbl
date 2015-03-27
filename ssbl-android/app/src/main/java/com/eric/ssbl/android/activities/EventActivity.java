@@ -397,11 +397,9 @@ public class EventActivity extends Activity {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                Event barren = new Event();
-                barren.setEventId(template.getEventId());
-                barren.setHost(template.getHost());
+                System.out.println(template.getEventId() + " event id");
 
-                StringEntity body = new StringEntity(om.writeValueAsString(barren));
+                StringEntity body = new StringEntity(om.writeValueAsString(template));
                 body.setContentType("application/json");
                 request.setEntity(body);
 
@@ -467,8 +465,7 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            if (DataManager.getEventListFragment() != null)
-                DataManager.getEventListFragment().refresh();
+            DataManager.refreshFragments();
             finish();
         }
     }

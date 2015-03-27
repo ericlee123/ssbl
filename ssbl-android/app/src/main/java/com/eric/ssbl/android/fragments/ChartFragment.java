@@ -102,7 +102,7 @@ public class ChartFragment extends Fragment {
     }
 
     public void displayElements() {
-        System.out.println("display elements");
+
         _map.clear();
 
         if (_curLoc != null)
@@ -117,7 +117,9 @@ public class ChartFragment extends Fragment {
 
         List<User> relevantUsers = new ArrayList<>();
         relevantUsers.addAll(DataManager.getNearbyUsers());
-//        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
+        relevantUsers.remove(DataManager.getCurUser());
+        relevantUsers.add(DataManager.getCurUser());
+//        relevantUsers.removeAll(DataManager.getCurUser().getFriends()); privacy issues; change later
 //        relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
 
@@ -148,10 +150,10 @@ public class ChartFragment extends Fragment {
 
         List<Event> relevantEvents = new ArrayList<>();
         relevantEvents.addAll(DataManager.getNearbyEvents());
-//        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
-//        relevantEvents.addAll(DataManager.getCurUser().getEvents());
-//        relevantEvents.removeAll(DataManager.getHostingEvents());
-//        relevantEvents.addAll(DataManager.getHostingEvents());
+        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
+        relevantEvents.addAll(DataManager.getCurUser().getEvents());
+        relevantEvents.removeAll(DataManager.getHostingEvents());
+        relevantEvents.addAll(DataManager.getHostingEvents());
         for (Event e: relevantEvents) {
 
             Marker marker = _map.addMarker(new MarkerOptions()

@@ -57,6 +57,10 @@ public class MessagingService extends Service {
 //        Intent i = new Intent(getApplicationContext(), ConversationActivity.class);
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 //
+//        Bundle b = new Bundle();
+//        b.putInt("conversation_index", conversationIndex);
+//        i.putExtras(b);
+//
 //        builder.setContentIntent(pi);
 
         NotificationManager notifMngr =
@@ -79,11 +83,13 @@ public class MessagingService extends Service {
         if (DataManager.getCurUser() == null)
             return;
 
+        boolean talking = (DataManager.getOpenConversationActivity() != null);
+
         // I want to restart this service again in 5 seconds
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarm.set(
                 alarm.RTC_WAKEUP,
-                System.currentTimeMillis() + (1000 * 7),
+                System.currentTimeMillis() + (1000 * ((talking) ? 4 : 7)),
                 PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
         );
     }
@@ -116,10 +122,10 @@ public class MessagingService extends Service {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-//                System.out.println("fetch_new_messages");
-//                System.out.println(url.toString());
-//                System.out.println(response.getStatusLine().getStatusCode());
-//                System.out.println(jsonString);
+                System.out.println("fetch_new_messages");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;
@@ -130,12 +136,13 @@ public class MessagingService extends Service {
                 e.printStackTrace();
             }
 
-            if (newMessages != null && newMessages.size() > 0) {
-                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
-                DataManager.addNewMessages(newMessages);
-                if (DataManager.getOpenConversationActivity() == null)
-                    createNotification();
-            }
+//            cannot update ui thread from background
+//            if (newMessages != null && newMessages.size() > 0) {
+//                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
+//                DataManager.addNewMessages(newMessages);
+//                if (DataManager.getOpenConversationActivity() == null)
+//                    createNotification();
+//            }
         }
 
         @Override
@@ -146,12 +153,12 @@ public class MessagingService extends Service {
 
         @Override
         protected void onPostExecute(Void what) {
-//            if (newMessages != null && newMessages.size() > 0) {
-//                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
-//                DataManager.addNewMessages(newMessages);
-//                if (DataManager.getOpenConversationActivity() == null)
-//                    createNotification();
-//            }
+            if (newMessages != null && newMessages.size() > 0) {
+                System.out.println("newMessages: " + newMessages.size() + " " + newMessages.get(0).getBody());
+                DataManager.addNewMessages(newMessages);
+                if (DataManager.getOpenConversationActivity() == null)
+                    createNotification();
+            }
         }
     }
 }

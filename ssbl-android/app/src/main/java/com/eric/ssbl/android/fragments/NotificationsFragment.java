@@ -33,6 +33,12 @@ public class NotificationsFragment extends ListFragment {
     }
 
     public void refresh() {
+
+        if (!isAdded()) {
+            _refreshed = false;
+            return;
+        }
+
         _refreshed = true;
         _notifs = DataManager.getCurUser().getNotifications();
         if (_notifs != null)

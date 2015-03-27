@@ -307,7 +307,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 _eventIdMap.put(result.getEventId(), result);
             }
         }
-        refreshFragments();
         return result;
     }
 
@@ -350,8 +349,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _nearbyEvents.remove(deleted);
         _hostingEvents.remove(deleted);
         oldList.remove(deleted);
-
-        refreshFragments();
     }
 
 
@@ -408,7 +405,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _conversationMap;
     }
 
-    private static final int ADDITONAL_MESSAGES = 40;
+    private static final int ADDITONAL_MESSAGES = 300;
 
     public static List<Message> httpFetchConversation(Conversation c) {
 
@@ -418,7 +415,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         url.append("/" + DataManager.getCurUser().getUsername());
         url.append("/" + DataManager.getCurUser().getUserId());
         url.append("/" + c.getConversationId());
-        url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
+//        url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
+        url.append("?size=0");
         url.append("&additional=" + ADDITONAL_MESSAGES);
 
         List<Message> lm;
@@ -449,8 +447,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             e.printStackTrace();
         }
 
-        if (lm != null)
-            _conversationMap.get(c).addAll(lm);
+        if (lm != null) {
+            _conversationMap.put(c, lm);
+        }
         return lm;
     }
 
@@ -770,10 +769,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-//            System.out.println("get_hosting_events");
-//            System.out.println(url.toString());
-//            System.out.println(response.getStatusLine().getStatusCode());
-//            System.out.println(jsonString);
+            System.out.println("get_hosting_events");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;

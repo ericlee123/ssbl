@@ -2,6 +2,7 @@ package com.eric.ssbl.android.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -66,10 +67,18 @@ public class SettingsActivity extends Activity {
             Toast.makeText(this, "Error saving settings", Toast.LENGTH_LONG).show();
             return;
         }
-        DataManager.saveSettings(_settings);
+        new SettingsSaver().execute(_settings);
     }
 
     public void goBack(View view) {
         finish();
+    }
+
+    private class SettingsSaver extends AsyncTask<JSONObject, Void, Void> {
+        @Override
+        protected Void doInBackground(JSONObject... params) {
+            DataManager.saveSettings(params[0]);
+            return null;
+        }
     }
 }

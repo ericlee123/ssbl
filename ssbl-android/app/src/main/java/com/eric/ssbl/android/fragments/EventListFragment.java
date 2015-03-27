@@ -48,6 +48,11 @@ public class EventListFragment extends ListFragment {
 
     public void refresh() {
 
+        if (!isAdded()) {
+            _refreshed = false;
+            return;
+        }
+
         if (getActivity() == null)
             return;
 

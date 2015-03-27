@@ -365,6 +365,7 @@ public class EditEventActivity extends Activity {
             _loading.dismiss();
             if (updated != null) {
                 Toast.makeText(_context, "Event saved!", Toast.LENGTH_SHORT).show();
+                DataManager.refreshFragments();
                 finish();
             } else {
                 Toast.makeText(_context, "Error saving event :(", Toast.LENGTH_SHORT).show();

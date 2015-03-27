@@ -36,7 +36,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class InboxFragment extends ListFragment {
@@ -96,8 +95,6 @@ public class InboxFragment extends ListFragment {
                             temp.addRecipient(DataManager.getCurUser());
                             first.setConversation(temp);
 
-                            DataManager.getCurUser().addConversation(temp);
-                            DataManager.reloadConversations();
                             new HttpFirstMessageSender().execute(first);
                         }
                     })
@@ -161,12 +158,20 @@ public class InboxFragment extends ListFragment {
 
         Intent i = new Intent(getActivity(), ConversationActivity.class);
         Bundle b = new Bundle();
-        b.putInt("conversation_index", position);
+
+        int realPosition = DataManager.getCurUser().getConversations().size() - 1 - position;
+
+        b.putInt("conversation_index", realPosition);
         i.putExtras(b);
         startActivity(i);
     }
 
     public void refresh() {
+
+        if (!isAdded()) {
+            _refreshed = false;
+            return;
+        }
 
         if (getActivity() == null)
             return;
@@ -246,11 +251,8 @@ public class InboxFragment extends ListFragment {
         @Override
         protected void onPostExecute(Void what) {
             if (message != null) {
-
-                System.out.println("first message recips: " + message.getConversation().getRecipients().size());
-
                 DataManager.getCurUser().getConversations().add(message.getConversation());
-                List<Message> one = new LinkedList<>();
+                List<Message> one = new ArrayList<>();
                 one.add(message);
                 DataManager.getConversationMap().put(message.getConversation(), one);
 

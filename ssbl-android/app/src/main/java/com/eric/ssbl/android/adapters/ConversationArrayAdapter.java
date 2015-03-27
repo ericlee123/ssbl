@@ -47,7 +47,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
         TextView sender = (TextView) messageView.findViewById(R.id.message_sender);
         sender.setText(m.getSender().getUsername());
 
-        if (m.getSender().getUsername().equals(DataManager.getCurUser().getUsername())) {
+        if (m.getSender().equals(DataManager.getCurUser())) {
             square.setImageResource(R.drawable.purple_rounded_square);
             squareLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
