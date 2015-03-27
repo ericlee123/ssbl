@@ -88,7 +88,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         private void doStuff() {
             new DataManager().refreshCurLoc();
-            DataManager.refreshConversations();
+            DataManager.reloadConversations();
         }
 
         @Override

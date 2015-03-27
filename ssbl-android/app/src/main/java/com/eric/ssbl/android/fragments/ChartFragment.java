@@ -15,7 +15,6 @@ import com.eric.ssbl.android.activities.EventActivity;
 import com.eric.ssbl.android.activities.ProfileActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
-import com.eric.ssbl.android.pojos.Location;
 import com.eric.ssbl.android.pojos.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,7 +31,7 @@ import java.util.List;
 
 public class ChartFragment extends Fragment {
 
-    private View _view;
+    private static View _view;
     private static GoogleMap _map;
     private static LatLng _curLoc;
     private static int _defaultZoom = 13;
@@ -94,7 +93,16 @@ public class ChartFragment extends Fragment {
         return _view;
     }
 
+    public void refresh() {
+        _refreshed = true;
+        // get fresh data from datamanager
+        _curLoc = DataManager.getCurLoc();
+        centerMapOnSelf();
+        displayElements();
+    }
+
     public void displayElements() {
+        System.out.println("display elements");
         _map.clear();
 
         if (_curLoc != null)
@@ -112,16 +120,6 @@ public class ChartFragment extends Fragment {
 //        relevantUsers.removeAll(DataManager.getCurUser().getFriends());
 //        relevantUsers.addAll(DataManager.getCurUser().getFriends());
         for (User u: relevantUsers) {
-
-            // To enforce synchronization with the current user
-            if (u.equals(DataManager.getCurUser())) {
-                Location loc = u.getLocation();
-                if (loc == null)
-                    loc = new Location();
-                loc.setLatitude(_curLoc.latitude);
-                loc.setLongitude(_curLoc.longitude);
-                u.setLocation(loc);
-            }
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
             String updated = "Here ";
@@ -172,13 +170,6 @@ public class ChartFragment extends Fragment {
 
     }
 
-    public void refresh() {
-        // get fresh data from datamanager
-        _curLoc = DataManager.getCurLoc();
-        centerMapOnSelf();
-        displayElements();
-    }
-
     public void centerMapOnSelf() {
         if (_curLoc == null || _map == null)
             Toast.makeText(getActivity(), getString(R.string.please_wait), Toast.LENGTH_SHORT).show();
@@ -188,8 +179,7 @@ public class ChartFragment extends Fragment {
 
     public static void clearData() {
         _refreshed = false;
-        if (_map != null)
-            _map.clear();
+        _map = null;
 
         if (_nearbyUsers != null)
             _nearbyUsers.clear();

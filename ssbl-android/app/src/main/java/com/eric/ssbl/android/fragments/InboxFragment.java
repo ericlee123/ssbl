@@ -70,60 +70,70 @@ public class InboxFragment extends ListFragment {
         LayoutInflater li = LayoutInflater.from(getActivity());
         final View temp = li.inflate(R.layout.prompt_first_message, null);
 
-        _firstMessage = new AlertDialog.Builder(getActivity());
-        _firstMessage
-                .setTitle("Compose message")
-                .setCancelable(true)
-                .setView(temp)
-                .setPositiveButton("Send", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        if (_firstMessage == null) {
+            _firstMessage = new AlertDialog.Builder(getActivity());
+            _firstMessage
+                    .setTitle("Compose message")
+                    .setCancelable(true)
+                    .setView(temp)
+                    .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                        EditText body = (EditText) temp.findViewById(R.id.prompt_first_message_body);
-                        if (body.getText().length() == 0) {
-                            Toast.makeText(getActivity(), "Why would you send a blank message?", Toast.LENGTH_LONG).show();
-                            return;
+                            EditText body = (EditText) temp.findViewById(R.id.prompt_first_message_body);
+                            if (body.getText().length() == 0) {
+                                Toast.makeText(getActivity(), "Why would you send a blank message?", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+
+                            Message first = new Message();
+                            first.setSentTime(System.currentTimeMillis());
+                            first.setSender(DataManager.getCurUser());
+                            first.setBody(body.getText().toString());
+
+                            Conversation temp = new Conversation();
+                            temp.addRecipient(relevantUsers.get(_which));
+                            temp.addRecipient(DataManager.getCurUser());
+                            first.setConversation(temp);
+
+                            DataManager.getCurUser().addConversation(temp);
+                            DataManager.reloadConversations();
+                            new HttpFirstMessageSender().execute(first);
                         }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+        }
+        if (_selectUser == null) {
+            _selectUser = new AlertDialog.Builder(getActivity());
+            _selectUser
+                    .setTitle("Start conversation with")
+                    .setCancelable(true)
+                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            _which = which;
 
-                        Message first = new Message();
-                        first.setSentTime(System.currentTimeMillis());
-                        first.setSender(DataManager.getCurUser());
-                        first.setBody(body.getText().toString());
+                            if (temp != null) {
+                                ViewGroup parent = (ViewGroup) temp.getParent();
+                                if (parent != null)
+                                    parent.removeView(temp);
+                            }
 
-                        Conversation temp = new Conversation();
-                        temp.addRecipient(relevantUsers.get(_which));
-                        temp.addRecipient(DataManager.getCurUser());
-                        first.setConversation(temp);
-
-                        DataManager.getCurUser().addConversation(temp);
-                        DataManager.refreshConversations();
-                        new HttpFirstMessageSender().execute(first);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-        _selectUser = new AlertDialog.Builder(getActivity());
-        _selectUser
-                .setTitle("Start conversation with")
-                .setCancelable(true)
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        _which = which;
-                        _firstMessage.show();
-                    }
-                })
-                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                            _firstMessage.show();
+                        }
+                    })
+                    .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+        }
     }
 
     @Override
@@ -157,10 +167,19 @@ public class InboxFragment extends ListFragment {
     }
 
     public void refresh() {
+
+        if (getActivity() == null)
+            return;
+
         _refreshed = true;
         _conversations = DataManager.getCurUser().getConversations();
-        if (_conversations != null)
-            setListAdapter(new InboxArrayAdapter(getActivity(), _conversations));
+        if (_conversations != null) {
+            List<Conversation> reversed = new ArrayList<>();
+            for (int i = _conversations.size() - 1; i >= 0; i--)
+                reversed.add(_conversations.get(i));
+
+            setListAdapter(new InboxArrayAdapter(getActivity(), reversed));
+        }
         else
             Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
     }
@@ -194,6 +213,8 @@ public class InboxFragment extends ListFragment {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+                System.out.println(om.writeValueAsString(m));
+
                 StringEntity body = new StringEntity(om.writeValueAsString(m), "UTF-8");
                 body.setContentType("application/json");
                 request.setEntity(body);
@@ -225,6 +246,9 @@ public class InboxFragment extends ListFragment {
         @Override
         protected void onPostExecute(Void what) {
             if (message != null) {
+
+                System.out.println("first message recips: " + message.getConversation().getRecipients().size());
+
                 DataManager.getCurUser().getConversations().add(message.getConversation());
                 List<Message> one = new LinkedList<>();
                 one.add(message);

@@ -46,19 +46,13 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         }
         if (titleText.length() >= 2)
             titleText.delete(titleText.length() - 2, titleText.length());
-
         title.setText(titleText.toString());
 
         List<Message> lm = DataManager.getConversationMap().get(_conversations.get(position));
         if (lm != null && lm.size() > 0)
             preview.setText(lm.get(0).getBody());
-        else {
-            StringBuilder blah = new StringBuilder();
-            int rand = (int) (Math.random() * 4) + 1;
-            for (int j = 0; j < rand; j++)
-                blah.append("blah ");
-            preview.setText(blah.toString());
-        }
+        else
+            preview.setText("(blah blah blah)");
 
         return singleConversation;
     }

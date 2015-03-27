@@ -51,7 +51,10 @@ public class ProfileFragment extends Fragment {
 
     private void fillDetails() {
 
-        if (_user == null) {
+        if (!isAdded())
+            return;
+
+        if (_user == null || _view == null) {
             _refreshed = false;
             return;
         }

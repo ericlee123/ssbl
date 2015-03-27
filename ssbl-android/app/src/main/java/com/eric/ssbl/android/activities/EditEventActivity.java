@@ -59,6 +59,8 @@ public class EditEventActivity extends Activity {
     private ProgressDialog _loading;
     private Event _event;
 
+    private boolean _new;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +80,7 @@ public class EditEventActivity extends Activity {
             }
         }
 
+        _new = (_event == null);
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(_event == null ? R.string.create_event : R.string.edit_event);
         setContentView(R.layout.activity_edit_event);
 
@@ -353,7 +356,7 @@ public class EditEventActivity extends Activity {
 
         @Override
         protected Void doInBackground(Event... params) {
-            updated = DataManager.httpUpdateEvent(params[0]);
+            updated = DataManager.httpUpdateEvent(params[0], _new);
             return null;
         }
 

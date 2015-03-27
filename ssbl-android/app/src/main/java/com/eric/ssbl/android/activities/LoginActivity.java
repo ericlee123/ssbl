@@ -222,20 +222,6 @@ public class LoginActivity extends Activity {
         _loading = ProgressDialog.show(_context, "Initializing data...", "Almost there, chill", true);
 
         new AppInitializer().execute();
-
-//        if (((CheckBox) findViewById(R.id.login_remember_me)).isChecked())
-//            rememberMe();
-//        else
-//            _loginFile.delete();
-//
-//        DataManager.httpUpdateCurUser(DataManager.getCurUser());
-//        new DataManager().initLocationData(getApplicationContext());
-//        DataManager.initSettings(getFilesDir());
-//        DataManager.refreshConversations();
-//
-//        startService(new Intent(this, MessagingService.class));
-//
-//        goToMain();
     }
 
     public void goToMain() {
@@ -281,10 +267,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("login");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("login");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
@@ -336,7 +322,7 @@ public class LoginActivity extends Activity {
         private void httpRegister(User newUser) {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/auth/register");
+            url.append("/edit/user/create");
 
             try {
 
@@ -358,10 +344,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("register");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("register");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 500)
@@ -412,8 +398,7 @@ public class LoginActivity extends Activity {
 
             new DataManager().initLocationData(getApplicationContext());
             DataManager.initSettings(getFilesDir());
-            DataManager.refreshConversations();
-
+            DataManager.reloadConversations();
             startService(new Intent(_context, MessagingService.class));
         }
 

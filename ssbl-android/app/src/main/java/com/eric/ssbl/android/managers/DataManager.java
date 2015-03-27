@@ -118,8 +118,13 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static void clearData() {
         _curUser = null;
 
-        _nearbyUsers.clear();
+        _chartFragment = null;
+        _profileFragment = null;
+//        _notificationsFragment = null;
+        _inboxFragment = null;
+        _eventListFragment = null;
 
+        _nearbyUsers.clear();
         _eventIdMap.clear();
         _nearbyEvents.clear();
         _hostingEvents.clear();
@@ -128,6 +133,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static String getServerUrl() {
         return _serverURL;
     }
+
+
+
 
     /////////////////////////////////////////////////
     // curUser section
@@ -190,15 +198,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 result = null;
             else
                 result = om.readValue(jsonString, User.class);
-
-            System.out.println("updated loc: " + (updated.getLocation() == null));
-            System.out.println("result loc: " + (result.getLocation() == null));
         } catch (Exception e) {
             result = null;
             e.printStackTrace();
         }
-
         _curUser = (result != null) ? result : backup;
+
         return result;
     }
 
@@ -207,8 +212,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     // Relevant users and events
     ///////////////////////////////////////////////////////
     public static void setNearbyUsers(List<User> nearbyUsers) {
-        if (nearbyUsers == null)
-            return;
         _nearbyUsers = nearbyUsers;
     }
 
@@ -217,8 +220,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public static void setNearbyEvents(List<Event> nearbyEvents) {
-        if (nearbyEvents == null)
-            return;
         _nearbyEvents = nearbyEvents;
         for (Event e : nearbyEvents)
             _eventIdMap.put(e.getEventId(), e);
@@ -229,8 +230,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public static void setHostingEvents(List<Event> hostingEvents) {
-        if (hostingEvents == null)
-            return;
         _hostingEvents = hostingEvents;
         for (Event e : hostingEvents)
             _eventIdMap.put(e.getEventId(), e);
@@ -240,14 +239,18 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _hostingEvents;
     }
 
-    public static Event httpUpdateEvent(Event updated) {
+    public static Event httpUpdateEvent(Event updated, boolean isNew) {
 
         if (updated == null)
             return null;
 
         Event result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-        url.append("/edit/event/update");
+        url.append("/edit/event");
+        if (isNew)
+            url.append("/create");
+        else
+            url.append("/update");
 
         try {
             HttpClient client = new DefaultHttpClient();
@@ -268,10 +271,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("update_event");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("update_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 result = null;
@@ -284,20 +287,27 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
         // update if successful
         if (result != null) {
-            // Update locally
-            Event backup = _eventIdMap.get(updated.getEventId());
-            List<Event> oldList = _curUser.getEvents();
-
-            if (backup != null) {
-                _nearbyEvents.remove(backup);
-                _hostingEvents.remove(backup);
-                oldList.remove(backup);
+            if (isNew) {
+                _eventIdMap.put(result.getEventId(), result);
+                _hostingEvents.add(result);
+                _nearbyEvents.add(result);
+                _curUser.getEvents().add(result);
             }
+            else {
+                Event backup = _eventIdMap.get(updated.getEventId());
+                List<Event> oldList = _curUser.getEvents();
 
-            _hostingEvents.add(result);
-            oldList.add(result);
-            _eventIdMap.put(result.getEventId(), result);
+                if (backup != null) {
+                    _nearbyEvents.remove(backup);
+                    _hostingEvents.remove(backup);
+                    oldList.remove(backup);
+                }
+                _hostingEvents.add(result);
+                oldList.add(result);
+                _eventIdMap.put(result.getEventId(), result);
+            }
         }
+        refreshFragments();
         return result;
     }
 
@@ -305,7 +315,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (deleted == null)
             return;
 
-        Event result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
         url.append("/edit/event/delete");
 
@@ -327,13 +336,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
             HttpResponse response = client.execute(request);
 
-            System.out.println("delete_event");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println("delete_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         // Update locally
         _eventIdMap.remove(deleted);
@@ -342,6 +350,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _nearbyEvents.remove(deleted);
         _hostingEvents.remove(deleted);
         oldList.remove(deleted);
+
+        refreshFragments();
     }
 
 
@@ -351,7 +361,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private static HashMap<Conversation, List<Message>> _conversationMap;
     private static ConversationActivity _openConversation;
 
-    public static void refreshConversations() {
+    public static void reloadConversations() {
         List<Conversation> empties = _curUser.getConversations();
         _conversationMap = new HashMap<>();
         for (int i = 0; i < empties.size(); i++)
@@ -367,12 +377,19 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _openConversation;
     }
 
+    /**
+     * Called from async task in MessagingService
+     * @param messageList new messages
+     */
     public static void addNewMessages(List<Message> messageList) {
-        for (Message m : messageList) {
-            if (!_curUser.getConversations().contains(m.getConversation()))
+        for (int i = messageList.size() - 1; i >= 0; i--) {
+            Message m = messageList.get(i);
+            if (!_curUser.getConversations().contains(m.getConversation())) {
                 _curUser.addConversation(m.getConversation());
+                httpUpdateCurUser(_curUser);
+            }
 
-            if (_conversationMap.get(m.getConversation()) == null) {
+            if (_conversationMap.get(m.getConversation()) == null) { // this shouldnt be null ever ??
                 List<Message> lm = new LinkedList<>();
                 lm.add(m);
                 _conversationMap.put(m.getConversation(), lm);
@@ -391,6 +408,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _conversationMap;
     }
 
+    private static final int ADDITONAL_MESSAGES = 40;
+
     public static List<Message> httpFetchConversation(Conversation c) {
 
         // get the users
@@ -400,9 +419,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         url.append("/" + DataManager.getCurUser().getUserId());
         url.append("/" + c.getConversationId());
         url.append("?size=" + ((_conversationMap.get(c) == null) ? 0 : _conversationMap.get(c).size()));
-        url.append("&additional=" + 40);
-
-        System.out.println("c size: " + _conversationMap.get(c).size());
+        url.append("&additional=" + ADDITONAL_MESSAGES);
 
         List<Message> lm;
         try {
@@ -638,6 +655,12 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             fetchHostingEvents();
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (_chartFragment != null)
+                _chartFragment.refresh();
+        }
     }
 
     private void fetchNearbyUsers(LatLng loc) {
@@ -657,10 +680,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_nearby_users");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_nearby_users");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
             if (jsonString.length() == 0)
                 return;
 
@@ -695,10 +718,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_nearby_events");
-            System.out.println(url2.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_nearby_events");
+//            System.out.println(url2.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;
@@ -747,10 +770,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_hosting_events");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("get_hosting_events");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;
