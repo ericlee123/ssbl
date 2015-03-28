@@ -267,10 +267,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-//                System.out.println("login");
-//                System.out.println(url.toString());
-//                System.out.println(response.getStatusLine().getStatusCode());
-//                System.out.println(jsonString);
+                System.out.println("login");
+                System.out.println(url.toString());
+                System.out.println(response.getStatusLine().getStatusCode());
+                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
@@ -282,6 +282,10 @@ public class LoginActivity extends Activity {
                         return;
 
                     ObjectMapper om = new ObjectMapper();
+                    om.enable(SerializationFeature.INDENT_OUTPUT);
+                    om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                    om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
                     curUser = om.readValue(jsonString, User.class);
                 }
             } catch (Exception e) {
@@ -302,8 +306,8 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             _loading.dismiss();
             if (curUser != null) {
-                curUser.setLastLoginTime(System.currentTimeMillis());
                 DataManager.setCurUser(curUser);
+                DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }
             else {
@@ -378,6 +382,7 @@ public class LoginActivity extends Activity {
             _loading.dismiss();
             if (curUser != null) {
                 DataManager.setCurUser(curUser);
+                DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }
             else {

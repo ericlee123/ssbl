@@ -48,6 +48,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 //    private static String _90serverURL = "http://10.148.130.20:8080/ssbl-server-2.0/smash";
     //    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
     private static User _curUser;
+    private static List<Conversation> _conversations;
     private static List<User> _nearbyUsers = new ArrayList<>();
     private static List<Event> _nearbyEvents = new ArrayList<>();
     private static List<Event> _hostingEvents = new ArrayList<>();
@@ -117,6 +118,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     public static void clearData() {
         _curUser = null;
+        _conversations = null;
 
         _chartFragment = null;
         _profileFragment = null;
@@ -148,6 +150,14 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _curUser = curUser;
     }
 
+    public static List<Conversation> getConversations() {
+        return _conversations;
+    }
+
+    public static void setConversations(List<Conversation> conversations) {
+        _conversations = conversations;
+    }
+
     /**
      * First updates the current user locally, and then sends an HTTP post
      * to the server. If the post is unsuccessful, the current user is reverted
@@ -161,8 +171,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (updated == null)
             return null;
 
-        User backup = _curUser;
-        _curUser = updated;
+        updated.setLastMessageTime(null);
 
         User result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
@@ -180,8 +189,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            System.out.println(om.writeValueAsString(updated));
-
             StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
             body.setContentType("application/json");
             request.setEntity(body);
@@ -189,10 +196,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("update_cur_user");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("update_cur_user");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 result = null;
@@ -202,7 +209,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             result = null;
             e.printStackTrace();
         }
-        _curUser = (result != null) ? result : backup;
+
+        if (result != null)
+            _curUser = result;
 
         return result;
     }
@@ -359,10 +368,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private static ConversationActivity _openConversation;
 
     public static void reloadConversations() {
-        List<Conversation> empties = _curUser.getConversations();
         _conversationMap = new HashMap<>();
-        for (int i = 0; i < empties.size(); i++)
-            _conversationMap.put(empties.get(i), new LinkedList<Message>());
+        for (int i = 0; i < _conversations.size(); i++)
+            _conversationMap.put(_conversations.get(i), new LinkedList<Message>());
 //        fetchConversationPreviews();
     }
 
@@ -381,10 +389,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static void addNewMessages(List<Message> messageList) {
         for (int i = messageList.size() - 1; i >= 0; i--) {
             Message m = messageList.get(i);
-            if (!_curUser.getConversations().contains(m.getConversation())) {
-                _curUser.addConversation(m.getConversation());
-                httpUpdateCurUser(_curUser);
-            }
+            if (!_conversations.contains(m.getConversation()))
+                _conversations.add(m.getConversation());
 
             if (_conversationMap.get(m.getConversation()) == null) { // this shouldnt be null ever ??
                 List<Message> lm = new LinkedList<>();

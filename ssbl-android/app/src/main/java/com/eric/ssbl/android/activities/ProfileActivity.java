@@ -208,7 +208,6 @@ public class ProfileActivity extends Activity {
                                     }
 
                                     Message first = new Message();
-                                    first.setSentTime(System.currentTimeMillis());
                                     first.setSender(DataManager.getCurUser());
                                     first.setBody(body.getText().toString());
 
@@ -347,14 +346,14 @@ public class ProfileActivity extends Activity {
         @Override
         protected void onPostExecute(Void what) {
             if (message != null) {
-                DataManager.getCurUser().getConversations().add(message.getConversation());
+                DataManager.getConversations().add(message.getConversation());
                 List<Message> one = new LinkedList<>();
                 one.add(message);
                 DataManager.getConversationMap().put(message.getConversation(), one);
 
                 Intent i = new Intent(_context, ConversationActivity.class);
                 Bundle b = new Bundle();
-                b.putInt("conversation_index", DataManager.getCurUser().getConversations().size() - 1);
+                b.putInt("conversation_index", DataManager.getConversations().size() - 1);
                 i.putExtras(b);
                 startActivity(i);
             }

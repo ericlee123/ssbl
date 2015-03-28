@@ -86,7 +86,6 @@ public class InboxFragment extends ListFragment {
                             }
 
                             Message first = new Message();
-                            first.setSentTime(System.currentTimeMillis());
                             first.setSender(DataManager.getCurUser());
                             first.setBody(body.getText().toString());
 
@@ -159,7 +158,7 @@ public class InboxFragment extends ListFragment {
         Intent i = new Intent(getActivity(), ConversationActivity.class);
         Bundle b = new Bundle();
 
-        int realPosition = DataManager.getCurUser().getConversations().size() - 1 - position;
+        int realPosition = DataManager.getConversations().size() - 1 - position;
 
         b.putInt("conversation_index", realPosition);
         i.putExtras(b);
@@ -177,7 +176,7 @@ public class InboxFragment extends ListFragment {
             return;
 
         _refreshed = true;
-        _conversations = DataManager.getCurUser().getConversations();
+        _conversations = DataManager.getConversations();
         if (_conversations != null) {
             List<Conversation> reversed = new ArrayList<>();
             for (int i = _conversations.size() - 1; i >= 0; i--)
@@ -185,8 +184,8 @@ public class InboxFragment extends ListFragment {
 
             setListAdapter(new InboxArrayAdapter(getActivity(), reversed));
         }
-        else
-            Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
+//        else
+//            Toast.makeText(getActivity(), "Error retrieving conversations", Toast.LENGTH_SHORT).show();
     }
 
     public static void clearData() {
@@ -227,10 +226,10 @@ public class InboxFragment extends ListFragment {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("send_first_message");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("send_first_message");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     message = null;
@@ -251,18 +250,17 @@ public class InboxFragment extends ListFragment {
         @Override
         protected void onPostExecute(Void what) {
             if (message != null) {
-                DataManager.getCurUser().getConversations().add(message.getConversation());
+                DataManager.getConversations().add(message.getConversation());
                 List<Message> one = new ArrayList<>();
                 one.add(message);
                 DataManager.getConversationMap().put(message.getConversation(), one);
 
                 Intent i = new Intent(getActivity(), ConversationActivity.class);
                 Bundle b = new Bundle();
-                b.putInt("conversation_index", DataManager.getCurUser().getConversations().size() - 1);
+                b.putInt("conversation_index", DataManager.getConversations().size() - 1);
                 i.putExtras(b);
                 startActivity(i);
-            }
-            else
+            } else
                 Toast.makeText(getActivity(), "Error creating new conversation :(", Toast.LENGTH_LONG).show();
         }
     }

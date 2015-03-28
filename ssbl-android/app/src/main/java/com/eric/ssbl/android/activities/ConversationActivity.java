@@ -60,7 +60,7 @@ public class ConversationActivity extends ListActivity {
 
         DataManager.setOpenConversationActivity(this);
 
-        _conversation = DataManager.getCurUser().getConversations().get(getIntent().getExtras().getInt("conversation_index"));
+        _conversation = DataManager.getConversations().get(getIntent().getExtras().getInt("conversation_index"));
 
         setContentView(R.layout.activity_conversation);
 
