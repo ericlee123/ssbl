@@ -397,7 +397,10 @@ public class EventActivity extends Activity {
                 om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
                 om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                System.out.println(template.getEventId() + " event id");
+                Event barren = new Event();
+                barren.setEventId(template.getEventId());
+                barren.setHost(template.getHost());
+                System.out.println("template json:\n" + om.writeValueAsString(barren));
 
                 StringEntity body = new StringEntity(om.writeValueAsString(template));
                 body.setContentType("application/json");
@@ -406,9 +409,9 @@ public class EventActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getEvent url: " + url.toString());
-                System.out.println("status code: " + response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("getEvent url: " + url.toString());
+//                System.out.println("status code: " + response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     return;

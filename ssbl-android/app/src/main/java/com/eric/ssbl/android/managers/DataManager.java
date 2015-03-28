@@ -393,12 +393,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             } else
                 _conversationMap.get(m.getConversation()).add(0, m);
         }
-
-        if (_inboxFragment != null)
-            _inboxFragment.refresh();
-        if (_openConversation != null) {
-            _openConversation.showMessages();
-        }
     }
 
     public static HashMap<Conversation, List<Message>> getConversationMap() {

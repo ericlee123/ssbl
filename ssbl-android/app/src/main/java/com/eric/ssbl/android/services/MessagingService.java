@@ -31,8 +31,6 @@ public class MessagingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Query the database and show alarm if it applies
-
         if (DataManager.getCurUser() == null) {
             stopSelf();
             return START_NOT_STICKY;
@@ -136,13 +134,10 @@ public class MessagingService extends Service {
                 e.printStackTrace();
             }
 
-//            cannot update ui thread from background
-//            if (newMessages != null && newMessages.size() > 0) {
-//                System.out.println("new message recips: " + newMessages.get(0).getConversation().getRecipients().size());
-//                DataManager.addNewMessages(newMessages);
-//                if (DataManager.getOpenConversationActivity() == null)
-//                    createNotification();
-//            }
+            if (newMessages != null && newMessages.size() > 0) {
+                DataManager.addNewMessages(newMessages);
+                createNotification(); // should check if the open conversation activity matches any of the new messages
+            }
         }
 
         @Override
@@ -154,10 +149,10 @@ public class MessagingService extends Service {
         @Override
         protected void onPostExecute(Void what) {
             if (newMessages != null && newMessages.size() > 0) {
-                System.out.println("newMessages: " + newMessages.size() + " " + newMessages.get(0).getBody());
-                DataManager.addNewMessages(newMessages);
-                if (DataManager.getOpenConversationActivity() == null)
-                    createNotification();
+                if (DataManager.getInboxFragment() != null)
+                    DataManager.getInboxFragment().refresh();
+                if (DataManager.getOpenConversationActivity() != null)
+                    DataManager.getOpenConversationActivity().showMessages();
             }
         }
     }

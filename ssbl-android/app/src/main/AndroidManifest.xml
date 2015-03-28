@@ -34,32 +34,40 @@
         </activity>
         <activity
             android:name=".android.activities.MainActivity"
-            android:theme="@style/MyNavigationDrawerTheme">
+            android:theme="@style/MyNavigationDrawerTheme"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".android.activities.ProfileActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".android.activities.EditProfileActivity"
             android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
             android:name=".android.activities.EventActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".android.activities.EditEventActivity"
             android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
             android:name=".android.activities.EditEventMapActivity"
-            android:theme="@android:style/Theme.Holo.Dialog" />
+            android:theme="@android:style/Theme.Holo.Dialog"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".android.activities.SettingsActivity"
-            android:theme="@style/LowerLevelTheme" />
+            android:theme="@style/LowerLevelTheme"
+            android:screenOrientation="portrait"/>
     </application>
 
     <!-- For Google Maps -->

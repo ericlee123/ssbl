@@ -75,8 +75,12 @@ public class ConversationActivity extends ListActivity {
             abTitle.delete(abTitle.length() - 2, abTitle.length());
         ((TextView) _abv.findViewById(R.id.action_bar_title)).setText(abTitle.toString());
 
-        _loading = ProgressDialog.show(this, "Loading conversation...", getString(R.string.chill_out), true);
-        new HttpConversationFetcher().execute(_conversation);
+        if (DataManager.getConversationMap().get(_conversation) == null || DataManager.getConversationMap().get(_conversation).size() == 0) {
+            _loading = ProgressDialog.show(this, "Loading conversation...", getString(R.string.chill_out), true);
+            new HttpConversationFetcher().execute(_conversation);
+        }
+        else
+            showMessages();
     }
 
     @Override
