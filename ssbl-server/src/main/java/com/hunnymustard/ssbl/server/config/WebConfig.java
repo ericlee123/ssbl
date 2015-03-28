@@ -29,8 +29,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         mapper.registerModule(new Hibernate4Module());
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-		// mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         
         messageConverter.setObjectMapper(mapper);

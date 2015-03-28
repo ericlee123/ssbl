@@ -17,7 +17,7 @@ import com.hunnymustard.ssbl.server.service.MessagingService;
 @Service("messagingService")
 @Transactional(propagation = Propagation.REQUIRED, readOnly=false)
 public class MessagingServiceHibernate implements MessagingService {
-	
+		
 	@Autowired
 	private MessageRepository _messageRepository;
 	

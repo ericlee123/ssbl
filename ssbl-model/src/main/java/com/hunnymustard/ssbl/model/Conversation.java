@@ -3,12 +3,13 @@ package com.hunnymustard.ssbl.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -56,7 +57,10 @@ public class Conversation {
 		_id = id;
 	}
 	
-    @ManyToMany(mappedBy="conversations", fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name="conversation_users",
+            inverseJoinColumns=@JoinColumn(name="user_id"),
+            joinColumns=@JoinColumn(name="conversation_id"))
 	public List<User> getRecipients() {
 		return _recipients;
 	}
@@ -70,7 +74,7 @@ public class Conversation {
 		_recipients.add(recipient);
 	}
 	
-	@OneToMany(cascade=CascadeType.ALL, mappedBy="conversation", fetch=FetchType.LAZY)
+	@OneToMany(mappedBy="conversation", fetch=FetchType.LAZY)
 	@LazyCollection(LazyCollectionOption.EXTRA)
 	@OrderBy("sent_time DESC")
 	public List<Message> getMessages() {

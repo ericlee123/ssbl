@@ -89,6 +89,7 @@ public class SmashController {
 	public @ResponseBody Message sendMessage(@PathVariable String username, 
 			@PathVariable Integer id, @RequestBody Message message) {
 		_authService.getByParameters(username, id);
+		message.setSentTime(System.currentTimeMillis());
 		return _messagingService.send(message);
 	}
 	
