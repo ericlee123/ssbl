@@ -22,19 +22,17 @@ import com.hunnymustard.ssbl.model.User;
 public class SendMessageExample {
 
 	public static void main(String[] args) throws ClientProtocolException, IOException {
+
 		User u1 = new User();
 		u1.setUserId(5);
 		u1.setUsername("ashwin");
-		u1.setPassword("password");
-		u1.setEmail("ashwin@password.com");
 		
 		User u2 = new User();
 		u2.setUserId(3);
 		u2.setUsername("papaya");
-		u2.setPassword("*975B2CD4FF9AE554FE8AD33168FBFC326D2021DD");
-		u2.setEmail("papaya@test.com");
 		
 		Conversation conversation = new Conversation();
+		conversation.setConversationId(3);
 		conversation.addRecipient(u1);
 		conversation.addRecipient(u2);
 		

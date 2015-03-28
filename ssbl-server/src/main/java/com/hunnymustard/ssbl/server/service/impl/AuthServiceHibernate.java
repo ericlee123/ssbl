@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hunnymustard.ssbl.model.Conversation;
 import com.hunnymustard.ssbl.model.User;
 import com.hunnymustard.ssbl.server.exceptions.AuthException;
 import com.hunnymustard.ssbl.server.repository.UserRepository;

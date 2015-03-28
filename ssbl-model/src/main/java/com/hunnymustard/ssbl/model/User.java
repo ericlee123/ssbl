@@ -22,6 +22,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SelectBeforeUpdate;
@@ -40,6 +41,7 @@ import com.hunnymustard.ssbl.util.Locatable;
  * @author ashwin
  */
 @Entity
+@DynamicInsert
 @DynamicUpdate(value=true)
 @SelectBeforeUpdate
 @Table(name="users")
@@ -243,10 +245,7 @@ public class User implements Locatable {
 		_friends.add(friend);
 	}
 	
-	@ManyToMany
-	@JoinTable(name="conversation_users",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="conversation_id"))
+    @ManyToMany(mappedBy="recipients", fetch=FetchType.LAZY)
 	public List<Conversation> getConversations() {
 		return _conversations;
 	}

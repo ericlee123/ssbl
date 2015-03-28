@@ -40,7 +40,7 @@ import com.hunnymustard.ssbl.util.Locatable;
  * @see com.hunnymustard.ssbm.model.User
  */
 @Entity
-@DynamicUpdate(value=true)
+@DynamicUpdate
 @SelectBeforeUpdate
 @Table(name="events")
 @JsonIdentityInfo(scope=Event.class, generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
