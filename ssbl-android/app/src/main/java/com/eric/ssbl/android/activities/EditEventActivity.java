@@ -311,7 +311,7 @@ public class EditEventActivity extends Activity {
             _event = new Event();
 
         _event.setTitle(_title.getText().toString());
-        _event.setHost(DataManager.getCurUser());
+        _event.setHost(DataManager.getCurrentUser());
         _event.setUsers(new ArrayList<User>());
 
         Location l = new Location();

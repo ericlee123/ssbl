@@ -306,7 +306,7 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             _loading.dismiss();
             if (curUser != null) {
-                DataManager.setCurUser(curUser);
+                DataManager.setCurrentUser(curUser);
                 DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }
@@ -381,7 +381,7 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(Void what) {
             _loading.dismiss();
             if (curUser != null) {
-                DataManager.setCurUser(curUser);
+                DataManager.setCurrentUser(curUser);
                 DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }

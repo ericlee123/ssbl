@@ -117,10 +117,10 @@ public class ChartFragment extends Fragment {
 
         List<User> relevantUsers = new ArrayList<>();
         relevantUsers.addAll(DataManager.getNearbyUsers());
-        relevantUsers.remove(DataManager.getCurUser());
-        relevantUsers.add(DataManager.getCurUser());
-//        relevantUsers.removeAll(DataManager.getCurUser().getFriends()); privacy issues; change later
-//        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+        relevantUsers.remove(DataManager.getCurrentUser());
+        relevantUsers.add(DataManager.getCurrentUser());
+//        relevantUsers.removeAll(DataManager.getCurrentUser().getFriends()); privacy issues; change later
+//        relevantUsers.addAll(DataManager.getCurrentUser().getFriends());
         for (User u: relevantUsers) {
 
             int elapsed = (int) ((now - u.getLastLocationTime()) / 60000);
@@ -138,7 +138,7 @@ public class ChartFragment extends Fragment {
                     .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
 
-            if (u.equals(DataManager.getCurUser()))
+            if (u.equals(DataManager.getCurrentUser()))
                 marker.showInfoWindow();
 
             try {
@@ -150,8 +150,8 @@ public class ChartFragment extends Fragment {
 
         List<Event> relevantEvents = new ArrayList<>();
         relevantEvents.addAll(DataManager.getNearbyEvents());
-        relevantEvents.removeAll(DataManager.getCurUser().getEvents());
-        relevantEvents.addAll(DataManager.getCurUser().getEvents());
+        relevantEvents.removeAll(DataManager.getCurrentUser().getEvents());
+        relevantEvents.addAll(DataManager.getCurrentUser().getEvents());
         relevantEvents.removeAll(DataManager.getHostingEvents());
         relevantEvents.addAll(DataManager.getHostingEvents());
         for (Event e: relevantEvents) {

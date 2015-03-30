@@ -28,7 +28,7 @@ public class MainActivity extends MaterialNavigationDrawer {
     public void init(Bundle bundle) {
 
         this.disableLearningPattern();
-        MaterialAccount account = new MaterialAccount(this.getResources(), DataManager.getCurUser().getUsername(), DataManager.getCurUser().getEmail(), R.drawable.smash_bros_icon, R.drawable.md_gray);
+        MaterialAccount account = new MaterialAccount(this.getResources(), DataManager.getCurrentUser().getUsername(), DataManager.getCurrentUser().getEmail(), R.drawable.smash_bros_icon, R.drawable.md_gray);
         this.addAccount(account);
 
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());

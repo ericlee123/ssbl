@@ -60,7 +60,7 @@ public class EventListFragment extends ListFragment {
 
         _allEvents = new ArrayList<>();
         List<Event> hosting = DataManager.getHostingEvents();
-        List<Event> attending = DataManager.getCurUser().getEvents();
+        List<Event> attending = DataManager.getCurrentUser().getEvents();
         List<Event> nearby = DataManager.getNearbyEvents();
 
         attending.removeAll(hosting);

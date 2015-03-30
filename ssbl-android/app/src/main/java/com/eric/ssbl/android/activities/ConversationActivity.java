@@ -68,7 +68,7 @@ public class ConversationActivity extends ListActivity {
         Iterator<User> i = _conversation.getRecipients().iterator();
         while (i.hasNext()) {
             User temp = i.next();
-            if (!temp.equals(DataManager.getCurUser()))
+            if (!temp.equals(DataManager.getCurrentUser()))
                 abTitle.append(temp.getUsername() + ", ");
         }
         if (abTitle.length() >= 2)
@@ -112,7 +112,7 @@ public class ConversationActivity extends ListActivity {
         }
 
         Message sending = new Message();
-        sending.setSender(DataManager.getCurUser());
+        sending.setSender(DataManager.getCurrentUser());
         sending.setSentTime(System.currentTimeMillis());
         sending.setConversation(_conversation);
 
@@ -185,8 +185,8 @@ public class ConversationActivity extends ListActivity {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/messaging");
-            url.append("/" + DataManager.getCurUser().getUsername());
-            url.append("/" + DataManager.getCurUser().getUserId());
+            url.append("/" + DataManager.getCurrentUser().getUsername());
+            url.append("/" + DataManager.getCurrentUser().getUserId());
 
             try {
                 HttpClient client = new DefaultHttpClient();

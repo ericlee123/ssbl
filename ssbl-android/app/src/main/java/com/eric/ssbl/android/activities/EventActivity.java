@@ -167,9 +167,9 @@ public class EventActivity extends Activity {
         ((TextView) findViewById(R.id.event_attending_list)).setText(attendance.toString());
 
         // Manage buttons
-        if (!_event.getHost().equals(DataManager.getCurUser())) {
+        if (!_event.getHost().equals(DataManager.getCurrentUser())) {
 
-            final boolean isAttending = _event.getUsers().contains(DataManager.getCurUser());
+            final boolean isAttending = _event.getUsers().contains(DataManager.getCurrentUser());
 
             final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
             leftCaption.setText(getString(isAttending ? R.string.unattend_event : R.string.attend_event));
@@ -181,12 +181,12 @@ public class EventActivity extends Activity {
                     List<User> attending = _event.getUsers();
 
                     if (isAttending) {
-                        attending.remove(DataManager.getCurUser());
+                        attending.remove(DataManager.getCurrentUser());
                         lb.setImageResource(R.drawable.green_up_arrow);
                         leftCaption.setText(getString(R.string.attend_event));
                     }
                     else {
-                        attending.add(DataManager.getCurUser());
+                        attending.add(DataManager.getCurrentUser());
                         lb.setImageResource(R.drawable.red_down_arrow);
                         leftCaption.setText(getString(R.string.unattend_event));
                     }
@@ -221,12 +221,12 @@ public class EventActivity extends Activity {
                                     }
 
                                     Message first = new Message();
-                                    first.setSender(DataManager.getCurUser());
+                                    first.setSender(DataManager.getCurrentUser());
                                     first.setBody(body.getText().toString());
 
                                     Conversation temp = new Conversation();
                                     temp.addRecipient(_event.getHost());
-                                    temp.addRecipient(DataManager.getCurUser());
+                                    temp.addRecipient(DataManager.getCurrentUser());
                                     first.setConversation(temp);
 
                                     new HttpFirstMessageSender().execute(first);
@@ -309,8 +309,8 @@ public class EventActivity extends Activity {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/messaging");
-            url.append("/" + DataManager.getCurUser().getUsername());
-            url.append("/" + DataManager.getCurUser().getUserId());
+            url.append("/" + DataManager.getCurrentUser().getUsername());
+            url.append("/" + DataManager.getCurrentUser().getUserId());
 
             try {
                 HttpClient client = new DefaultHttpClient();

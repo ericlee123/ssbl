@@ -38,7 +38,7 @@ public class EditProfileActivity extends Activity {
 
         setContentView(R.layout.activity_edit_profile);
 
-        User u = DataManager.getCurUser();
+        User u = DataManager.getCurrentUser();
         for (Game g: u.getGames()) {
             if (g.equals(Game.SSB64))
                 ((CheckBox) findViewById(R.id.edit_profile_games_ssb64)).setChecked(true);
@@ -59,7 +59,7 @@ public class EditProfileActivity extends Activity {
 
         _loading = ProgressDialog.show(_context, "Updating profile...", getString(R.string.chill_out), true);
 
-        User u = DataManager.getCurUser();
+        User u = DataManager.getCurrentUser();
         List<Game> games = new ArrayList<>();
         if (((CheckBox) findViewById(R.id.edit_profile_games_ssb64)).isChecked())
             games.add(Game.SSB64);
@@ -89,7 +89,7 @@ public class EditProfileActivity extends Activity {
 
         @Override
         protected Void doInBackground(User... params) {
-            updated = DataManager.httpUpdateCurUser(params[0]);
+            updated = DataManager.httpUpdateCurrentUser(params[0]);
             return null;
         }
 

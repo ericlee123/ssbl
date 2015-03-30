@@ -148,9 +148,9 @@ public class ProfileActivity extends Activity {
         ((TextView) findViewById(R.id.event_attending_list)).setText(attendingEvents);
 
         // Check to see if it's the current user's profile
-        if (!_user.equals(DataManager.getCurUser())) {
+        if (!_user.equals(DataManager.getCurrentUser())) {
 
-            boolean inCircle = DataManager.getCurUser().getFriends().contains(_user);
+            boolean inCircle = DataManager.getCurrentUser().getFriends().contains(_user);
 
             final TextView leftCaption = (TextView) findViewById(R.id.eu_button_left_caption);
             leftCaption.setText(getString(inCircle ? R.string.uncircle : R.string.add_to_circle));
@@ -165,10 +165,10 @@ public class ProfileActivity extends Activity {
                         return;
                     }
 
-                    User cur = DataManager.getCurUser();
+                    User cur = DataManager.getCurrentUser();
                     List<User> circle = cur.getFriends();
 
-                    if (DataManager.getCurUser().getFriends().contains(_user)) {
+                    if (DataManager.getCurrentUser().getFriends().contains(_user)) {
                         circle.remove(_user);
                         lb.setImageResource(R.drawable.green_plus);
                         leftCaption.setText(getString(R.string.add_to_circle));
@@ -208,12 +208,12 @@ public class ProfileActivity extends Activity {
                                     }
 
                                     Message first = new Message();
-                                    first.setSender(DataManager.getCurUser());
+                                    first.setSender(DataManager.getCurrentUser());
                                     first.setBody(body.getText().toString());
 
                                     Conversation temp = new Conversation();
                                     temp.addRecipient(_user);
-                                    temp.addRecipient(DataManager.getCurUser());
+                                    temp.addRecipient(DataManager.getCurrentUser());
                                     first.setConversation(temp);
 
                                     new HttpFirstMessageSender().execute(first);
@@ -300,8 +300,8 @@ public class ProfileActivity extends Activity {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/messaging");
-            url.append("/" + DataManager.getCurUser().getUsername());
-            url.append("/" + DataManager.getCurUser().getUserId());
+            url.append("/" + DataManager.getCurrentUser().getUsername());
+            url.append("/" + DataManager.getCurrentUser().getUserId());
 
             try {
                 HttpClient client = new DefaultHttpClient();
@@ -433,7 +433,7 @@ public class ProfileActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             _circling = true;
-            DataManager.httpUpdateCurUser(DataManager.getCurUser());
+            DataManager.httpUpdateCurrentUser(DataManager.getCurrentUser());
             return null;
         }
         @Override

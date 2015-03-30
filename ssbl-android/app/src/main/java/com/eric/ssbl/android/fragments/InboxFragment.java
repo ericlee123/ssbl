@@ -53,10 +53,10 @@ public class InboxFragment extends ListFragment {
 
         final List<User> relevantUsers = new ArrayList<>();
         List<User> nearbyTemp = DataManager.getNearbyUsers();
-        relevantUsers.addAll(DataManager.getCurUser().getFriends());
+        relevantUsers.addAll(DataManager.getCurrentUser().getFriends());
         nearbyTemp.removeAll(relevantUsers);
         relevantUsers.addAll(nearbyTemp);
-        relevantUsers.remove(DataManager.getCurUser());
+        relevantUsers.remove(DataManager.getCurrentUser());
 
         List<String> usernames = new ArrayList<>();
         Iterator<User> iter = relevantUsers.iterator();
@@ -86,12 +86,12 @@ public class InboxFragment extends ListFragment {
                             }
 
                             Message first = new Message();
-                            first.setSender(DataManager.getCurUser());
+                            first.setSender(DataManager.getCurrentUser());
                             first.setBody(body.getText().toString());
 
                             Conversation temp = new Conversation();
                             temp.addRecipient(relevantUsers.get(_which));
-                            temp.addRecipient(DataManager.getCurUser());
+                            temp.addRecipient(DataManager.getCurrentUser());
                             first.setConversation(temp);
 
                             new HttpFirstMessageSender().execute(first);
@@ -202,8 +202,8 @@ public class InboxFragment extends ListFragment {
 
             StringBuilder url = new StringBuilder(DataManager.getServerUrl());
             url.append("/messaging");
-            url.append("/" + DataManager.getCurUser().getUsername());
-            url.append("/" + DataManager.getCurUser().getUserId());
+            url.append("/" + DataManager.getCurrentUser().getUsername());
+            url.append("/" + DataManager.getCurrentUser().getUserId());
 
             try {
                 HttpClient client = new DefaultHttpClient();

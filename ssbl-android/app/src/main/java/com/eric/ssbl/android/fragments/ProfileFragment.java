@@ -45,7 +45,7 @@ public class ProfileFragment extends Fragment {
 
     public void refresh() {
         _refreshed = true;
-        _user = DataManager.getCurUser();
+        _user = DataManager.getCurrentUser();
         fillDetails();
     }
 
@@ -131,7 +131,7 @@ public class ProfileFragment extends Fragment {
         ((TextView) _view.findViewById(R.id.eu_button_middle_caption)).setText(getString(R.string.tip_fedora));
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
-        List<User> circle = DataManager.getCurUser().getFriends();
+        List<User> circle = DataManager.getCurrentUser().getFriends();
         List<String> circleNames = new ArrayList<>();
         if (circle != null)
             for (int i = 0; i < circle.size(); i++)

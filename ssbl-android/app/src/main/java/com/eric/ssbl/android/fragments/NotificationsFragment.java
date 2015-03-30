@@ -40,7 +40,7 @@ public class NotificationsFragment extends ListFragment {
         }
 
         _refreshed = true;
-        _notifs = DataManager.getCurUser().getNotifications();
+        _notifs = DataManager.getCurrentUser().getNotifications();
         if (_notifs != null)
             setListAdapter(new NotificationArrayAdapter(getActivity(), _notifs));
         else

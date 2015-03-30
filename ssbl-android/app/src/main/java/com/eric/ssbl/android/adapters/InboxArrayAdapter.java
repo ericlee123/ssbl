@@ -41,7 +41,7 @@ public class InboxArrayAdapter extends ArrayAdapter<Conversation> {
         Iterator<User> i = c.getRecipients().iterator();
         while (i.hasNext()) {
             User temp = i.next();
-            if (!temp.equals(DataManager.getCurUser()))
+            if (!temp.equals(DataManager.getCurrentUser()))
                 titleText.append(temp.getUsername() + ", ");
         }
         if (titleText.length() >= 2)

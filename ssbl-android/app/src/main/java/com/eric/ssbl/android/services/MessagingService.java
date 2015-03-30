@@ -31,12 +31,12 @@ public class MessagingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DataManager.getCurUser() == null) {
+        if (DataManager.getCurrentUser() == null) {
             stopSelf();
             return START_NOT_STICKY;
         }
 
-        new HttpNewMessageGetter().execute(DataManager.getCurUser());
+        new HttpNewMessageGetter().execute(DataManager.getCurrentUser());
 
         // I don't want this service to stay in memory, so I stop it
         // immediately after doing what I wanted it to do.
@@ -49,7 +49,7 @@ public class MessagingService extends Service {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(DataManager.getCurUser().getUsername())
+                        .setContentTitle(DataManager.getCurrentUser().getUsername())
                         .setContentText("You have new messages");
 
 //        Intent i = new Intent(getApplicationContext(), ConversationActivity.class);
@@ -78,7 +78,7 @@ public class MessagingService extends Service {
     public void onDestroy() {
 
         // If no account is active or the app is kill, don't keep running the service
-        if (DataManager.getCurUser() == null)
+        if (DataManager.getCurrentUser() == null)
             return;
 
         boolean talking = (DataManager.getOpenConversationActivity() != null);
