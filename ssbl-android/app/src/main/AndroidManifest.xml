@@ -22,10 +22,10 @@
             android:value="AIzaSyCaB7BTece_GsqdDU-ZaIdfyVmfCtGI_uI" />
             <!--android:value="AIzaSyBg-9IAl0myr7r3kUfZltRHZGkqSohzP8I" />  debug -->
 
-        <service android:name=".android.services.MessagingService" />
+        <service android:name="com.eric.ssbl.android.services.MessagingService" />
 
         <activity
-            android:name=".android.activities.LoginActivity"
+            android:name="com.eric.ssbl.android.activities.LoginActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,39 +33,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".android.activities.MainActivity"
+            android:name="com.eric.ssbl.android.activities.MainActivity"
             android:theme="@style/MyNavigationDrawerTheme"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".android.activities.ProfileActivity"
+            android:name="com.eric.ssbl.android.activities.ProfileActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".android.activities.EditProfileActivity"
+            android:name="com.eric.ssbl.android.activities.EditProfileActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan" />
         <activity
-            android:name=".android.activities.EventActivity"
+            android:name="com.eric.ssbl.android.activities.EventActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".android.activities.EditEventActivity"
+            android:name="com.eric.ssbl.android.activities.EditEventActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan"/>
         <activity
-            android:name=".android.activities.EditEventMapActivity"
+            android:name="com.eric.ssbl.android.activities.EditEventMapActivity"
             android:theme="@android:style/Theme.Holo.Dialog"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".android.activities.ConversationActivity"
+            android:name="com.eric.ssbl.android.activities.ConversationActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".android.activities.SettingsActivity"
+            android:name="com.eric.ssbl.android.activities.SettingsActivity"
             android:theme="@style/LowerLevelTheme"
             android:screenOrientation="portrait"/>
     </application>
