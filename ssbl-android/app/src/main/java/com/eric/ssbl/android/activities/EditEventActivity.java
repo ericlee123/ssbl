@@ -352,20 +352,23 @@ public class EditEventActivity extends Activity {
 
     private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
 
-        private Event updated;
+        private boolean updated;
 
         @Override
         protected Void doInBackground(Event... params) {
-            updated = DataManager.httpUpdateEvent(params[0], _new);
+            if (!_new)
+                updated = DataManager.httpUpdateEvent(params[0]);
+            else
+                updated = DataManager.httpCreateEvent(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-            if (updated != null) {
+            if (updated) {
                 Toast.makeText(_context, "Event saved!", Toast.LENGTH_SHORT).show();
-                DataManager.refreshFragments();
+                DataManager.refreshAllFragments();
                 finish();
             } else {
                 Toast.makeText(_context, "Error saving event :(", Toast.LENGTH_SHORT).show();

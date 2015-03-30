@@ -76,27 +76,27 @@ public class EditProfileActivity extends Activity {
         String desc = ((EditText) findViewById(R.id.edit_profile_bio)).getText().toString();
         u.setBlurb(desc);
 
-        new HttpProfileUpdater().execute(u);
+        new HttpProfileUpdater().execute();
     }
 
     public void goBack(View view) {
         finish();
     }
 
-    private class HttpProfileUpdater extends AsyncTask<User, Void, Void> {
+    private class HttpProfileUpdater extends AsyncTask<Void, Void, Void> {
 
-        private User updated;
+        private boolean updated;
 
         @Override
-        protected Void doInBackground(User... params) {
-            updated = DataManager.httpUpdateCurrentUser(params[0]);
+        protected Void doInBackground(Void... params) {
+            updated = DataManager.httpUpdateCurrentUser();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-            if (updated != null) {
+            if (updated) {
                 if (DataManager.getProfileFragment() != null)
                     DataManager.getProfileFragment().refresh();
                 Toast.makeText(_context, "Profile saved!", Toast.LENGTH_SHORT).show();

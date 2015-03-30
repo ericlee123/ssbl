@@ -267,10 +267,10 @@ public class LoginActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("login");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("login");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 int statusCode = response.getStatusLine().getStatusCode();
                 if (statusCode == 401)
@@ -307,6 +307,7 @@ public class LoginActivity extends Activity {
             _loading.dismiss();
             if (curUser != null) {
                 DataManager.setCurrentUser(curUser);
+                DataManager.setBackupUser(curUser);
                 DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }
@@ -382,6 +383,7 @@ public class LoginActivity extends Activity {
             _loading.dismiss();
             if (curUser != null) {
                 DataManager.setCurrentUser(curUser);
+                DataManager.setBackupUser(curUser);
                 DataManager.setConversations(curUser.getConversations());
                 initiateApp();
             }

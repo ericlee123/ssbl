@@ -24,7 +24,7 @@ import com.eric.ssbl.android.pojos.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileFragment extends Fragment {
+public class UserFragment extends Fragment {
 
     private static View _view;
     private static User _user;

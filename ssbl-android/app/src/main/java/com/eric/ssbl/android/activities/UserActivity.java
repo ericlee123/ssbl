@@ -42,7 +42,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ProfileActivity extends Activity {
+public class UserActivity extends Activity {
 
     private final Context _context = this;
     private ProgressDialog _loading;
@@ -52,12 +52,12 @@ public class ProfileActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Setting up custom action bar
         ActionBar ab = getActionBar();
         ab.setDisplayShowHomeEnabled(false);
         View abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
         ((TextView) abv.findViewById(R.id.action_bar_title)).setText(getString(R.string.profile));
 
         setContentView(R.layout.fragment_eu);
@@ -69,7 +69,6 @@ public class ProfileActivity extends Activity {
 
         try {
             String userJson = getIntent().getStringExtra("user_json");
-            System.out.println("userJson: " + userJson);
             User u = new ObjectMapper().readValue(userJson, User.class);
             _loading = ProgressDialog.show(this, "Loading player details", getString(R.string.chill_out), true);
             new HttpUserGetter().execute(u);
@@ -288,6 +287,10 @@ public class ProfileActivity extends Activity {
         ((TextView) findViewById(R.id.eu_button_right_caption)).setText(getString(R.string.view_circle));
     }
 
+    private void updateCircleButton() {
+
+    }
+
     public void goBack(View view) {
         finish();
     }
@@ -433,7 +436,7 @@ public class ProfileActivity extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             _circling = true;
-            DataManager.httpUpdateCurrentUser(DataManager.getCurrentUser());
+            DataManager.httpUpdateCurrentUser();
             return null;
         }
         @Override

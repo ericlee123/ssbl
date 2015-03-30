@@ -13,7 +13,7 @@ import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.NotificationsFragment;
-import com.eric.ssbl.android.fragments.ProfileFragment;
+import com.eric.ssbl.android.fragments.UserFragment;
 import com.eric.ssbl.android.managers.DataManager;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
@@ -32,7 +32,7 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addAccount(account);
 
         MaterialSection map = newSection(getString(R.string.map), new ChartFragment());
-        MaterialSection profile = newSection(getString(R.string.profile), new ProfileFragment());
+        MaterialSection profile = newSection(getString(R.string.profile), new UserFragment());
         MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
 //        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
         MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
@@ -66,7 +66,7 @@ public class MainActivity extends MaterialNavigationDrawer {
                 EventListFragment.clearData();
                 InboxFragment.clearData();
                 NotificationsFragment.clearData();
-                ProfileFragment.clearData();
+                UserFragment.clearData();
 
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
@@ -99,7 +99,7 @@ public class MainActivity extends MaterialNavigationDrawer {
 
         @Override
         protected void onPostExecute(Void what) {
-            DataManager.refreshFragments();
+            DataManager.refreshAllFragments();
             _loading.dismiss();
         }
     }

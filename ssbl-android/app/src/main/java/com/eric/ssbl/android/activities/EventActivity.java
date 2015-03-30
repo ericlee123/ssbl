@@ -24,7 +24,6 @@ import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Game;
 import com.eric.ssbl.android.pojos.Message;
 import com.eric.ssbl.android.pojos.User;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -70,8 +69,13 @@ public class EventActivity extends Activity {
         try {
             String eventJson = getIntent().getStringExtra("event_json");
             Event e = new ObjectMapper().readValue(eventJson, Event.class);
+
+            Event example = new Event();
+            example.setEventId(e.getEventId());
+            example.setHost(e.getHost());
+
             _loading = ProgressDialog.show(this, "Loading event details", getString(R.string.chill_out), true);
-            new HttpEventGetter().execute(e);
+            new HttpEventGetter().execute(example);
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
         }
@@ -377,63 +381,21 @@ public class EventActivity extends Activity {
 
     private class HttpEventGetter extends AsyncTask<Event, Void, Void> {
 
-        private Event e;
-
-        private void getEvent(Event template) {
-
-            StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-            url.append("/search/event");
-
-            try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost request = new HttpPost(url.toString());
-
-                request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-                request.setHeader("Accept", "application/json");
-
-                ObjectMapper om = new ObjectMapper();
-                om.enable(SerializationFeature.INDENT_OUTPUT);
-                om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-                Event barren = new Event();
-                barren.setEventId(template.getEventId());
-                barren.setHost(template.getHost());
-                System.out.println("template json:\n" + om.writeValueAsString(barren));
-
-                StringEntity body = new StringEntity(om.writeValueAsString(template));
-                body.setContentType("application/json");
-                request.setEntity(body);
-
-                HttpResponse response = client.execute(request);
-                String jsonString = EntityUtils.toString(response.getEntity());
-
-//                System.out.println("getEvent url: " + url.toString());
-//                System.out.println("status code: " + response.getStatusLine().getStatusCode());
-//                System.out.println(jsonString);
-
-                if (jsonString.length() == 0)
-                    return;
-
-                List<Event> le = om.readValue(jsonString, new TypeReference<List<Event>>(){});
-                e = le.get(0);
-            } catch (Exception exc) {
-                e = null;
-                exc.printStackTrace();
-            }
-        }
+        List<Event> events;
 
         @Override
         protected Void doInBackground(Event... params) {
-            getEvent(params[0]);
+            events = DataManager.httpFetchEvents(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-            if (e != null) {
-                _event = e;
+            if (events != null || events.size() != 0) {
+                if (events.size() > 1)
+                    Toast.makeText(_context, "This might not be the correct event...", Toast.LENGTH_LONG).show();
+                _event = events.get(0);
                 fillDetails();
             }
             else
@@ -467,7 +429,7 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            DataManager.refreshFragments();
+            DataManager.refreshAllFragments();
             finish();
         }
     }

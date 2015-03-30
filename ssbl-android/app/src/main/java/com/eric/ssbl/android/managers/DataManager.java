@@ -9,7 +9,7 @@ import com.eric.ssbl.android.activities.ConversationActivity;
 import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
-import com.eric.ssbl.android.fragments.ProfileFragment;
+import com.eric.ssbl.android.fragments.UserFragment;
 import com.eric.ssbl.android.pojos.Conversation;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.Location;
@@ -52,15 +52,32 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return _serverURL;
     }
 
+    /**
+     * To be called on log out.
+     */
+    public static void clearData() {
+        _currentUser = null;
 
+        _conversations = null;
+        _conversationMap = null;
+        _openConversation = null;
 
+        _chartFragment = null;
+        _userFragment = null;
+//        _notificationsFragment = null;
+        _inboxFragment = null;
+        _eventListFragment = null;
 
-
+        _nearbyUsers = null;
+        _nearbyEvents = null;
+        _hostingEvents = null;
+    }
 
     /////////////////////////////////////////////////
     // curUser section
     /////////////////////////////////////////////////
     private static User _currentUser;
+    private static User _backupUser;
 
     public static User getCurrentUser() {
         return _currentUser;
@@ -74,20 +91,18 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _currentUser = currentUser;
     }
 
-    /**
-     * First updates the current user locally, and then sends an HTTP post
-     * to the server. If the post is unsuccessful, the current user is reverted
-     * back to normal. Returns the user object response from the server, otherwise
-     * null if the request failed.
-     *
-     * @param updated the updated current user
-     * @return the result
-     */
-    public static User httpUpdateCurrentUser(User updated) {
-        if (updated == null)
-            return null;
+    public static void setBackupUser(User backupUser) {
+        _backupUser = backupUser;
+    }
 
-        updated.setLastMessageTime(null);
+    /**
+     * Code that calls this method should first update the current user's attributes.
+     * This method will automatically revert to backup User object in the case of
+     * failure.
+     *
+     * @return success
+     */
+    public static boolean httpUpdateCurrentUser() {
 
         User result;
         StringBuilder url = new StringBuilder(DataManager.getServerUrl());
@@ -105,7 +120,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
             om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
+            StringEntity body = new StringEntity(om.writeValueAsString(_currentUser), "UTF-8");
             body.setContentType("application/json");
             request.setEntity(body);
 
@@ -126,10 +141,15 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             e.printStackTrace();
         }
 
-        if (result != null)
+        if (result != null) {
             _currentUser = result;
-
-        return result;
+            _backupUser = result; // If the update was successful, update the backup
+            return true;
+        }
+        else {
+            _currentUser = _backupUser;
+            return false;
+        }
     }
 
 
@@ -164,6 +184,11 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 //        fetchConversationPreviews();
     }
 
+    public static HashMap<Conversation, List<Message>> getConversationMap() {
+        return _conversationMap;
+    }
+
+
     /**
      * This method helps other users figure out whether or not a ConversationActivity
      * is active.
@@ -177,30 +202,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _openConversation = open;
     }
 
-    /**
-     * Called from async task in MessagingService
-     * @param messageList new messages
-     */
-    public static void addNewMessages(List<Message> messageList) {
-        for (int i = messageList.size() - 1; i >= 0; i--) {
-            Message m = messageList.get(i);
-            if (!_conversations.contains(m.getConversation()))
-                _conversations.add(m.getConversation());
-
-            if (_conversationMap.get(m.getConversation()) == null) { // this shouldnt be null ever ??
-                List<Message> lm = new ArrayList<>();
-                lm.add(m);
-                _conversationMap.put(m.getConversation(), lm);
-            } else
-                _conversationMap.get(m.getConversation()).add(0, m);
-        }
-    }
-
-    public static HashMap<Conversation, List<Message>> getConversationMap() {
-        return _conversationMap;
-    }
-
-    private static final int ADDITONAL_MESSAGES = 300;
+    private static final int ADDITONAL_MESSAGES = 400;
 
     public static List<Message> httpFetchConversation(Conversation c) {
 
@@ -286,97 +288,24 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         }
     }
 
-
-
-
-    private static List<User> _nearbyUsers = new ArrayList<>();
-    private static List<Event> _nearbyEvents = new ArrayList<>();
-    private static List<Event> _hostingEvents = new ArrayList<>();
-    private static HashMap<Integer, Event> _eventIdMap = new HashMap<>();
-
-    ///////////////////////////////////////////////////
-    // General stuff
-    ///////////////////////////////////////////////////
-    private static ChartFragment _chartFragment;
-    private static ProfileFragment _profileFragment;
-    private static InboxFragment _inboxFragment;
-//    private static NotificationsFragment _notificationsFragment;
-    private static EventListFragment _eventListFragment;
-
-    public static void setChartFragment(ChartFragment cf) {
-        _chartFragment = cf;
-    }
-
-    public static void setProfileFragment(ProfileFragment pf) {
-        _profileFragment = pf;
-    }
-
-    public static void setInboxFragment(InboxFragment inboxFragment) {
-        _inboxFragment = inboxFragment;
-    }
-
-//    public static void setNotificationsFragment(NotificationsFragment nf) {
-//        _notificationsFragment = nf;
-//    }
-
-    public static void setEventListFragment(EventListFragment elf) {
-        _eventListFragment = elf;
-    }
-
-    public static ChartFragment getChartFragment() {
-        return _chartFragment;
-    }
-
-    public static ProfileFragment getProfileFragment() {
-        return _profileFragment;
-    }
-
-    public static InboxFragment getInboxFragment() {
-        return _inboxFragment;
-    }
-
-//    public static ChartFragment getNotificationsFragment() {
-//        return _notificationsFragment;
-//    }
-
-    public static EventListFragment getEventListFragment() {
-        return _eventListFragment;
-    }
-
     /**
-     * This method should only be called from onPostExecute in an AsyncTask.
+     * Called from async task in MessagingService
+     * @param messageList new messages
      */
-    public static void refreshFragments() {
-        if (_chartFragment != null)
-            _chartFragment.refresh();
-        if (_profileFragment != null)
-            _profileFragment.refresh();
-        if (_inboxFragment != null)
-            _inboxFragment.refresh();
-//        if (_notificationsFragment != null)
-//            _notificationsFragment.refresh();
-        if (_eventListFragment != null)
-            _eventListFragment.refresh();
+    public static void addNewMessages(List<Message> messageList) {
+        for (int i = messageList.size() - 1; i >= 0; i--) {
+            Message m = messageList.get(i);
+            if (!_conversations.contains(m.getConversation()))
+                _conversations.add(m.getConversation());
+
+            if (_conversationMap.get(m.getConversation()) == null) { // this shouldnt be null ever ??
+                List<Message> lm = new ArrayList<>();
+                lm.add(m);
+                _conversationMap.put(m.getConversation(), lm);
+            } else
+                _conversationMap.get(m.getConversation()).add(0, m);
+        }
     }
-
-    public static void clearData() {
-        _currentUser = null;
-        _conversations = null;
-
-        _chartFragment = null;
-        _profileFragment = null;
-//        _notificationsFragment = null;
-        _inboxFragment = null;
-        _eventListFragment = null;
-
-        _nearbyUsers.clear();
-        _eventIdMap.clear();
-        _nearbyEvents.clear();
-        _hostingEvents.clear();
-    }
-
-
-
 
 
 
@@ -384,242 +313,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
 
     ////////////////////////////////////////////////////////
-    // Relevant users and events
-    ///////////////////////////////////////////////////////
-    public static void setNearbyUsers(List<User> nearbyUsers) {
-        _nearbyUsers = nearbyUsers;
-    }
-
-    public static List<User> getNearbyUsers() {
-        return _nearbyUsers;
-    }
-
-    public static void setNearbyEvents(List<Event> nearbyEvents) {
-        _nearbyEvents = nearbyEvents;
-        for (Event e : nearbyEvents)
-            _eventIdMap.put(e.getEventId(), e);
-    }
-
-    public static List<Event> getNearbyEvents() {
-        return _nearbyEvents;
-    }
-
-    public static void setHostingEvents(List<Event> hostingEvents) {
-        _hostingEvents = hostingEvents;
-        for (Event e : hostingEvents)
-            _eventIdMap.put(e.getEventId(), e);
-    }
-
-    public static List<Event> getHostingEvents() {
-        return _hostingEvents;
-    }
-
-    public static Event httpUpdateEvent(Event updated, boolean isNew) {
-
-        if (updated == null)
-            return null;
-
-        Event result;
-        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-        url.append("/edit/event");
-        if (isNew)
-            url.append("/create");
-        else
-            url.append("/update");
-
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpPost request = new HttpPost(url.toString());
-
-            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-            request.setHeader("Accept", "application/json");
-
-            ObjectMapper om = new ObjectMapper();
-            om.enable(SerializationFeature.INDENT_OUTPUT);
-            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
-            body.setContentType("application/json");
-            request.setEntity(body);
-
-            HttpResponse response = client.execute(request);
-            String jsonString = EntityUtils.toString(response.getEntity());
-
-//            System.out.println("update_event");
-//            System.out.println(url.toString());
-//            System.out.println(response.getStatusLine().getStatusCode());
-//            System.out.println(jsonString);
-
-            if (jsonString.length() == 0)
-                result = null;
-            else
-                result = om.readValue(jsonString, Event.class);
-        } catch (Exception e) {
-            result = null;
-            e.printStackTrace();
-        }
-
-        // update if successful
-        if (result != null) {
-            if (isNew) {
-                _eventIdMap.put(result.getEventId(), result);
-                _hostingEvents.add(result);
-                _nearbyEvents.add(result);
-                _currentUser.getEvents().add(result);
-            }
-            else {
-                Event backup = _eventIdMap.get(updated.getEventId());
-                List<Event> oldList = _currentUser.getEvents();
-
-                if (backup != null) {
-                    _nearbyEvents.remove(backup);
-                    _hostingEvents.remove(backup);
-                    oldList.remove(backup);
-                }
-                _hostingEvents.add(result);
-                oldList.add(result);
-                _eventIdMap.put(result.getEventId(), result);
-            }
-        }
-        return result;
-    }
-
-    public static void httpDeleteEvent(Event deleted) {
-        if (deleted == null)
-            return;
-
-        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
-        url.append("/edit/event/delete");
-
-        try {
-            HttpClient client = new DefaultHttpClient();
-            HttpPost request = new HttpPost(url.toString());
-
-            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
-            request.setHeader("Accept", "application/json");
-
-            ObjectMapper om = new ObjectMapper();
-            om.enable(SerializationFeature.INDENT_OUTPUT);
-            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-            StringEntity body = new StringEntity(om.writeValueAsString(deleted), "UTF-8");
-            body.setContentType("application/json");
-            request.setEntity(body);
-
-            HttpResponse response = client.execute(request);
-
-//            System.out.println("delete_event");
-//            System.out.println(url.toString());
-//            System.out.println(response.getStatusLine().getStatusCode());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Update locally
-        _eventIdMap.remove(deleted);
-        List<Event> oldList = _currentUser.getEvents();
-
-        _nearbyEvents.remove(deleted);
-        _hostingEvents.remove(deleted);
-        oldList.remove(deleted);
-    }
-
-
-
-
-
-    ////////////////////////////////////////////////
-    // Settings
-    //////////////////////////////////////////
-
-    private static File _settingsFile;
-    private static JSONObject _settings;
-
-    public static void initSettings(File fileDir) {
-        _settingsFile = new File(fileDir, "settings");
-        try {
-            if (!_settingsFile.exists()) {
-                _settingsFile.createNewFile();
-                _settings = new JSONObject();
-
-                _settings.put("location_private", false);
-                _settings.put("map_radius_index", 2);
-
-                PrintWriter pw = new PrintWriter(_settingsFile);
-                pw.print(_settings.toString());
-                pw.close();
-            } else {
-                Scanner scan = new Scanner(_settingsFile);
-                _settings = new JSONObject(scan.nextLine());
-            }
-        } catch (Exception e) {
-            _settingsFile.delete();
-            e.printStackTrace();
-        }
-    }
-
-    public static JSONObject getSettings() {
-        return _settings;
-    }
-
-    public static void saveSettings(JSONObject settings) {
-
-        _settings = settings;
-
-        try {
-            PrintWriter pw = new PrintWriter(_settingsFile);
-            pw.print(_settings.toString());
-            pw.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            User u = getCurrentUser();
-            u.setPrivate(_settings.getBoolean("location_private"));
-            httpUpdateCurrentUser(u);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // this is so poorly written i am sorry
-    public static double getRadius() {
-
-        if (_settingsFile == null || _settings == null)
-            return 10.0;
-
-        int index = 0;
-        try {
-            index = _settings.getInt("map_radius_index");
-        } catch (Exception e) {
-            _settingsFile.delete();
-        }
-        if (index == 0)
-            return 1.0;
-        if (index == 1)
-            return 5.0;
-        if (index == 2)
-            return 10.0;
-        if (index == 3)
-            return 20.0;
-        if (index == 4)
-            return 50.0;
-        if (index == 5)
-            return 100.0;
-        if (index == 6)
-            return 500.0;
-        if (index == 7)
-            return 50000.0;
-
-        return 10.0;
-    }
-
-
-    ////////////////////////////////////////////////////////
-    // Nearby users and events
+    // Location and fetching nearby users and events
     ////////////////////////////////////////////////////////
     private static Context _appContext;
     private static GoogleApiClient _googleApiClient;
@@ -668,11 +362,11 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             _curLoc = new LatLng(here.getLatitude(), here.getLongitude());
 
             if (_currentUser != null) {
-                _currentUser.setLastLocationTime(System.currentTimeMillis());
                 Location l = new Location();
                 l.setLatitude(here.getLatitude());
                 l.setLongitude(here.getLongitude());
                 _currentUser.setLocation(l);
+                _currentUser.setLastLocationTime(System.currentTimeMillis());
             }
 
             new HttpNearbyHostingFetcher().execute(_curLoc);
@@ -686,7 +380,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private class HttpNearbyHostingFetcher extends AsyncTask<LatLng, Void, Void> {
         @Override
         protected Void doInBackground(LatLng... params) {
-            httpUpdateCurrentUser(_currentUser);
+            httpUpdateCurrentUser();
             fetchNearbyUsers(params[0]);
             fetchNearbyEvents(params[0]);
             fetchHostingEvents();
@@ -778,9 +472,6 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     private void fetchHostingEvents() {
 
-        if (_currentUser == null)
-            return;
-
         Event e = new Event();
         e.setHost(_currentUser);
         List<Event> hostingEvents;
@@ -825,5 +516,431 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             setHostingEvents(hostingEvents);
         else
             Toast.makeText(_appContext, "Error fetching hosting events", Toast.LENGTH_LONG).show();
+    }
+
+
+
+
+
+    ////////////////////////////////////////////////////////
+    // Relevant users and events
+    ///////////////////////////////////////////////////////
+    private static List<User> _nearbyUsers = new ArrayList<>();
+    private static List<Event> _nearbyEvents = new ArrayList<>();
+    private static List<Event> _hostingEvents = new ArrayList<>();
+    private static HashMap<Integer, Event> _eventIdMap = new HashMap<>();
+
+    public static void setNearbyUsers(List<User> nearbyUsers) {
+        _nearbyUsers = nearbyUsers;
+    }
+
+    public static List<User> getNearbyUsers() {
+        return _nearbyUsers;
+    }
+
+    public static void setNearbyEvents(List<Event> nearbyEvents) {
+        _nearbyEvents = nearbyEvents;
+    }
+
+    public static List<Event> getNearbyEvents() {
+        return _nearbyEvents;
+    }
+
+    public static void setHostingEvents(List<Event> hostingEvents) {
+        _hostingEvents = hostingEvents;
+    }
+
+    public static List<Event> getHostingEvents() {
+        return _hostingEvents;
+    }
+
+
+
+
+
+    //////////////////////////////////////////////////////
+    // Updating/Fetching users and events
+    //////////////////////////////////////////////////////
+    public static List<User> httpFetchUsers(User example) {
+
+        List<User> results;
+
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/user");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(example));
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            if (jsonString.length() == 0)
+                return null;
+
+            results = om.readValue(jsonString, new TypeReference<List<User>>(){});
+        } catch (Exception e) {
+            results = null;
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+    public static List<Event> httpFetchEvents(Event example) {
+
+        List<Event> results;
+
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/event");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(example));
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+            if (jsonString.length() == 0)
+                return null;
+
+            results = om.readValue(jsonString, new TypeReference<List<Event>>(){});
+        } catch (Exception e) {
+            results = null;
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+    public static boolean httpUpdateEvent(Event updated) {
+
+        Event result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/update");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(updated), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+//            System.out.println("update_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                result = null;
+            else
+                result = om.readValue(jsonString, Event.class);
+        } catch (Exception e) {
+            result = null;
+            e.printStackTrace();
+        }
+
+        // update if successful
+        if (result != null) {
+            Event backup = _eventIdMap.get(updated.getEventId());
+            List<Event> oldList = _currentUser.getEvents();
+
+            if (backup != null) {
+                _nearbyEvents.remove(backup);
+                _hostingEvents.remove(backup);
+                oldList.remove(backup);
+            }
+            _hostingEvents.add(result);
+            oldList.add(result);
+            _eventIdMap.put(result.getEventId(), result);
+
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean httpCreateEvent(Event newEvent) {
+        Event result;
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/create");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(newEvent), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+//            System.out.println("create_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                result = null;
+            else
+                result = om.readValue(jsonString, Event.class);
+        } catch (Exception e) {
+            result = null;
+            e.printStackTrace();
+        }
+
+        // update if successful
+        if (result != null) {
+            _eventIdMap.put(result.getEventId(), result);
+            _hostingEvents.add(result);
+            _nearbyEvents.add(result);
+            _currentUser.getEvents().add(result);
+
+            return true;
+        }
+        return false;
+    }
+
+    public static void httpDeleteEvent(Event deleted) {
+        if (deleted == null)
+            return;
+
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/edit/event/delete");
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            StringEntity body = new StringEntity(om.writeValueAsString(deleted), "UTF-8");
+            body.setContentType("application/json");
+            request.setEntity(body);
+
+            HttpResponse response = client.execute(request);
+
+//            System.out.println("delete_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Update locally
+        _eventIdMap.remove(deleted);
+        List<Event> oldList = _currentUser.getEvents();
+
+        _nearbyEvents.remove(deleted);
+        _hostingEvents.remove(deleted);
+        oldList.remove(deleted);
+    }
+
+
+
+
+
+    ///////////////////////////////////////////////////
+    // Fragment management
+    ///////////////////////////////////////////////////
+    private static ChartFragment _chartFragment;
+    private static UserFragment _userFragment;
+    private static InboxFragment _inboxFragment;
+    //    private static NotificationsFragment _notificationsFragment;
+    private static EventListFragment _eventListFragment;
+
+    public static void setChartFragment(ChartFragment chartFragment) {
+        _chartFragment = chartFragment;
+    }
+
+    public static void setProfileFragment(UserFragment userFragment) {
+        _userFragment = userFragment;
+    }
+
+    public static void setInboxFragment(InboxFragment inboxFragment) {
+        _inboxFragment = inboxFragment;
+    }
+
+//    public static void setNotificationsFragment(NotificationsFragment notificationsFragment) {
+//        _notificationsFragment = notificationsFragment;
+//    }
+
+    public static void setEventListFragment(EventListFragment eventListFragment) {
+        _eventListFragment = eventListFragment;
+    }
+
+    public static ChartFragment getChartFragment() {
+        return _chartFragment;
+    }
+
+    public static UserFragment getProfileFragment() {
+        return _userFragment;
+    }
+
+    public static InboxFragment getInboxFragment() {
+        return _inboxFragment;
+    }
+
+//    public static ChartFragment getNotificationsFragment() {
+//        return _notificationsFragment;
+//    }
+
+    public static EventListFragment getEventListFragment() {
+        return _eventListFragment;
+    }
+
+    /**
+     * This method should only be called from onPostExecute in an AsyncTask.
+     */
+    public static void refreshAllFragments() {
+        if (_chartFragment != null)
+            _chartFragment.refresh();
+        if (_userFragment != null)
+            _userFragment.refresh();
+        if (_inboxFragment != null)
+            _inboxFragment.refresh();
+//        if (_notificationsFragment != null)
+//            _notificationsFragment.refresh();
+        if (_eventListFragment != null)
+            _eventListFragment.refresh();
+    }
+
+
+
+
+
+    ////////////////////////////////////////////////
+    // Settings
+    //////////////////////////////////////////
+    private static File _settingsFile;
+    private static JSONObject _settings;
+
+    public static void initSettings(File fileDir) {
+        _settingsFile = new File(fileDir, "settings");
+        try {
+            if (!_settingsFile.exists()) {
+                _settingsFile.createNewFile();
+                _settings = new JSONObject();
+
+                _settings.put("location_private", false);
+                _settings.put("map_radius_index", 2);
+
+                PrintWriter pw = new PrintWriter(_settingsFile);
+                pw.print(_settings.toString());
+                pw.close();
+            } else {
+                Scanner scan = new Scanner(_settingsFile);
+                _settings = new JSONObject(scan.nextLine());
+            }
+        } catch (Exception e) {
+            _settingsFile.delete();
+            e.printStackTrace();
+        }
+    }
+
+    public static JSONObject getSettings() {
+        return _settings;
+    }
+
+    public static void saveSettings(JSONObject settings) {
+
+        _settings = settings;
+
+        try {
+            PrintWriter pw = new PrintWriter(_settingsFile);
+            pw.print(_settings.toString());
+            pw.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            _currentUser.setPrivate(_settings.getBoolean("location_private"));
+            httpUpdateCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // this is so poorly written i am sorry
+    public static double getRadius() {
+
+        if (_settingsFile == null || _settings == null)
+            return 10.0;
+
+        int index = 0;
+        try {
+            index = _settings.getInt("map_radius_index");
+        } catch (Exception e) {
+            _settingsFile.delete();
+        }
+        if (index == 0)
+            return 1.0;
+        if (index == 1)
+            return 5.0;
+        if (index == 2)
+            return 10.0;
+        if (index == 3)
+            return 20.0;
+        if (index == 4)
+            return 50.0;
+        if (index == 5)
+            return 100.0;
+        if (index == 6)
+            return 500.0;
+        if (index == 7)
+            return 50000.0;
+
+        return 10.0;
     }
 }

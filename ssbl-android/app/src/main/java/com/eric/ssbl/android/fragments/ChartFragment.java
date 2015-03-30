@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.eric.ssbl.R;
 import com.eric.ssbl.android.activities.EventActivity;
-import com.eric.ssbl.android.activities.ProfileActivity;
+import com.eric.ssbl.android.activities.UserActivity;
 import com.eric.ssbl.android.managers.DataManager;
 import com.eric.ssbl.android.pojos.Event;
 import com.eric.ssbl.android.pojos.User;
@@ -70,7 +70,7 @@ public class ChartFragment extends Fragment {
                         i = new Intent(getActivity(), EventActivity.class);
                         b.putString("event_json", _eu.get(marker));
                     } else {
-                        i = new Intent(getActivity(), ProfileActivity.class);
+                        i = new Intent(getActivity(), UserActivity.class);
                         b.putString("user_json", _eu.get(marker));
                     }
                     i.putExtras(b);
