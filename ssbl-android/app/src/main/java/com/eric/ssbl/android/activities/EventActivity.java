@@ -7,6 +7,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -148,6 +150,25 @@ public class EventActivity extends Activity {
         else
             timeString.append("(N/A)");
         time.setText(timeString.toString());
+
+        // set address
+        TextView address = ((TextView) findViewById(R.id.event_address));
+        address.setVisibility(View.VISIBLE);
+        StringBuilder addressString = new StringBuilder("Address:");
+        if (_event.getLocation() != null) {
+            try {
+                Address a = new Geocoder(this).getFromLocation(_event.getLocation().getLatitude(), _event.getLocation().getLongitude(), 1).get(0);
+                for (int i = 0; i <= a.getMaxAddressLineIndex(); i++)
+                    addressString.append("\n\t" + a.getAddressLine(i));
+            } catch (Exception e) {
+                Toast.makeText(_context, "Error loading event address", Toast.LENGTH_LONG).show();
+                addressString.append("\n\t(N/A)");
+            }
+        }
+        else
+            addressString.append("(N/A)");
+        address.setText(addressString.toString());
+
 
         // set description
         StringBuilder description = new StringBuilder();
@@ -335,10 +356,10 @@ public class EventActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("send_first_message");
-                System.out.println(url.toString());
-                System.out.println(response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
+//                System.out.println("send_first_message");
+//                System.out.println(url.toString());
+//                System.out.println(response.getStatusLine().getStatusCode());
+//                System.out.println(jsonString);
 
                 if (jsonString.length() == 0)
                     message = null;
@@ -405,17 +426,17 @@ public class EventActivity extends Activity {
 
     private class HttpEventUpdater extends AsyncTask<Event, Void, Void> {
 
-        private Event updated;
+        private boolean updated;
 
         @Override
         protected Void doInBackground(Event... params) {
-            updated = DataManager.httpUpdateEvent(params[0], false);
+            updated = DataManager.httpUpdateEvent(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
-            if (updated == null)
+            if (updated)
                 Toast.makeText(_context, "Error updating RSVP status", Toast.LENGTH_LONG).show();
         }
     }

@@ -768,11 +768,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             body.setContentType("application/json");
             request.setEntity(body);
 
-            HttpResponse response = client.execute(request);
-
-//            System.out.println("delete_event");
-//            System.out.println(url.toString());
-//            System.out.println(response.getStatusLine().getStatusCode());
+            client.execute(request);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -873,7 +869,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
                 _settings = new JSONObject();
 
                 _settings.put("location_private", false);
-                _settings.put("map_radius_index", 2);
+                _settings.put("map_radius_index", 4);
 
                 PrintWriter pw = new PrintWriter(_settingsFile);
                 pw.print(_settings.toString());
