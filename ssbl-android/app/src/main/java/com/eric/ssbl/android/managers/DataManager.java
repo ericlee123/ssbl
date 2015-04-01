@@ -58,8 +58,8 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static void clearData() {
         _currentUser = null;
 
-        _conversations = null;
-        _conversationMap = null;
+        _conversations.clear();
+        _conversationMap.clear();
         _openConversation = null;
 
         _chartFragment = null;
@@ -68,9 +68,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         _inboxFragment = null;
         _eventListFragment = null;
 
-        _nearbyUsers = null;
-        _nearbyEvents = null;
-        _hostingEvents = null;
+        _nearbyUsers.clear();
+        _nearbyEvents.clear();
+        _hostingEvents.clear();
     }
 
     /////////////////////////////////////////////////
