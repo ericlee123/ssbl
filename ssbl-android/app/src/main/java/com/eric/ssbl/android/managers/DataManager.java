@@ -436,13 +436,13 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         List<Event> nearbyEvents;
 
         // get the events
-        StringBuilder url2 = new StringBuilder(DataManager.getServerUrl());
-        url2.append("/search/event");
-        url2.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/event");
+        url.append("?lat=" + loc.latitude + "&lon=" + loc.longitude + "&radius=" + DataManager.getRadius());
 
         try {
             HttpClient client = new DefaultHttpClient();
-            HttpGet request = new HttpGet(url2.toString());
+            HttpGet request = new HttpGet(url.toString());
 
             request.setHeader(HTTP.CONTENT_TYPE, "application/json");
 
@@ -498,7 +498,7 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("get_hosting_events");
+            System.out.println("fetch_hosting_events");
             System.out.println(url.toString());
             System.out.println(response.getStatusLine().getStatusCode());
             System.out.println(jsonString);
@@ -624,6 +624,11 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
+
+            System.out.println("fetch_events");
+            System.out.println(url.toString());
+            System.out.println(response.getStatusLine().getStatusCode());
+            System.out.println(om.writeValueAsString(example));
 
             if (jsonString.length() == 0)
                 return null;
@@ -912,9 +917,9 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
     public static double getRadius() {
 
         if (_settingsFile == null || _settings == null)
-            return 10.0;
+            return 100.0;
 
-        int index = 0;
+        int index = 5;
         try {
             index = _settings.getInt("map_radius_index");
         } catch (Exception e) {
@@ -935,8 +940,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         if (index == 6)
             return 500.0;
         if (index == 7)
+            return 1000.0;
+        if (index == 8)
             return 50000.0;
 
-        return 10.0;
+        return 100.0;
     }
 }

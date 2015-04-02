@@ -74,7 +74,6 @@ public class EventActivity extends Activity {
 
             Event example = new Event();
             example.setEventId(e.getEventId());
-            example.setHost(e.getHost());
 
             _loading = ProgressDialog.show(this, "Loading event details", getString(R.string.chill_out), true);
             new HttpEventGetter().execute(example);
