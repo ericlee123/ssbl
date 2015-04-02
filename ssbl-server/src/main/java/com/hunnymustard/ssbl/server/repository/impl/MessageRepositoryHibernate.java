@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +28,12 @@ public class MessageRepositoryHibernate extends HibernateRepository<Message, Int
 	public List<Message> findByNew(User user) {
 		return (List<Message>) getSession().createCriteria(Message.class)
 				.createAlias("sender", "sender")
+				.createAlias("conversation", "convo")
+				.createAlias("convo.recipients", "recipient")
 				.add(Restrictions.gt("sentTime", user.getLastMessageTime()))
+				.add(Restrictions.eq("recipient.userId", user.getUserId()))
 				.add(Restrictions.ne("sender.userId", user.getUserId()))
+				.setResultTransformer(DistinctRootEntityResultTransformer.INSTANCE)
 				.addOrder(Order.desc("sentTime"))
 				.list();
 	}

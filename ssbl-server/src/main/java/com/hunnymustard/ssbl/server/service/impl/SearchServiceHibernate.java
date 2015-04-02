@@ -50,6 +50,16 @@ public class SearchServiceHibernate implements SearchService {
 	}
 	
 	@Override
+	public User getUserById(int userId) {
+		User user = _userRepository.find(userId);
+		Hibernate.initialize(user.getLocation());
+		Hibernate.initialize(user.getGames());
+		Hibernate.initialize(user.getEvents());
+		Hibernate.initialize(user.getFriends());
+		return user;
+	}
+	
+	@Override
 	public List<Event> getEventsByProximity(Location current, Double radius) {
 		List<Event> events = _eventRepository.findByProximity(current, radius);
 		for(Event event : events) {
@@ -71,5 +81,15 @@ public class SearchServiceHibernate implements SearchService {
 			Hibernate.initialize(event.getLocation());
 		}
 		return events;
+	}
+	
+	@Override
+	public Event getEventById(int eventId) {
+		Event event = _eventRepository.find(eventId);
+		Hibernate.initialize(event.getGames());
+		Hibernate.initialize(event.getUsers());
+		Hibernate.initialize(event.getHost());
+		Hibernate.initialize(event.getLocation());
+		return event;
 	}
 }

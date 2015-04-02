@@ -10,7 +10,9 @@ public interface SearchService {
 	
 	List<User> getUsersByProximity(Location current, Double radius);
 	List<User> getUsersByExample(User example);
+	User getUserById(int userId);
 
 	List<Event> getEventsByProximity(Location current, Double radius);
 	List<Event> getEventsByExample(Event example);
+	Event getEventById(int eventId);
 }

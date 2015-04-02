@@ -17,7 +17,6 @@ import com.hunnymustard.ssbl.model.Location;
 import com.hunnymustard.ssbl.model.Message;
 import com.hunnymustard.ssbl.model.Notification;
 import com.hunnymustard.ssbl.model.User;
-import com.hunnymustard.ssbl.server.exceptions.AuthException;
 import com.hunnymustard.ssbl.server.service.AuthService;
 import com.hunnymustard.ssbl.server.service.EditService;
 import com.hunnymustard.ssbl.server.service.MessagingService;
@@ -50,6 +49,11 @@ public class SmashController {
 		return _searchService.getUsersByProximity(new Location(null, lat, lon), radius);
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/search/user/{id}")
+	public @ResponseBody User getUserById(@PathVariable Integer id) {
+		return _searchService.getUserById(id);
+	}
+	
 	@RequestMapping(method=RequestMethod.POST, value="/search/user")
 	public @ResponseBody List<User> getUsersByExample(@RequestBody User example) {
 		return _searchService.getUsersByExample(example);
@@ -61,8 +65,13 @@ public class SmashController {
 		return _searchService.getEventsByProximity(new Location(null, lat, lon), radius);
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value="/search/event/{id}")
+	public @ResponseBody Event getEventById(@PathVariable Integer id) {
+		return _searchService.getEventById(id);
+	}
+	
 	@RequestMapping(method=RequestMethod.POST, value="/search/event")
-	public @ResponseBody List<Event> getUsersByExample(@RequestBody Event example) {
+	public @ResponseBody List<Event> getEventsByExample(@RequestBody Event example) {
 		return _searchService.getEventsByExample(example);
 	}
 	
