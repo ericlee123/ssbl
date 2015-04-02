@@ -397,10 +397,6 @@ public class UserActivity extends Activity {
                 HttpResponse response = client.execute(request);
                 String jsonString = EntityUtils.toString(response.getEntity());
 
-                System.out.println("getUser url: " + url.toString());
-                System.out.println("status code: " + response.getStatusLine().getStatusCode());
-                System.out.println(jsonString);
-
                 if (jsonString.length() == 0)
                     return;
 

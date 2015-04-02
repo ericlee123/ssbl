@@ -430,7 +430,7 @@ public class EventActivity extends Activity {
 
         @Override
         protected void onPostExecute(Void what) {
-            if (updated)
+            if (!updated)
                 Toast.makeText(_context, "Error updating RSVP status", Toast.LENGTH_LONG).show();
         }
     }

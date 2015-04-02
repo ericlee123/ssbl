@@ -498,10 +498,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("fetch_hosting_events");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(jsonString);
+//            System.out.println("fetch_hosting_events");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
 
             if (jsonString.length() == 0)
                 return;
@@ -664,10 +664,10 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
             HttpResponse response = client.execute(request);
             String jsonString = EntityUtils.toString(response.getEntity());
 
-            System.out.println("fetch_events");
-            System.out.println(url.toString());
-            System.out.println(response.getStatusLine().getStatusCode());
-            System.out.println(om.writeValueAsString(example));
+//            System.out.println("fetch_events");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(om.writeValueAsString(example));
 
             if (jsonString.length() == 0)
                 return null;
