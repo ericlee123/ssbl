@@ -599,7 +599,46 @@ public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleA
         return results;
     }
 
-    public static List<Event> httpFetchEvents(Event example) {
+    public static Event httpFetchEvent(int eventId) {
+
+        Event result;
+
+        StringBuilder url = new StringBuilder(DataManager.getServerUrl());
+        url.append("/search/event/" + eventId);
+
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet request = new HttpGet(url.toString());
+
+            request.setHeader(HTTP.CONTENT_TYPE, "application/json");
+            request.setHeader("Accept", "application/json");
+
+            ObjectMapper om = new ObjectMapper();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            om.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+            HttpResponse response = client.execute(request);
+            String jsonString = EntityUtils.toString(response.getEntity());
+
+//            System.out.println("fetch_event");
+//            System.out.println(url.toString());
+//            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(jsonString);
+
+            if (jsonString.length() == 0)
+                return null;
+
+            result = om.readValue(jsonString, Event.class);
+        } catch (Exception e) {
+            result = null;
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static List<Event> httpFetchEventList(Event example) {
 
         List<Event> results;
 

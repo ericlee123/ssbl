@@ -72,11 +72,8 @@ public class EventActivity extends Activity {
             String eventJson = getIntent().getStringExtra("event_json");
             Event e = new ObjectMapper().readValue(eventJson, Event.class);
 
-            Event example = new Event();
-            example.setEventId(e.getEventId());
-
             _loading = ProgressDialog.show(this, "Loading event details", getString(R.string.chill_out), true);
-            new HttpEventGetter().execute(example);
+            new HttpEventGetter().execute(e.getEventId());
         } catch (Exception e) {
             Toast.makeText(_context, "Error loading event :(", Toast.LENGTH_LONG).show();
         }
@@ -399,23 +396,21 @@ public class EventActivity extends Activity {
         finish();
     }
 
-    private class HttpEventGetter extends AsyncTask<Event, Void, Void> {
+    private class HttpEventGetter extends AsyncTask<Integer, Void, Void> {
 
-        List<Event> events;
+        Event event;
 
         @Override
-        protected Void doInBackground(Event... params) {
-            events = DataManager.httpFetchEvents(params[0]);
+        protected Void doInBackground(Integer... params) {
+            event = DataManager.httpFetchEvent(params[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void what) {
             _loading.dismiss();
-            if (events != null || events.size() != 0) {
-                if (events.size() > 1)
-                    Toast.makeText(_context, "This might not be the correct event...", Toast.LENGTH_LONG).show();
-                _event = events.get(0);
+            if (event != null) {
+                _event = event;
                 fillDetails();
             }
             else

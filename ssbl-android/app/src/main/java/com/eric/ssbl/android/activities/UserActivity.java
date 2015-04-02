@@ -136,7 +136,7 @@ public class UserActivity extends Activity {
         ((TextView) findViewById(R.id.eu_description)).setText(bio.toString());
 
         StringBuilder attendingEvents = new StringBuilder();
-        attendingEvents.append("Attending events\n");
+        attendingEvents.append("Attending event\n");
         if (_user.getEvents() == null || _user.getEvents().size() == 0)
             attendingEvents.append("\t\t\t\tNot attending anything.");
         else {
