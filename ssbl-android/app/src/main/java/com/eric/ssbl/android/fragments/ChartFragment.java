@@ -116,7 +116,7 @@ public class ChartFragment extends Fragment {
         long now = System.currentTimeMillis();
 
         List<User> relevantUsers = new ArrayList<>();
-        relevantUsers.addAll(DataManager.getNearbyUsers());
+            relevantUsers.addAll(DataManager.getNearbyUsers());
         relevantUsers.remove(DataManager.getCurrentUser());
         relevantUsers.add(DataManager.getCurrentUser());
 //        relevantUsers.removeAll(DataManager.getCurrentUser().getFriends()); privacy issues; change later
@@ -132,19 +132,21 @@ public class ChartFragment extends Fragment {
             else
                 updated += (elapsed / 1440) + " days ago";
 
-            Marker marker = _map.addMarker(new MarkerOptions()
-                    .title(u.getUsername())
-                    .snippet(updated)
-                    .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
+            if (u.getLocation() != null) {
+                Marker marker = _map.addMarker(new MarkerOptions()
+                        .title(u.getUsername())
+                        .snippet(updated)
+                        .position(new LatLng(u.getLocation().getLatitude(), u.getLocation().getLongitude()))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.gc_controller)));
 
-            if (u.equals(DataManager.getCurrentUser()))
-                marker.showInfoWindow();
+                if (u.equals(DataManager.getCurrentUser()))
+                    marker.showInfoWindow();
 
-            try {
-                _eu.put(marker, om.writeValueAsString(u));
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    _eu.put(marker, om.writeValueAsString(u));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 

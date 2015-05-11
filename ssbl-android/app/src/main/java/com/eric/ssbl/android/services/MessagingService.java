@@ -29,14 +29,23 @@ import java.util.List;
 
 public class MessagingService extends Service {
 
+    private static User curUser;
+    private boolean _open = false;
+    private boolean _talking = false;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (DataManager.getCurrentUser() == null) {
-            stopSelf();
-            return START_NOT_STICKY;
+        if (curUser == null) {
+            if (DataManager.getCurrentUser() == null) {
+                stopSelf();
+                return START_NOT_STICKY;
+            }
+            else {
+                curUser = DataManager.getCurrentUser();
+            }
         }
 
-        new HttpNewMessageGetter().execute(DataManager.getCurrentUser());
+        new HttpNewMessageGetter().execute(curUser);
 
         // I don't want this service to stay in memory, so I stop it
         // immediately after doing what I wanted it to do.
@@ -49,8 +58,8 @@ public class MessagingService extends Service {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(DataManager.getCurrentUser().getUsername())
-                        .setContentText("You have new messages");
+                        .setContentTitle("New Messages")
+                        .setContentText("Go check your inbox");
 
 //        Intent i = new Intent(getApplicationContext(), ConversationActivity.class);
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -69,6 +78,10 @@ public class MessagingService extends Service {
 
     }
 
+    public static void clearData() {
+        curUser = null;
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -76,20 +89,26 @@ public class MessagingService extends Service {
 
     @Override
     public void onDestroy() {
-
-        // If no account is active or the app is kill, don't keep running the service
-        if (DataManager.getCurrentUser() == null)
-            return;
-
-        boolean talking = (DataManager.getOpenConversationActivity() != null);
+        _open = (DataManager.getCurrentUser() != null);
+        _talking = (DataManager.getOpenConversationActivity() != null);
 
         // I want to restart this service again in 5 seconds
         AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarm.set(
-                alarm.RTC_WAKEUP,
-                System.currentTimeMillis() + (1000 * ((talking) ? 4 : 7)),
-                PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
-        );
+        if (curUser != null) {
+            if (!_open) {
+                alarm.set(
+                        alarm.RTC_WAKEUP,
+                        System.currentTimeMillis() + (300000), // 5 minutes
+                        PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
+                );
+            } else {
+                alarm.set(
+                        alarm.RTC_WAKEUP,
+                        System.currentTimeMillis() + (1000 * (_talking ? 4 : 7)), // 4 or 7 seconds
+                        PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
+                );
+            }
+        }
     }
 
     private class HttpNewMessageGetter extends AsyncTask<User, Void, Void> {

@@ -13,8 +13,10 @@ import com.eric.ssbl.android.fragments.ChartFragment;
 import com.eric.ssbl.android.fragments.EventListFragment;
 import com.eric.ssbl.android.fragments.InboxFragment;
 import com.eric.ssbl.android.fragments.NotificationsFragment;
+import com.eric.ssbl.android.fragments.SettingsFragment;
 import com.eric.ssbl.android.fragments.UserFragment;
 import com.eric.ssbl.android.managers.DataManager;
+import com.eric.ssbl.android.services.MessagingService;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
 import it.neokree.materialnavigationdrawer.elements.MaterialAccount;
@@ -36,8 +38,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         MaterialSection inbox = newSection(getString(R.string.inbox), new InboxFragment());
 //        MaterialSection notifs = newSection(getString(R.string.notifications), new NotificationsFragment());
         MaterialSection events = newSection(getString(R.string.events), new EventListFragment());
+        MaterialSection settings = newSection("Settings", new SettingsFragment());
 
-        // divisor
 
         this.addSection(map);
         this.addSection(profile);
@@ -46,6 +48,8 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addSection(events);
 
         this.addDivisor();
+
+        this.addSection(settings);
     }
 
     @Override
@@ -67,6 +71,7 @@ public class MainActivity extends MaterialNavigationDrawer {
                 InboxFragment.clearData();
                 NotificationsFragment.clearData();
                 UserFragment.clearData();
+                MessagingService.clearData();
 
                 intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);

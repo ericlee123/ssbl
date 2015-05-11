@@ -44,8 +44,17 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
         RelativeLayout.LayoutParams bodyLayoutParams = (RelativeLayout.LayoutParams) body.getLayoutParams();
         body.setText(m.getBody());
 
-        TextView sender = (TextView) messageView.findViewById(R.id.message_sender);
-        sender.setText(m.getSender().getUsername());
+        TextView details = (TextView) messageView.findViewById(R.id.message_details);
+        StringBuilder temp = new StringBuilder();
+        temp.append(m.getSender().getUsername() + " - ");
+        int elapsed = (int) ((System.currentTimeMillis() - m.getSentTime()) / 60000);
+        if (elapsed < 60)
+            temp.append(elapsed + " minutes ago");
+        else if (elapsed < 1440)
+            temp.append((elapsed / 60) + " hours ago");
+        else
+            temp.append((elapsed / 1440) + " days ago");
+        details.setText(temp.toString());
 
         if (m.getSender().equals(DataManager.getCurrentUser())) {
             square.setImageResource(R.drawable.purple_rounded_square);
@@ -59,7 +68,7 @@ public class ConversationArrayAdapter extends ArrayAdapter<Message> {
 
             bodyLayoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.message_square);
 
-            sender.setVisibility(View.VISIBLE);
+            details.setVisibility(View.VISIBLE);
         }
 
         square.setLayoutParams(squareLayoutParams);
