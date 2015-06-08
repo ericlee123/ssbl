@@ -19,8 +19,8 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBg-9IAl0myr7r3kUfZltRHZGkqSohzP8I" />
-            <!--android:value="AIzaSyCaB7BTece_GsqdDU-ZaIdfyVmfCtGI_uI" /> publish -->
+            android:value="AIzaSyBVanezNJrGPuvfVrChrzNm5UGkCqLyRPY" />
+        <!--android:value="AIzaSyCjUyQ2GG0YmxtIylzQBW7g6ATHTow0mco" /> debug -->
 
         <service android:name=".android.services.MessagingService" />
 

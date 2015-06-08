@@ -59,7 +59,7 @@ public class MessagingService extends Service {
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContentTitle("New Messages")
-                        .setContentText("Go check your inbox");
+                        .setContentText("Don't click me. Go check your inbox");
 
 //        Intent i = new Intent(getApplicationContext(), ConversationActivity.class);
 //        PendingIntent pi = PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -74,7 +74,6 @@ public class MessagingService extends Service {
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Builds the notification and issues it.
         notifMngr.notify(1, builder.build());
-
 
     }
 
@@ -104,7 +103,7 @@ public class MessagingService extends Service {
             } else {
                 alarm.set(
                         alarm.RTC_WAKEUP,
-                        System.currentTimeMillis() + (1000 * (_talking ? 4 : 7)), // 4 or 7 seconds
+                        System.currentTimeMillis() + (1000 * (_talking ? 4 : 10)), // 4 or 7 seconds
                         PendingIntent.getService(this, 0, new Intent(this, MessagingService.class), 0)
                 );
             }
