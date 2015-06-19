@@ -1,0 +1,130 @@
+<!--
+  Copyright 2013 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<resources>
+
+    <!-- Titles -->
+    <string name="app_name">Smash Locator</string>
+    <string name="map">Map</string>
+    <string name="inbox">Inbox</string>
+    <string name="events">Events</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
+
+    <!-- Login screen -->
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="log_in">Log in</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="chill_out">Just chill out for a bit</string>
+    <string name="bad_login">Incorrect login credentials</string>
+    <string name="register">Register</string>
+    <string name="enter_email">Enter email:</string>
+    <string name="enter_username">Enter username:</string>
+    <string name="enter_password">Enter password:</string>
+    <string name="confirm_password">Confirm password:</string>
+    <string name="registering">Registering...</string>
+
+    <!-- ProfileActivity -->
+    <string name="profile">Profile</string>
+    <string name="casual">Casual</string>
+    <string name="competitive">Competitive</string>
+    <string name="games">Games</string>
+    <string name="bio">Bio</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="set_mood">Set mood</string>
+    <string name="add_to_circle">Add to circle</string>
+    <string name="remove_from_circle">Remove from circle</string>
+    <string name="uncircle">Uncircle</string>
+    <string name="nearby_users">Nearby users</string>
+    <string name="message">Message</string>
+    <string name="view_friends">View friends</string>
+    <string name="view_circle">View circle</string>
+    <string name="error_loading_profile">Error displaying profile :(</string>
+
+    <!-- EditProfileActivity -->
+    <string name="bio_caps">BIO</string>
+
+    <!-- EventListActivity -->
+    <string name="hosting_events">Hosting events</string>
+    <string name="attending_events">Attending events</string>
+    <string name="nearby_events">Nearby events</string>
+
+    <!-- EventActivity -->
+    <string name="event">Event</string>
+    <string name="hosted_by">Hosted by</string>
+    <string name="description">Description</string>
+    <string name="start_time">Start time</string>
+    <string name="end_time">End time</string>
+    <string name="attend_event">Attend event</string>
+    <string name="unattend_event">Unattend event</string>
+    <string name="message_host">Message host</string>
+    <string name="view_attendance">View attendance</string>
+    <string name="whos_going">Who\'s going</string>
+    <string name="show_on_map">Show on map</string>
+    <string name="error_loading_event">Error displaying event :(</string>
+
+    <!-- EditEventActivity -->
+    <string name="create_event">Create Event</string>
+    <string name="edit_event">Edit Event</string>
+    <string name="event_title">Event title</string>
+    <string name="event_location">Event location</string>
+    <string name="event_location_caps">EVENT LOCATION</string>
+    <string name="set_on_map">Set on map</string>
+    <string name="location">Location</string>
+    <string name="enter_as_address">Enter as address</string>
+    <string name="games_caps">GAMES</string>
+    <string name="time_caps">TIME</string>
+    <string name="set_date_time">Set date and time</string>
+    <string name="other_caps">OTHER</string>
+    <string name="event_description">Event description</string>
+    <string name="public_">Public</string>
+    <string name="private_">Private</string>
+    <string name="save">Save</string>
+
+    <!-- MessageActivity -->
+    <string name="delete_message">Delete message</string>
+    <string name="enter_message">Enter message</string>
+    <string name="talk_trash">Talk trash</string>
+
+    <!-- SettingsActivity -->
+    <string name="receive_alerts">Receive alerts</string>
+    <string name="private_location">Keep location private</string>
+    <string name="map_radius">Set map radius (miles)</string>
+    <string name="error_loading_settings">Error loading preferences</string>
+    <string name="error_saving_settings">Error saving preferences</string>
+    <string name="saved_settings">Settings saved</string>
+
+    <!-- Games -->
+    <string name="ssb64">Smash 64</string>
+    <string name="melee">Melee</string>
+    <string name="brawl">Brawl</string>
+    <string name="pm">Project M.</string>
+    <string name="smash4">Smash 4</string>
+
+    <!-- Miscellaneous -->
+    <string name="none">none</string>
+    <string name="tip_fedora">Tip fedora</string>
+    <string name="mlady">M\'lady</string>
+    <string name="sww_error">Something went wrong :(</string>
+    <string name="remember_me_error">Error saving login info</string>
+    <string name="refresh">Refresh</string>
+    <string name="log_out">Log out</string>
+    <string name="refreshing">Refreshing...</string>
+    <string name="please_wait">Please wait...</string>
+
+</resources>

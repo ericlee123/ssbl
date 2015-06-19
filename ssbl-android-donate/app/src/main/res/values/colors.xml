@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="white">#FFFFFF</color>
+    <color name="less_white">#EEEEEE</color>
+    <color name="black">#000000</color>
+    <color name="dark_gray">#433f45</color>
+    <color name="subtitle_gray">#FF707070</color>
+
+    <!-- GameCube controller colors -->
+    <color name="gc_purple">#4F3D8B</color>
+    <color name="gc_green">#29A9A1</color>
+    <color name="gc_gray">#CDCDCD</color>
+    <color name="gc_red">#E73148</color>
+    <color name="gc_yellow">#DDCB3B</color>
+
+</resources>
