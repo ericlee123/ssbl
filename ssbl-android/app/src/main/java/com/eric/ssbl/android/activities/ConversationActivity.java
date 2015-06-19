@@ -51,7 +51,7 @@ public class ConversationActivity extends ListActivity {
         _abv = getLayoutInflater().inflate(R.layout.action_bar_back, null);
         ab.setCustomView(_abv);
         ab.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
+//        _abv.findViewById(R.id.action_bar_delete).setVisibility(View.VISIBLE);
 
         if (!getIntent().hasExtra("conversation_index")) {
             Toast.makeText(_context, "Error loading conversation", Toast.LENGTH_LONG).show();
