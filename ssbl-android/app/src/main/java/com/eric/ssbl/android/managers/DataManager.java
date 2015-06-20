@@ -44,9 +44,11 @@ import java.util.Scanner;
 
 public class DataManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static String _serverURL = "http://ec2-52-25-230-32.us-west-2.compute.amazonaws.com:8080/ssbl-server-2.0/smash";
-//    private static String _90serverURL = "http://10.148.130.20:8080/ssbl-server-2.0/smash";
-//    private static String _serverURL = "http://192.168.1.9:8080/ssbl-server/smash";
+    private static String _serverURL;
+
+    public static void setServerUrl(String serverUrl) {
+        _serverURL = serverUrl;
+    }
 
     public static String getServerUrl() {
         return _serverURL;

@@ -29,21 +29,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -59,36 +67,38 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        _loginFile = new File(getFilesDir(), "yummy.hunnymustard");
+        _loginFile = new File(getFilesDir(), "login");
 
         // Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         setContentView(R.layout.activity_login);
 
-        File opened = new File(getFilesDir(), "opened");
-        if (!opened.exists()) {
-            try {
-                opened.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+        // Get aws server url
+        new HttpServerUrlInit().execute();
 
-            adb
-                    .setTitle("Welcome!!!")
-                    .setMessage("We listened to your feedback and overhauled the poop out of everything! New features include user privacy, " +
-                            "messaging functions, and a better user interface. In case you made an account with the old application, you will have" +
-                            " to make a new account (compatibility issues). Sorry! Everything should be working a lot better, and if you stumble upon" +
-                            " any errors, shoot us an email at hunnymustardapps@gmail.com. Have fun smashing!")
-                    .setNeutralButton("Okay!", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            adb.create().show();
-        }
+//        File opened = new File(getFilesDir(), "opened");
+//        if (!opened.exists()) {
+//            try {
+//                opened.createNewFile();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            AlertDialog.Builder adb = new AlertDialog.Builder(this);
+//
+//            adb
+//                    .setTitle("Welcome!!!")
+//                    .setMessage("We listened to your feedback and overhauled the poop out of everything! New features include user privacy, " +
+//                            "messaging functions, and a better user interface. In case you made an account with the old application, you will have" +
+//                            " to make a new account (compatibility issues). Sorry! Everything should be working a lot better, and if you stumble upon" +
+//                            " any errors, shoot us an email at hunnymustardapps@gmail.com. Have fun smashing!")
+//                    .setNeutralButton("Okay!", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                        }
+//                    });
+//            adb.create().show();
+//        }
 
         // check for stored login info
         if (_loginFile.exists()) {
@@ -111,7 +121,6 @@ public class LoginActivity extends Activity {
 
         // Ask to turn location on if not on
         final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
-
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("This app will have weird behavior if GPS is not enabled. Do you want to enable it?")
@@ -240,9 +249,7 @@ public class LoginActivity extends Activity {
     }
 
     private void initiateApp() {
-
         _loading = ProgressDialog.show(_context, "Initializing data...", "Almost there, chill", true);
-
         new AppInitializer().execute();
     }
 
@@ -267,6 +274,42 @@ public class LoginActivity extends Activity {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    private class HttpServerUrlInit extends AsyncTask<Void, Void, Void> {
+
+        private String tinycc = "http://tiny.cc/ssblredirect";
+        private String actual;
+
+        private void getAwsUrl() {
+            try {
+                HttpClient client = new DefaultHttpClient();
+
+                HttpParams params = new BasicHttpParams();
+                params.setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+
+                HttpGet request = new HttpGet(tinycc);
+                request.setParams(params);
+
+                HttpResponse response = client.execute(request);
+                if (response.getStatusLine().getStatusCode() == 303)
+                    actual = response.getHeaders("Location")[0].getValue();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... nothing) {
+            getAwsUrl();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void what) {
+            if (actual != null)
+                DataManager.setServerUrl(actual);
+        }
     }
 
     private class HttpLogin extends AsyncTask<NameValuePair, Void, Void> {
